@@ -200,3 +200,7 @@ init python:
 ## by a slash.
 
 # define build.itch_project = "renpytom/test-project"
+
+init -1:
+    python hide:
+        config.developer=True
