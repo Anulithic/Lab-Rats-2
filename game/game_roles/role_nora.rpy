@@ -149,7 +149,7 @@ label nora_intro_label(the_person):
     "[the_nora.title] looks up from her notes."
     $ the_nora.draw_person(position = "sitting")
     the_nora.char "Do I know? Of course! I haven't just been twiddling my thumbs since you two left!"
-    the_nora.char "The problem is that all of my research is suppose to be kept within the university now. No sharing with outside organizations."
+    the_nora.char "The problem is that all of my research is supposed to be kept within the university now. No sharing with outside organizations."
     the_nora.char "I wish I could help, but it's my job at risk."
     mc.name "Come on [the_nora.title], we're counting on you here."
     $ the_person.draw_person(position = "sitting")
@@ -288,11 +288,18 @@ label nora_research_cash_first_time(the_person):
 
 label nora_research_cash(the_person):
     # The event where you turn in a completed research report.
-    "You knock on the door to the lab. [the_person.title] answers and steps out into the hallway to talk to you."
-    $ the_person.draw_person()
-    the_person.char "[the_person.mc_title], I'm glad you were able to come by. Let's walk and talk."
-    $ university.show_background()
-    "You walk upstairs together to make sure none of [the_person.possessive_title]'s co-workers are around."
+    if not emily.event_triggers_dict.get("tutor_introduced", False):
+        $ emily.event_triggers_dict["tutor_introduced"] = True
+        call student_intro_one(the_person, emily) from _call_student_intro_one
+
+    else:
+        "You knock on the door to the lab. [the_person.title] answers and steps out into the hallway to talk to you."
+        $ the_person.draw_person()
+        the_person.char "[the_person.mc_title], I'm glad you were able to come by. Let's walk and talk."
+        $ university.show_background()
+        "You walk upstairs together to make sure none of [the_person.possessive_title]'s co-workers are around."
+
+    # TODO: The first intro bit returns here
     $ the_trait = mc.business.event_triggers_dict.get("nora_cash_research_trait") #We know won't be None from our initial event check.
     $ list_of_traits.remove(the_trait)
     $ list_of_nora_traits.remove(the_trait) #Clear it from Nora's list as well so it cannot be randomly obtained again.
@@ -335,7 +342,7 @@ label nora_research_cash(the_person):
     return
 
 label nora_special_research(the_person):
-    # Bring a special person to Nora (or a sample from them? Just a report?) and she generates a special serum trait for them.
+    # Bring a report about a special person to Nora and she generates a special serum trait for them.
     $ the_subject = mc.business.event_triggers_dict.get("nora_research_subject") #This is guaranteed to exist thanks to the pre action checks.
 
     mc.name "I have a research profile for you to take a look at [the_person.title]. Let me know if you can find anything interesting out."

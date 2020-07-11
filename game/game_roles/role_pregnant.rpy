@@ -281,7 +281,7 @@ init 2 python:
         person.event_triggers_dict["preg_old_schedule"] = person.schedule.copy() #Take a shallow copy so we can change their current schedule to nothing
         person.set_schedule([0,1,2,3,4], person.home)
 
-        preg_finish_action = Action("Pregnancy Finish", preg_finish_requirement, "pregnant_finish", args = person, requirement_args = [person, renpy.random.randint(4,7)])
+        preg_finish_action = Action("Pregnancy Finish", preg_finish_requirement, "pregnant_finish", args = person, requirement_args = [person, day + renpy.random.randint(4,7)])
         mc.business.mandatory_morning_crises_list.append(preg_finish_action)
         return
 

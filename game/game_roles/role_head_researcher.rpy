@@ -227,7 +227,7 @@ label advanced_serum_stage_1_label(the_person):
         "Try and secure a prototype serum\n{color=#ff0000}{size=18}Costs: $2000{/size}{/color} (disabled)" if mc.business.funds < 2000:
             pass
 
-        "Contact Nora"if steph_role in the_person.special_role and not mc.business.event_triggers_dict.get("intro_nora", False) and mc.business.event_triggers_dict.get("nora_trait_researched",None) is None:
+        "Contact Nora" if steph_role in the_person.special_role and not mc.business.event_triggers_dict.get("intro_nora", False) and mc.business.event_triggers_dict.get("nora_trait_researched",None) is None:
             $ mc.business.event_triggers_dict["intro_nora"] = True
             mc.name "I think [nora.title] is the right choice."
             the_person.char "I'll call and see when she's available. Come back and talk to me when you want to go visit her."
@@ -323,14 +323,13 @@ label advanced_serum_stage_2_label(the_person):
             menu:
                 "Give [the_person.title] the reversal serum":
                     $ had_sex = True
-                    pass #This falls through to the previous section.
 
                 "Leave [the_person.title] the way she is":
                     "You think about giving [the_person.title] the reversal serum but decide against it. You aren't sure if the serum effects will wear off, but she seems happy enough as she is."
                     "[the_person.title] certainly doesn't seem like she's in any state to run your research department. It would be a good idea to pick a successor to continue [the_person.title]'s work."
                     mc.name "Okay [the_person.title], we're all done here."
                     "Her eyebrows knit together, like a child's attempt to concentrate."
-                    the_person.char "I... wasn't there something I was suppose to do first? Or have done? Uh... I'm sorry [the_person.mc_title], I'm having a real hard time thinking right."
+                    the_person.char "I... wasn't there something I was supposed to do first? Or have done? Uh... I'm sorry [the_person.mc_title], I'm having a real hard time thinking right."
                     "She sticks out her tongue, then giggles and shrugs."
                     the_person.char "Oh well, how important can it be, right? Glad I could help you with your science. And all that fun other stuff."
                     mc.name "And thank you for all that help."
@@ -343,7 +342,6 @@ label advanced_serum_stage_2_label(the_person):
 
         "Give [the_person.title] the reversal serum":
             $ had_sex = False
-            pass
 
     #Undo the effects of the serum, we will use a special exit if we leave her as she is.
     mc.name "Okay [the_person.title], I think we should wrap this little experiment up. I need you to drink this for me."

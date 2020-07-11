@@ -891,7 +891,7 @@ label relaxed_date_seduction(the_person):
         $ so_title = SO_relationship_to_title(the_person.relationship)
         if the_person.sluttiness > the_person.love:
             if the_person.sluttiness > 40:
-                the_person.char "I had a great time [the_person.mc_title]. My [so_title] is suppose to be out for the rest of the night with his friends so..."
+                the_person.char "I had a great time [the_person.mc_title]. My [so_title] is supposed to be out for the rest of the night with his friends so..."
                 the_person.char "Would you like to swing by my place tonight?"
             else:
                 the_person.char "I had such a good time tonight [the_person.mc_title]. It's been years since I had this much fun with my [so_title]."

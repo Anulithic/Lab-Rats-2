@@ -16,7 +16,6 @@ init -2:
     default persistent.pregnancy_pref = 0 # 0 = no content, 1 = predictable, 2 = realistic
 
 init -2 python:
-
     import os
     import copy
     import math
@@ -29,11 +28,41 @@ init -2 python:
     if not renpy.mobile:
         import shader
 
-    config.predict_screen_statements = False #True
-    config.predict_statements = 50
-    config.predict_screens = False #True
+    def take_animation_screenshot(): #Called on every interact beginning, if animation_draw_requested is True it makes the screenshot and starts a new thread to display the image.
+        # This approach is needed because draw.screenshot is fast, but must be done in the main thread. Rendering is slower, but can be threaded. This lets us get the best of both worlds.
+        global animation_draw_requested #This might have some race conditions if character images are drawn very quickly, but I doubt it will be something to worry about.
 
-    config.cache_surfaces = False
+        if animation_draw_requested:
+            global person_being_drawn
+            global prepared_animation_render
+            animation_draw_requested = False
+            if isinstance(prepared_animation_render, list): #It's a removal draw (Which makes prepared_animation_render a list of renders, the first (old) one should be drawn on top and faded out.
+                surface_old = renpy.display.draw.screenshot(prepared_animation_render[0], False)
+                surface_new = renpy.display.draw.screenshot(prepared_animation_render[1], False)
+                prepared_animation_render = None
+                person_being_drawn.draw_person_animation(surface_new, *prepared_animation_arguments, overwrite_at_arguments = [character_right, scale_person(person_being_drawn.height)])
+                person_being_drawn.draw_person_animation(surface_old, *prepared_animation_arguments, overwrite_at_arguments = [character_right, scale_person(person_being_drawn.height), clothing_fade], clear_active = False) #as_top_fade is a hack that overrides the normal clear of a character so we can reuse the drawing code.
+
+                surface_old = None
+                surface_new = None
+                prepared_animation_render = None
+
+            else: #It's just a normal draw
+                the_surface = renpy.display.draw.screenshot(prepared_animation_render, False) #This is the operation that must be in the
+                prepared_animation_render = None
+                person_being_drawn.draw_person_animation(the_surface, *prepared_animation_arguments)
+                the_surface = None
+                # renpy.invoke_in_thread(person_being_drawn.draw_person_animation, the_surface, *prepared_animation_arguments)
+
+        return
+
+    config.interact_callbacks.append(take_animation_screenshot)
+
+    config.predict_screen_statements = True
+    config.predict_statements = 50
+    config.predict_screens = True
+
+    config.cache_surfaces = True
     config_image_cache_size = 8
 
     config.image_cache_size = 2
@@ -67,12 +96,22 @@ init -2 python:
 
     _preferences.show_empty_window = False #Prevents Ren'py from incorrectly showing the text window in complex menu sitations (which was a new bug/behaviour in Ren'py v7.2)
 
+    global current_draw_number
+    current_draw_number = 0 #This value is increased by one every time a character animation thread is created. If the value is not the same when the thread goes to show the animation the draw is skipped (as a new animation has already been requested)
 
+    global animation_draw_requested
+    animation_draw_requested = False #If True when an interaction starts (which happens when a thread returns)... TODO: Document this more once the functions are actually written
 
+    global prepared_animation_render #The render that has been prepared by a separate thread should be placed here.
+    prepared_animation_render = None
+
+    global prepared_animation_arguments #Holds all of the extra arguments that should be passed onto the display code.
+    prepared_animation_arguments = []
 
 
     build.archive("character_images") #When building all character images are placed into an archive. This archive make it easier to navigate through the game folder without significant slowdown on non-SSD systems.
     build.classify("game/images/character_images/**.png", "character_images")
+
 
     def get_obedience_plaintext(obedience_amount):
         obedience_string = "ERROR - Please Tell Vren!"
@@ -120,7 +159,7 @@ init -2 python:
         else:
             return "{image=gui/heart/Grey_Steady.png}"
 
-    def get_red_heart(sluttiness): #A recursive function, feet it a sluttiness and it will return a string of all red heart images for it. Heatrts taht are entirely empty are left out.
+    def get_red_heart(sluttiness): #A recursive function, feet it a sluttiness and it will return a string of all red heart images for it. Hearts that are entirely empty are left out.
         the_final_string = ""
         if sluttiness >= 20:
             the_final_string += "{image=gui/heart/red_heart.png}"
@@ -1844,6 +1883,8 @@ init -2 python:
             self.sex_record["Cum Covered"] = 0
             self.sex_record["Vaginal Creampies"] = 0
             self.sex_record["Anal Creampies"] = 0
+            self.sex_record["Fingered"] = 0
+            self.sex_record["Kissing"] = 0
 
             self.broken_taboos = [] #Taboos apply a penalty to the _first_ time you are trying to push some boundry (first time touching her pussy, first time seeing her tits, etc.), and trigger special dialogue when broken.
 
@@ -2093,11 +2134,11 @@ init -2 python:
             elif day%7 == 5 or day%7 == 6: #If the new day is a weekend day
                 self.change_happiness(self.get_opinion_score("the weekend"), add_to_log = False)
 
-        def threaded_person_displayable(self, position = None, emotion = None, special_modifier = None, lighting = None, background_fill = "#0026a5", no_frame = False): #Starts a separate thread to show this displayable, removing delay.
-            renpy.scene("Active")
-            the_displayable = self.build_person_displayable(lighting = mc.location.get_lighting_conditions())
-            renpy.show(self.name, at_list=[character_right, scale_person(self.height)], layer="Active",what = the_displayable, tag = self.name)
-
+        # def threaded_person_displayable(self, position = None, emotion = None, special_modifier = None, lighting = None, background_fill = "#0026a5", no_frame = False): #Starts a separate thread to show this displayable, removing delay.
+        #     renpy.scene("Active")
+        #     the_displayable = self.build_person_displayable(lighting = mc.location.get_lighting_conditions())
+        #     renpy.show(self.name, at_list=[character_right, scale_person(self.height)], layer="Active",what = the_displayable, tag = self.name)
+        #
 
         def build_person_displayable(self,position = None, emotion = None, special_modifier = None, lighting = None, background_fill = "#0026a5", no_frame = False): #Encapsulates what is done when drawing a person and produces a single displayable.
             if position is None:
@@ -2115,11 +2156,15 @@ init -2 python:
             displayable_list.append(self.expression_images.generate_emotion_displayable(position,emotion, special_modifier = special_modifier, eye_colour = self.eyes[1], lighting = lighting)) #Get the face displayable
             displayable_list.append(self.pubes_style.generate_item_displayable(self.body_type,self.tits, position, lighting = lighting)) #Add in her pubes. #TODO: See if we need to mask this with her body profile for particularly bush-y bushes to prevent clothing overflow.
 
-            (x_size, y_size) = renpy.load_surface(displayable_list[0]).get_size()
-
-            if background_fill: #If we have a background add hair backplate.
-                hair_backplate = im.Blur(self.hair_style.generate_item_displayable("standard_body",self.tits,position, lighting = lighting),2) #Add a hair backplage
-                displayable_list.insert(0, ((0,0),hair_backplate)) #The hair plate is what we want to actually be displayed first, but we need to know the XY sizes of the body first
+            # size_render = renpy.render(displayable_list[0], 10, 10, 0, 0) #We need a render object to check the actual size of the body displayable so we can build our composite accordingly.
+            # the_size = size_render.get_size() # Get the size. Without it our displayable would be stuck in the top left when we changed the size ofthings inside it.
+            # x_size = __builtin__.int(the_size[0])
+            # y_size = __builtin__.int(the_size[1])
+            x_size = position_size_dict.get(position)[0]
+            y_size = position_size_dict.get(position)[1]
+            # hair_backplate = im.Blur(self.hair_style.generate_item_displayable("standard_body",self.tits,position, lighting = lighting),2) #Add a hair backplate
+            #
+            # displayable_list.insert(0, ((0,0),hair_backplate)) #The hair plate is what we want to actually be displayed first, but we need to know the XY sizes of the body first
 
             displayable_list.extend(self.outfit.generate_draw_list(self,position,emotion,special_modifier, lighting = lighting)) #Get the displayables for everything we wear. Note that extnsions do not return anything because they have nothing to show.
             displayable_list.append(self.hair_style.generate_item_displayable("standard_body",self.tits,position, lighting = lighting)) #Get hair
@@ -2133,33 +2178,79 @@ init -2 python:
                 if isinstance(display, __builtin__.tuple):
                     composite_list.extend(display)
                 else:
-                    composite_list.append((0,0)) #Center all displaybles on the top left corner, because of how they are rendered they will all line up.
+                    composite_list.append((0,0)) #Displayables are all handed over as composites with the image centered, so no extra work is needed here.
                     composite_list.append(display) #Append the actual displayable
-
 
             if background_fill and not no_frame: #no_frame allows us to add the frame after for animated displayables, to avoid warping the frame itself.
                 composite_list.append((0,0))
                 composite_list.append(Frame("/gui/Character_Window_Frame.png", 12, 12))
 
-            return Composite(*composite_list) # Create a composite image using all of the displayables
+            final_image = Composite(*composite_list) # Create a composite image using all of the displayables
+            return final_image
 
-        def build_person_animation(self, the_animation, position, emotion, special_modifier, lighting, background_fill = None, animation_effect_strength = 1.0):
+        # def test_thread(self):
+        #     the_render = the_displayable = self.build_person_displayable(no_frame = True).render(1920, 1080, 0 ,0)
+        #     the_surface = renpy.display.draw.screenshot(the_render, False)
+        #     renpy.invoke_in_thread(self.test_function, the_surface)
+        #
+        # def test_function(self, the_surface):
+        #     #Something in this function causes this thread never to exit. We need to find out what!
+        #     print("Hello World!")
+        #     # the_displayable = self.build_person_displayable(no_frame = True)
+        #     # print("Break 1")
+        #     # #the_surftree = renpy.display.render.render_screen(the_displayable, renpy.config.screen_width, renpy.config.screen_height) #This seems to hang while this thread is in action.
+        #     # the_render = renpy.render(the_displayable, 1920, 1080,0,0)
+        #     print("Break 2")
+        #     # the_surface = renpy.display.draw.screenshot(the_render, False) #This is a relatively time expensive operation.
+        #     print("Break 3")
+        #     save_surface(the_surface,"_TEST004")
+        #     #renpy.display.module.save_png(the_surface, surface_file, 0) #This is a relatively time expensive operation, taking 0.12 to 0.14 seconds to perform.
+        #     print("All Done!") #This style works. We have to generate the displayable inside of the main thread, because display.draw only functions
+
+        def prepare_animation_screenshot_render(self, position, emotion, special_modifier, lighting, background_fill, given_reference_draw_number):
             if background_fill is None:
                 background_fill = "#0026a5"
 
-            if the_animation is None:
-                the_animation = wiggle_animation #Placeholder in case this gets called without any proper animation argument
 
             the_displayable = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill, no_frame = True)
-            the_render = the_displayable.render(10,10,0,0)
-            the_size = the_render.get_size() # Get the size. Without it our displayable would be stuck in the top left when we changed the size of things inside it.
 
-            x_size = __builtin__.int(the_size[0])
-            y_size = __builtin__.int(the_size[1])
+            x_size = position_size_dict.get(position)[0]
+            y_size = position_size_dict.get(position)[1]
+            the_render = the_displayable.render(x_size,y_size,0,0)
 
+            global reference_draw_number
+            reference_draw_number = given_reference_draw_number #Let's us check later if this animation is still wanted or if a new one has been requested.
 
-            # the_surftree = renpy.display.render.render_screen(the_displayable, renpy.config.screen_width, renpy.config.screen_height) # Turns out this isn't needed, screenshot() operates just fine a pure displayable Render.
-            the_surface = renpy.display.draw.screenshot(the_render, False) #This is a relatively time expensive operation.
+            global prepared_animation_render
+            prepared_animation_render = the_render
+
+            global animation_draw_requested
+            animation_draw_requested = True
+            return
+
+        def prepare_animation_screenshot_render_multi(self, position, old_precalculated_render, new_precalculated_render, given_reference_draw_number):
+
+            x_size, y_size = position_size_dict.get(position)
+
+            old_render = old_precalculated_render
+            new_render = new_precalculated_render
+
+            global reference_draw_number
+            reference_draw_number = given_reference_draw_number
+
+            global prepared_animation_render
+            prepared_animation_render = [old_render, new_render]
+
+            global animation_draw_requested
+            animation_draw_requested = True
+
+            # Note: The precalcualted
+            return
+
+        # Renamed from "build_person_animtion" in v0.30, now assuems it is handed a screenshot surface from take_animation_screenshot
+        def draw_person_animation(self, the_surface, the_animation, position, emotion, special_modifier, lighting, background_fill = None, animation_effect_strength = 1.0, show_person_info = True, draw_reference_number = None, overwrite_at_arguments = None, clear_active = True):
+            x_size, y_size = position_size_dict.get(position)
+
             surface_file = io.BytesIO()
             renpy.display.module.save_png(the_surface, surface_file, 0) #This is a relatively time expensive operation, taking 0.12 to 0.14 seconds to perform.
             static_image = im.Data(surface_file.getvalue(), "animation_temp_image.png")
@@ -2182,10 +2273,7 @@ init -2 python:
 
                 y_scale = x_scale
 
-
-
             scaled_image = im.FactorScale(static_image, x_scale, y_scale)
-
 
             the_image_name = self.name + " | " + str(time.time())
 
@@ -2193,7 +2281,8 @@ init -2 python:
             region_weight_items_dict = the_animation.get_weight_items()
             for region_weight_name in region_weight_items_dict: #Goes through each region ie. "breasts", "butt", and others to come, and applies the animation strength, the personal region strength, and animation region strength
                 the_weight_item = region_weight_items_dict[region_weight_name]
-                composite_components.append((0,0))
+                #composite_components.append((0,0))
+                composite_components.append(clothing_manager.get_crop_offset_dict(the_weight_item).get(position, (0,0)))
                 region_weight_modifier = animation_effect_strength * self.personal_region_modifiers.get(region_weight_name, 1) * the_animation.innate_animation_strength * the_animation.region_specific_weights.get(region_weight_name, 1)
                 if region_weight_modifier > 1:
                     region_weight_modifier = 1
@@ -2218,14 +2307,29 @@ init -2 python:
 
             cropped_animated_displayable = Crop((0,0,x_size,y_size), raw_animated_displayable)
             framed_animated_displayable = Composite((x_size,y_size),(0,0),cropped_animated_displayable,(0,0),Frame("/gui/Character_Window_Frame.png", 12, 12))
-            return framed_animated_displayable#The shaderdisplayable
+
+            if draw_reference_number is None or draw_reference_number == current_draw_number: #Note: current_draw_number is a global variable that tracks what animation should be drawn. If we don't match it a new animation has been asked for since this oen was requested and it should not be drawn.
+                if clear_active:
+                    renpy.scene("Active")
+
+                if show_person_info:
+                    renpy.show_screen("person_info_ui", self)
+
+                at_list_arguments = [character_right, scale_person(self.height)]
+
+                if overwrite_at_arguments:
+                    at_list_arguments = overwrite_at_arguments
+
+                name = self.name+"_anim"
+                if not clear_active:
+                    name+= "_noclear" # A hack for the clothing removal system
+                renpy.show(name,at_list=at_list_arguments,layer="Active",what=framed_animated_displayable,tag=name)
 
 
         def draw_person(self,position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0): #Draw the person, standing as default if they aren't standing in any other position.
             # PROOTOTYPE! Soon character drawing will be multithreaded with everything except for the screen render for animation handled by the main thread.
             # Alternatively I may be able to process the render myself in PyOpenGL and create a .png from that. This would allow the entire process to function without the main thread.
             #renpy.invoke_in_thread(self.draw_person_in_thread, position, emotion, special_modifier, show_person_info, lighting, background_fill, the_animation, animation_effect_strength)
-
             if position is None:
                 position = self.idle_pose #Easiest change is to call this and get a random standing posture instead of a specific idle pose. We redraw fairly frequently so she will change position frequently.
 
@@ -2238,15 +2342,36 @@ init -2 python:
             if lighting is None:
                 lighting = mc.location.get_lighting_conditions()
 
-            if the_animation:
-                final_image = self.build_person_animation(the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength)
-            else:
-                final_image = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill)
+            character_image = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill)
+            renpy.show(self.name+"_anim",at_list=[character_right, scale_person(self.height)],layer="Active",what=character_image,tag=self.name+"_anim") #Display a static image of the character as soon as possible
 
-            renpy.scene("Active")
             if show_person_info:
                 renpy.show_screen("person_info_ui",self)
-            renpy.show(self.name+"_anim",at_list=[character_right, scale_person(self.height)],layer="Active",what=final_image,tag=self.name+"_anim")
+
+            if the_animation:
+                global person_being_drawn
+                person_being_drawn = self
+
+                global current_draw_number
+                current_draw_number += 1
+
+                global prepared_animation_arguments
+                prepared_animation_arguments = [the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength, show_person_info, current_draw_number] #Effectively these are being stored and passed to draw_person_animation once take_animation_screenshot returns the surface
+                renpy.invoke_in_thread(self.prepare_animation_screenshot_render, position, emotion, special_modifier, lighting, background_fill, current_draw_number) #This thread prepares the render. When it is finished it is caught by the interact_callback function take_animation_screenshot
+
+
+                # renpy.invoke_in_thread(self.draw_person_animation, displayable_screenshot_surface, the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength, show_person_info, draw_reference_number = current_draw_number)
+                # displayable_screenshot_surface = None # Saving surfaces is a no-go for Ren'py so just in case we make sure we have no reference to it after
+
+            # if the_animation:
+            #     final_image = self.build_person_animation(the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength)
+            # else:
+            #     final_image = self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill)
+
+            # renpy.scene("Active")
+            # if show_person_info:
+            #     renpy.show_screen("person_info_ui",self)
+            #renpy.show(self.name+"_anim",at_list=[character_right, scale_person(self.height)],layer="Active",what=final_image,tag=self.name+"_anim")
 
         # PROTOTYPE! In an ideal world this would draw the character in another thread. Unfortunately only the main Renpy thread is capable of rendering/capturing displayable images, so having this work with animation will require extra effort.
         # def draw_person_in_thread(self,position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0):
@@ -2275,9 +2400,8 @@ init -2 python:
         #     renpy.scene("Active")
         #     renpy.show(self.name+"_anim",at_list=[character_right, scale_person(self.height)],layer="Active",what=final_image,tag=self.name+"_anim")
 
-        def draw_animated_removal(self, the_clothing, position = None, emotion = None, special_modifier = None, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0):
+        def draw_animated_removal(self, the_clothing, position = None, emotion = None, special_modifier = None, show_person_info = True, lighting = None, background_fill = "#0026a5", the_animation = None, animation_effect_strength = 1.0):
             #The new animated_removal method generates two image, one with the clothing item and one without. It then stacks them and layers one on top of the other and blends between them.
-            renpy.scene("Active")
 
             if position is None:
                 position = self.idle_pose
@@ -2291,20 +2415,57 @@ init -2 python:
             if lighting is None:
                 lighting = mc.location.get_lighting_conditions()
 
-            if the_animation:
-                bottom_displayable = self.build_person_animation(the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength)
-            else:
-                bottom_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill))
-
-            self.outfit.remove_clothing(the_clothing)
 
             if the_animation:
-                top_displayable = self.build_person_animation(the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength)
-            else:
-                top_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill))
+                # Normally we would display a quick flat version, but we can assume we are already looking at the girl pre-clothing removal.
+                bottom_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill, no_frame = True)) #Get the starting image without the frame
+                self.outfit.remove_clothing(the_clothing) #Remove the clothing
+                top_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill, no_frame = True)) #Get the top image without the frame
 
-            renpy.show(self.name+"_new", at_list=[character_right, scale_person(self.height)], layer = "Active", what = top_displayable, tag = self.name+"_new")
-            renpy.show(self.name+"_old", at_list=[character_right, scale_person(self.height), clothing_fade], layer = "Active", what = bottom_displayable, tag = self.name+"_old")
+                x_size, y_size = position_size_dict.get(position)
+                bottom_render = bottom_displayable.render(x_size, y_size, 0, 0)
+                top_render = top_displayable.render(x_size, y_size, 0, 0)
+
+                global current_draw_number
+                current_draw_number += 1
+
+                global prepared_animation_arguments
+                prepared_animation_arguments = [the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength, show_person_info, current_draw_number]
+
+                global person_being_drawn
+                person_being_drawn = self
+                renpy.invoke_in_thread(self.prepare_animation_screenshot_render_multi, position, bottom_render, top_render, current_draw_number)
+
+            else:
+
+                renpy.scene("Active")
+                if show_person_info:
+                    renpy.show_screen("person_info_ui",self)
+
+                bottom_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill)) #Get the starting image
+                self.outfit.remove_clothing(the_clothing) #Remove the clothing
+                top_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill)) #Get the top image
+                renpy.show(self.name+"_new", at_list=[character_right, scale_person(self.height)], layer = "Active", what = top_displayable, tag = self.name+"_new")
+                renpy.show(self.name+"_old", at_list=[character_right, scale_person(self.height), clothing_fade], layer = "Active", what = bottom_displayable, tag = self.name+"_old") #Blend from old to new.
+
+            # if the_animation:
+            #
+            # else:
+            #     bottom_displayable = Flatten(self.build_person_displayable(position, emotion, special_modifier, lighting, background_fill))
+            #
+            #
+            #
+            #
+            #
+            # if the_animation:
+            #     renpy.show(self.name+"_old", at_list=[character_right, scale_person(self.height)], layer = "Active", what = bottom_displayable, tag = self.name+"_old") #Show old imediately, the new
+            #
+            #     top_displayable = self.build_person_animation(the_animation, position, emotion, special_modifier, lighting, background_fill, animation_effect_strength)
+            #
+            #
+            # else:
+            #
+
 
             return
 
@@ -2425,7 +2586,7 @@ init -2 python:
                 if self.title:
                     display_name = self.title
                 if add_to_log:
-                    mc.log_event("Taboo broken with " + display_name + "!", "float_text_red")
+                    mc.log_event(" Taboo broken with " + display_name + "!", "float_text_red")
                 return True
             return False
 
@@ -3367,7 +3528,7 @@ init -2 python:
             start_sluttiness += 20
 
         if relationship is None:
-            relationship = get_random_from_weighted_list([["Single",120-age],["Girlfriend",50],["Fiancée",120-(age*2)],["Married",20+(age*4)]]) #Age plays a major factor.
+            relationship = get_random_from_weighted_list([["Single",120-age],["Girlfriend",100-age],["Fiancée",120-(age*2)],["Married",(age*3)]]) #Age plays a major factor.
 
         if starting_wardrobe is None:
             starting_wardrobe = Wardrobe(name +"'s Wardrobe")
@@ -4171,7 +4332,7 @@ init -2 python:
                 if self.obedience_modifier < 0:
                     the_string += str(self.obedience_modifier) + " Obedience"
 
-                if self.obedience_modifier >0:
+                if self.obedience_modifier > 0:
                     the_string += "+" + str(self.obedience_modifier) + " Obedience"
 
                 the_string += "{/size}{/color} (tooltip)The object you have sex on influences how enthusiastic and obedient a girl will be."
@@ -4181,12 +4342,16 @@ init -2 python:
 
     class Clothing_Renderer(renpy.store.object):
         supported_positions = ["stand2","stand3","stand4","stand5","walking_away","kissing","doggy","missionary","blowjob","against_wall","back_peek","sitting","kneeling1","standing_doggy","cowgirl"]
+
         def __init__(self):
             self.clothing_items = {}
 
-        def add_clothing_item(self, proper_name, draws_breasts, body_dependant = True, supported_patterns = None):
+        def add_clothing_item(self, proper_name, draws_breasts, body_dependant = True, supported_patterns = None, half_off_regions = None, half_off_ignore_regions = None, constrain_regions = None, crop_offset_dict = None):
             if proper_name in self.clothing_items:
                 return
+
+            if not crop_offset_dict:
+                crop_offset_dict = {}
 
             position_sets = {} #A list of position set names. When the clothing is created it will make a dict containing these names and image sets for them.
             pattern_sets = {} #A list of patterns for this piece of clothing that are valid. Keys are in the form "position_patternName"
@@ -4199,13 +4364,46 @@ init -2 python:
                         if pattern_name:
                             pattern_sets[set + "_" + pattern_name] = Clothing_Images(proper_name+"_"+pattern_name, set, draws_breasts, body_dependant = body_dependant)
 
-            self.clothing_items[proper_name] = [position_sets, pattern_sets]
+            if half_off_regions is None: #A list of body region "clothing items". When self.half_off is True these regions are hidden.
+                half_off_regions = []
+            elif isinstance(half_off_regions, list):
+                half_off_regions = half_off_regions
+            else:
+                half_off_regions = [half_off_regions]
+
+            if half_off_ignore_regions is None: #A list of region "clothing items" that are added _back_ onto an item when half off. These use no blur, so can preserve sharp edges where, for example, arms interact with a torso.
+                half_off_ignore_regions = []
+            elif isinstance(half_off_ignore_regions, list):
+                half_off_ignore_regions = half_off_ignore_regions
+            else:
+                half_off_ignore_regions = [half_off_ignore_regions]
+
+            if constrain_regions is None: #an area of the body that other clothing items are "constrained" to if this item is worn over top.
+                constrain_regions = []
+            elif isinstance(constrain_regions, list):
+                constrain_regions = constrain_regions
+            else:
+                constrain_regions = [constrain_regions]
+
+            self.clothing_items[proper_name] = [position_sets, pattern_sets, half_off_regions, half_off_ignore_regions, constrain_regions, crop_offset_dict]
 
         def get_position_sets(self, clothing):
             return self.clothing_items[clothing.proper_name][0]
 
         def get_pattern_sets(self, clothing):
             return self.clothing_items[clothing.proper_name][1]
+
+        def get_half_off_regions(self, clothing):
+            return self.clothing_items[clothing.proper_name][2]
+
+        def get_half_off_ignore_regions(self, clothing):
+            return self.clothing_items[clothing.proper_name][3]
+
+        def get_constrain_regions(self, clothing):
+            return self.clothing_items[clothing.proper_name][4]
+
+        def get_crop_offset_dict(self, clothing):
+            return self.clothing_items[clothing.proper_name][5]
 
         def generate_item_image_name(self, clothing, body_type, tit_size, position):
             position_set = self.clothing_items[clothing.proper_name][0]
@@ -4276,7 +4474,9 @@ init -2 python:
             else:
                 final_image = shader_image
 
-            if len(regions_constrained)>0:
+            final_image = Composite(position_size_dict[position], self.get_crop_offset_dict(clothing).get(position,(0,0)), final_image) #Transform the clothing image into a composite with the image positioned correctly.
+
+            if len(regions_constrained) > 0:
                 # We want to support clothing "constraining", or masking, lower images. This is done by region.
                 # Each constraining region effectively subtracts itself + a blurred border around it, and then the body region is added back in so it appears through clothing.
 
@@ -4286,15 +4486,15 @@ init -2 python:
                     region_mask = Image(region.generate_item_image_name(body_type, tit_size, position))
 
                     if composite_list is None:
-                        composite_list = [renpy.load_surface(region_mask).get_size()]
-                    composite_list.append((0,0))
+                        composite_list = [position_size_dict.get(position)]
+                    composite_list.append(self.get_crop_offset_dict(region).get(position,(0,0)))
                     composite_list.append(region_mask)
 
                 composite = im.Composite(*composite_list)
                 blurred_composite = im.Blur(composite, 8) #Blur the combined region mask to make it wider than the original. This would start to incorrectly include the interior of the mask, but...
                 constrained_region_mask = im.MatrixColor(blurred_composite, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,8,0]) #This is the area to be subracted from the image.
                 full_body_mask = Image(all_regions.generate_item_image_name(body_type, tit_size, position)) #And this is the area to add back in so it is displayed only along the body in some regions
-                composite_list.extend([(0,0),full_body_mask])
+                composite_list.extend([self.get_crop_offset_dict(all_regions).get(position, (0,0)),full_body_mask])
                 #BUG: It only seems to be using the first region constrain.
                 full_body_comp = im.Composite(*composite_list) # This ensures all constrained regions are part of the body mask, enabling support for items like skirts w/ clothing between body parts.
                 constrained_mask = AlphaBlend(constrained_region_mask, Solid("#FFFFFFFF"), full_body_comp) #This builds the proper final image mask (ie all shown, except for the region around but not including the constrained region)
@@ -4304,35 +4504,36 @@ init -2 python:
                 region_mask = Image(wet_nipple_region.generate_item_image_name(body_type, tit_size, position)) #TODO: Add a much more specific "nipple region"
                 # darkness_factor = nipple_wetness * 0.1 #Used to darken clothing where it is wet
                 region_mask = im.MatrixColor(region_mask, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,-1*nipple_wetness,1])
-                final_image = AlphaBlend(region_mask, Solid("#00000000"), final_image)
+                region_composite = im.Composite(position_size_dict[position], self.get_crop_offset_dict(wet_nipple_region).get(position,(0,0)), region_mask)
+                final_image = AlphaBlend(region_composite, Solid("#00000000"), final_image)
 
 
-            if clothing.half_off:
+            if len(self.get_half_off_regions(clothing)) > 0:
                 #NOTE: This actually produces some really good looking effects for water/stuff. We should add these kinds of effects as a general thing, probably on the pattern level.
                 #NOTE: Particularly for water/stains, this could work really well (and can use skin-tight region marking, ie. not clothing item dependant).
                 # list_of_regions_to_hide = self.half_off_regions[:]
                 # if nipple_wetness > 0 and breast_region not in list_of_regions_to_hide: #TODO: Add a proper nipple region.
                 #     list_of_regions_to_hide.append(breast_region)
                 composite_list = None
-                for region_to_hide in half_off_regions: #We first add together all of the region masks so we only operate on a single displayable
+                for region_to_hide in self.get_half_off_regions(clothing): #We first add together all of the region masks so we only operate on a single displayable
                     region_mask = Image(region_to_hide.generate_item_image_name(body_type, tit_size, position))
                     if composite_list is None:
-                        composite_list = [renpy.load_surface(region_mask).get_size()]
+                        composite_list = [position_size_dict.get(position)]
 
-                    composite_list.append((0,0))
+                    composite_list.append(self.get_crop_offset_dict(region_to_hide).get(position, (0,0)))
                     composite_list.append(region_mask)
 
                 composite = im.Composite(*composite_list)
                 blurred_composite = im.Blur(composite, 12) #Blur the combined region mask to make it wider than the original. This would start to incorrectly include the interior of the mask, but...
                 transparency_control_image = im.MatrixColor(blurred_composite, [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,7,0]) #...We increase the contribution of alpha from the mask, so a small amount ends up being 100% (this still preserves some gradient at the edge as well)
 
-                if clothing.half_off_ignore_regions: #Sometimes you want hard edges, or a section of a piece of clothing not to be moved. These regions are not blured/enlarged and are subtracted from the mask generated above.
+                if len(self.get_half_off_ignore_regions(clothing)) > 0: #Sometimes you want hard edges, or a section of a piece of clothing not to be moved. These regions are not blured/enlarged and are subtracted from the mask generated above.
                     add_composite_list = None
-                    for region_to_add in clothing.half_off_ignore_regions:
+                    for region_to_add in self.get_half_off_ignore_regions(clothing):
                         region_mask = Image(region_to_add.generate_item_image_name(body_type, tit_size, position))
                         if add_composite_list is None:
-                            add_composite_list = [renpy.load_surface(region_mask).get_size()] #We can reuse the size from our first pass building the mask.
-                        add_composite_list.append((0,0))
+                            add_composite_list = [position_size_dict.get(position)] #We can reuse the size from our first pass building the mask.
+                        add_composite_list.append(self.get_crop_offset_dict(region_to_add).get(position, (0,0)))
                         add_composite_list.append(region_mask)
                     add_composite = im.Composite(*add_composite_list)
                     transparency_control_image = AlphaBlend(add_composite, transparency_control_image, Solid("#00000000"), True) #This alpha blend effectively subtracts the half_off_ignore mask from the half_off region mask
@@ -4367,7 +4568,8 @@ init -2 python:
 
         def __init__(self, name, layer, hide_below, anchor_below, proper_name, draws_breasts, underwear, slut_value, has_extension = None, is_extension = False, colour = None, tucked = False, body_dependant = True,
         opacity_adjustment = 1, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, supported_patterns = None, pattern = None, colour_pattern = None, ordering_variable = 0, display_name = None,
-        half_off_regions = None, half_off_ignore_regions = None, constrain_regions = None):
+        half_off_regions = None, half_off_ignore_regions = None, constrain_regions = None,
+        crop_offset_dict = None):
             self.name = name
             self.proper_name = proper_name #The true name used in the file system
             if display_name is None:
@@ -4383,6 +4585,7 @@ init -2 python:
             if not supported_patterns:
                 self.supported_patterns = {"Default":None}
             self.supported_patterns["Default"] = None
+
             self.draws_breasts = draws_breasts
             self.underwear = underwear #True if the item of clothing satisfies the desire for underwear for upper or lower (bra or panties), false if it can pass as outerwear. Underwear on outside of outfit gives higher slut requirement.
             self.slut_value = slut_value #The amount of sluttiness that this piece of clothing adds to an outfit.
@@ -4409,30 +4612,8 @@ init -2 python:
             self.ordering_variable = ordering_variable #Used for things like hair and pubes when we need to know what can be trimmed into what without any time taken.
             #TODO: Assign ordering variables to all hair based on length (short, medium, long) and then have haircuts and stuff be possible.
 
-            self.half_off = False
-            if half_off_regions is None: #A list of body region "clothing items". When self.half_off is True these regions are hidden.
-                self.half_off_regions = []
-            elif isinstance(half_off_regions, list):
-                self.half_off_regions = half_off_regions
-            else:
-                self.half_off_regions = [half_off_regions]
-
-            if half_off_ignore_regions is None: #A list of region "clothing items" that are added _back_ onto an item when half off. These use no blur, so can preserve sharp edges where, for example, arms interact with a torso.
-                self.half_off_ignore_regions = []
-            elif isinstance(half_off_ignore_regions, list):
-                self.half_off_ignore_regions = half_off_ignore_regions
-            else:
-                self.half_off_ignore_regions = [half_off_ignore_regions]
-
-            if constrain_regions is None: #an area of the body that other clothing items are "constrained" to if this item is worn over top.
-                self.constrain_regions = []
-            elif isinstance(constrain_regions, list):
-                self.constrain_regions = constrain_regions
-            else:
-                self.constrain_regions = [constrain_regions]
-
             if not is_extension: # don't render extensions
-                clothing_manager.add_clothing_item(proper_name, draws_breasts, body_dependant, supported_patterns)
+                clothing_manager.add_clothing_item(proper_name, draws_breasts, body_dependant, supported_patterns, half_off_regions, half_off_ignore_regions, constrain_regions, crop_offset_dict)
 
         def __cmp__(self,other):
             if isinstance(self, type(other)):
@@ -4465,16 +4646,24 @@ init -2 python:
         def __init__(self):
             self.accessories = {}
         
-        def add_facial_accessory(self, proper_name):
+        def add_facial_accessory(self, proper_name, crop_offset_dict = None):
             if proper_name in self.accessories:
                 return
 
-            position_sets = {} #A list of position set names. When the clothing is created it will make a dict containing these names and image sets for them.
+            if not crop_offset_dict:
+                crop_offset_dict = {}
 
+            position_sets = {} #A list of position set names. When the clothing is created it will make a dict containing these names and image sets for them.
             for set in self.supported_positions:
                 position_sets[set] = Facial_Accessory_Images(proper_name,set)
 
-            self.accessories[proper_name] = position_sets
+            self.accessories[proper_name] = [position_sets, crop_offset_dict]
+
+        def get_position_sets(self, accessory):
+            return self.accessories[accessory.proper_name][0]
+
+        def get_crop_offset_dict(self, accessory):
+            return self.accessories[accessory.proper_name][1]
 
         def generate_item_displayable(self, accessory, position, face_type, emotion, special_modifiers = None, lighting = None):
             if accessory.is_extension:
@@ -4483,9 +4672,9 @@ init -2 python:
             if lighting is None:
                 lighting = [1,1,1]
 
-            image_set = self.accessories[accessory.proper_name].get(position)
+            image_set = self.get_position_sets(accessory).get(position)
             if image_set is None:
-                image_set = self.accessories[accessory.proper_name].get("stand3") #Get a default image set if we are looking at a position we do not have.
+                image_set = self.get_position_sets(accessory).get("stand3") #Get a default image set if we are looking at a position we do not have.
 
             the_image = image_set.get_image(face_type, emotion, special_modifiers)
             if not the_image:
@@ -4499,11 +4688,13 @@ init -2 python:
 
             colour_matrix = im.matrix.tint(accessory.colour[0], accessory.colour[1], accessory.colour[2]) * im.matrix.tint(*lighting)
             alpha_matrix = im.matrix.opacity(accessory.colour[3])
-            return im.MatrixColor(greyscale_image, alpha_matrix * colour_matrix) #Now colour the final greyscale image
+            shader_image = im.MatrixColor(greyscale_image, alpha_matrix * colour_matrix) #Now colour the final greyscale image
+
+            return Composite(position_size_dict[position], self.get_crop_offset_dict(accessory).get(position,(0,0)), shader_image)
 
     class Facial_Accessory(Clothing): #This class inherits from Clothing and is used for special accessories that require extra information
         def __init__(self, name, layer, hide_below, anchor_below, proper_name, draws_breasts, underwear, slut_value, has_extension = None, is_extension = False, colour = None, tucked = False,
-            opacity_adjustment = 1, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, display_name = None):
+            opacity_adjustment = 1, whiteness_adjustment = 0.0, contrast_adjustment = 1.0, display_name = None, crop_offset_dict = None):
 
             self.name = name
             if display_name is None:
@@ -4514,7 +4705,6 @@ init -2 python:
             self.hide_below = hide_below #If true, it hides the clothing beneath so you can't tell what's on.
             self.anchor_below = anchor_below #If true, you must take this off before you can take off anything of a lower layer.f
             self.layer = layer #A list of the slots above that this should take up or otherwise prevent from being filled. Slots are a list of the slot and the layer.
-
 
             self.draws_breasts = draws_breasts
             self.underwear = underwear #True if the item of clothing satisfies the desire for underwear for upper or lower (bra or panties), false if it can pass as outerwear. Underwear on outside of outfit gives higher slut requirement.
@@ -4532,7 +4722,7 @@ init -2 python:
             self.contrast_adjustment = contrast_adjustment
 
             if not is_extension: # don't render extensions
-                facial_accessory_manager.add_facial_accessory(proper_name)
+                facial_accessory_manager.add_facial_accessory(proper_name, crop_offset_dict)
 
 
         def generate_item_displayable(self, position, face_type, emotion, special_modifiers = None, lighting = None):
@@ -4540,7 +4730,7 @@ init -2 python:
 
 
     class Facial_Accessory_Images():
-        supported_faces = ["Face_1","Face_2","Face_3","Face_4","Face_5","Face_6"]
+        supported_faces = ["Face_1","Face_2","Face_3","Face_4","Face_5","Face_6","Face_7","Face_8","Face_9","Face_11","Face_12","Face_13","Face_14"]
         supported_emotions = ["default","sad","happy","angry","orgasm"]
         special_modifiers = {"blowjob":"blowjob","kissing":"kissing"}
 
@@ -4708,11 +4898,8 @@ init -2 python:
                 else:
                     if not item.is_extension:
                         ordered_displayables.append(item.generate_item_displayable(body_type, tit_size, position, lighting = lighting, regions_constrained = currently_constrained_regions, nipple_wetness = nipple_wetness))
-                        for region in item.constrain_regions:
-
-                            if item.half_off and region in item.half_off_regions:
-                                pass # If an item is half off the regions that are hidden while half off are also not constrained by the clothing.
-                            else:
+                        for region in clothing_manager.get_constrain_regions(item):
+                            if not region in clothing_manager.get_half_off_regions(item):
                                 currently_constrained_regions.append(region)
             return ordered_displayables[::-1] #We iterated over all_items backwards, so our return list needs to be inverted
 
@@ -4740,10 +4927,8 @@ init -2 python:
                 else:
                     if not item.is_extension:
                         item_check = item.generate_item_displayable(body_type, tit_size, position, lighting = lighting, regions_constrained = currently_constrained_regions)
-                        for region in item.constrain_regions:
-                            if item.half_off and region in item.constrain_regions:
-                                pass # If an item is half off the regions that are hidden while half off are also not constrained by the clothing.
-                            else:
+                        for region in clothing_manager.get_constrain_regions(item):
+                            if not region in clothing_manager.get_half_off_regions(item):
                                 currently_constrained_regions.append(region)
 
                 if not item.is_extension:
@@ -5663,7 +5848,7 @@ init -2 python:
                 self.verbing = verbing
             self.record_class = record_class #A key to Person.sex_record[] that is updated once (and only once!) per sexual encounter if this position is picked.
 
-            self.current_modifier = None #We will update this if the posisiion has a special modifier that shoudl be applied, like blowjob.
+            self.current_modifier = None #We will update this if the position has a special modifier that shoudl be applied, like blowjob.
 
             if default_animation is None:
                 self.default_animation = idle_wiggle_animation
@@ -6435,7 +6620,7 @@ screen business_ui(): #Shows some information about your business.
 
             if not mc.business.active_research_design is None:
                 text "  Current Research: " style "menu_text_style"
-                textbutton "    [mc.business.active_research_design.name] (" + str(__builtin__.int(mc.business.active_research_design.current_research))+"/[mc.business.active_research_design.research_needed])":
+                textbutton "    [mc.business.active_research_design.name] (" + str(int(mc.business.active_research_design.current_research))+"/[mc.business.active_research_design.research_needed])":
                     ysize 28
                     text_style "menu_text_style"
                     tooltip "The current research task of your R&D division. Visit them to set a new goal or to assemble a new serum design."
@@ -6600,45 +6785,51 @@ screen employee_overview(white_list = None, black_list = None, person_select = F
             $ grid_count = 15
             # if person_select:
             #     $ grid_count += 1
-            grid grid_count len(display_list)+1:
-                text "Name" style "menu_text_style" xsize 120 size 14
-                # if person_select:
-                #     text "" style "menu_text_style" xsize 120 size 14
-                text "Salary" style "menu_text_style" xsize 120 size 14
-                text "Happiness" style "menu_text_style" xsize 120 size 14
-                text "Obedience" style "menu_text_style" xsize 120 size 14
-                text "Love" style "menu_text_style" xsize 120 size 14
-                text "Sluttiness" style "menu_text_style" xsize 120 size 14
-                text "Suggest" style "menu_text_style" xsize 120 size 14
-                text "Charisma" style "menu_text_style" xsize 120 size 14
-                text "Int" style "menu_text_style" xsize 120 size 14
-                text "Focus" style "menu_text_style" xsize 120 size 14
-                text "Research" style "menu_text_style" xsize 120 size 14
-                text "Production " style "menu_text_style" xsize 120 size 14
-                text "Supply" style "menu_text_style" xsize 120 size 14
-                text "Marketing " style "menu_text_style" xsize 120 size 14
-                text "HR" style "menu_text_style" xsize 120 size 14
+            viewport:
+                xsize 1800
+                ysize  585
+                scrollbars "vertical"
+                mousewheel True
+
+                grid grid_count len(display_list)+1:
+                    text "Name" style "menu_text_style" xsize 120 size 14
+                    # if person_select:
+                    #     text "" style "menu_text_style" xsize 120 size 14
+                    text "Salary" style "menu_text_style" xsize 120 size 14
+                    text "Happiness" style "menu_text_style" xsize 120 size 14
+                    text "Obedience" style "menu_text_style" xsize 120 size 14
+                    text "Love" style "menu_text_style" xsize 120 size 14
+                    text "Sluttiness" style "menu_text_style" xsize 120 size 14
+                    text "Suggest" style "menu_text_style" xsize 120 size 14
+                    text "Charisma" style "menu_text_style" xsize 120 size 14
+                    text "Int" style "menu_text_style" xsize 120 size 14
+                    text "Focus" style "menu_text_style" xsize 120 size 14
+                    text "Research" style "menu_text_style" xsize 120 size 14
+                    text "Production " style "menu_text_style" xsize 120 size 14
+                    text "Supply" style "menu_text_style" xsize 120 size 14
+                    text "Marketing " style "menu_text_style" xsize 120 size 14
+                    text "HR" style "menu_text_style" xsize 120 size 14
 
 
-                for person in display_list:
-                    vbox:
-                        textbutton person.name + "\n" + person.last_name style "textbutton_style" text_style "menu_text_style" action Show("person_info_detailed",None,person) xmaximum 120 xfill True text_size 12
-                        if person_select:
-                            textbutton "Select" style "textbutton_style" text_style "menu_text_style" action Return(person) xsize 120 yalign 0.5 text_size 12
-                    text "$" + str(person.salary) + "/day" style "menu_text_style" xsize 120 yalign 0.5 size 12
-                    text str(int(person.happiness)) style "menu_text_style" xsize 120 yalign 0.5 size 12
-                    text str(int(person.obedience)) style "menu_text_style" xsize 120 yalign 0.5 size 12
-                    text str(int(person.love)) style "menu_text_style" xsize 120 yalign 0.5 size 12
-                    text str(int(person.sluttiness)) style "menu_text_style" xsize 120 yalign 0.5 size 12
-                    text str(int(person.suggestibility)) style "menu_text_style" xsize 120 yalign 0.5 size 12
-                    text str(int(person.charisma)) style "menu_text_style" xsize 120 yalign 0.5 size 12
-                    text str(int(person.int)) style "menu_text_style" xsize 120 yalign 0.5 size 12
-                    text str(int(person.focus)) style "menu_text_style" xsize 120 yalign 0.5 size 12
-                    text str(int(person.research_skill)) style "menu_text_style" xsize 120 yalign 0.5 size 12
-                    text str(int(person.production_skill)) style "menu_text_style" xsize 120 yalign 0.5 size 12
-                    text str(int(person.supply_skill)) style "menu_text_style" xsize 120 yalign 0.5 size 12
-                    text str(int(person.market_skill)) style "menu_text_style" xsize 120 yalign 0.5 size 12
-                    text str(int(person.hr_skill)) style "menu_text_style" xsize 120 yalign 0.5 size 12
+                    for person in display_list:
+                        vbox:
+                            textbutton person.name + "\n" + person.last_name style "textbutton_style" text_style "menu_text_style" action Show("person_info_detailed",None,person) xmaximum 120 xfill True text_size 12
+                            if person_select:
+                                textbutton "Select" style "textbutton_style" text_style "menu_text_style" action Return(person) xsize 120 yalign 0.5 text_size 12
+                        text "$" + str(person.salary) + "/day" style "menu_text_style" xsize 120 yalign 0.5 size 12
+                        text str(int(person.happiness)) style "menu_text_style" xsize 120 yalign 0.5 size 12
+                        text str(int(person.obedience)) style "menu_text_style" xsize 120 yalign 0.5 size 12
+                        text str(int(person.love)) style "menu_text_style" xsize 120 yalign 0.5 size 12
+                        text str(int(person.sluttiness)) style "menu_text_style" xsize 120 yalign 0.5 size 12
+                        text str(int(person.suggestibility)) style "menu_text_style" xsize 120 yalign 0.5 size 12
+                        text str(int(person.charisma)) style "menu_text_style" xsize 120 yalign 0.5 size 12
+                        text str(int(person.int)) style "menu_text_style" xsize 120 yalign 0.5 size 12
+                        text str(int(person.focus)) style "menu_text_style" xsize 120 yalign 0.5 size 12
+                        text str(int(person.research_skill)) style "menu_text_style" xsize 120 yalign 0.5 size 12
+                        text str(int(person.production_skill)) style "menu_text_style" xsize 120 yalign 0.5 size 12
+                        text str(int(person.supply_skill)) style "menu_text_style" xsize 120 yalign 0.5 size 12
+                        text str(int(person.market_skill)) style "menu_text_style" xsize 120 yalign 0.5 size 12
+                        text str(int(person.hr_skill)) style "menu_text_style" xsize 120 yalign 0.5 size 12
 
 
     if not person_select:
@@ -6841,8 +7032,15 @@ screen person_info_detailed(the_person):
                     text "Kids: [the_person.kids]" style "menu_text_style"
                     #TODO: Decide how much of this information we want to give to the player directly and how much we want to have delivered in game.
                     if persistent.pregnancy_pref > 0:
-                        text "Fertility: " + str(round(the_person.fertility_percent)) + "%" style "menu_text_style"
+                        if persistent.pregnancy_pref == 1:
+                            text "Fertility: " + str(round(the_person.fertility_percent)) + "%" style "menu_text_style"
                         if persistent.pregnancy_pref == 2:
+                            $ day_difference = abs((day % 30) - the_person.ideal_fertile_day) # Gets the distance between the current day and the ideal fertile day.
+                            if day_difference > 15:
+                                $ day_difference = 30 - day_difference #Wrap around to get correct distance between months.
+                            $ multiplier = 2 - (float(day_difference)/10.0) # The multiplier is 2 when the day difference is 0, 0.5 when the day difference is 15.
+                            $ modified_fertility = the_person.fertility_percent * multiplier
+                            text "Fertility: " + str(round(modified_fertility)) + "%" style "menu_text_style"
                             text "Monthly Peak Day: " + str(the_person.ideal_fertile_day ) style "menu_text_style"
                         text "Birth Control: " + str(the_person.on_birth_control) style "menu_text_style"
 
@@ -6856,9 +7054,8 @@ screen person_info_detailed(the_person):
                     text "Intelligence: [the_person.int]" style "menu_text_style"
                     text "Focus: [the_person.focus]" style "menu_text_style"
 
-                $ list_of_relationships = town_relationships.get_relationship_type_list(the_person, visible = True)
-                if list_of_relationships:
-                    vbox:
+                    $ list_of_relationships = town_relationships.get_relationship_type_list(the_person, visible = True)
+                    if list_of_relationships:
                         text "Other relationships:"  style "menu_text_style"
                         viewport:
                             xsize 325
@@ -7718,7 +7915,7 @@ screen serum_select_ui: #How you select serum and trait research
             background "#888888"
             xsize 1000
             if not mc.business.active_research_design is None:
-                text "Current Research: [mc.business.active_research_design.name] ([mc.business.active_research_design.current_research]/[mc.business.active_research_design.research_needed])" style "menu_text_style" size 25 xanchor 0.5 xalign 0.5
+                text "Current Research: [mc.business.active_research_design.name] " + str(int(mc.business.active_research_design.current_research)) + "/[mc.business.active_research_design.research_needed])" style "menu_text_style" size 25 xanchor 0.5 xalign 0.5
             else:
                 text "Current Research: None!" style "menu_text_style" size 25 xanchor 0.5 xalign 0.5
 
@@ -9851,6 +10048,9 @@ init -2 python:
         return get_random_from_list(possible_greetings)
 
 label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS YOU TAKE
+    $ renpy.checkpoint()
+    $ renpy.scene("Active")
+
     if "action_mod_list" in globals():
         call screen enhanced_main_choice_display(build_menu_items([build_people_list(), build_actions_list()]))
     else:
@@ -9858,48 +10058,44 @@ label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS Y
     $ picked_option = _return
 
     if isinstance(picked_option, Person):
-        # mc.can_skip_time = False
-        if picked_option == "Back":
-            $ renpy.jump("game_loop")
+        $ picked_option.draw_person() #the_animation = sudden_bounce_animation) TODO: Experiment more with this once we are predicting images a little bit.
+        $ talk_action = pick_room_talk_event(picked_option)
+
+        if talk_action:
+            #If there are any events we want to trigger it happens instead of talking to the person. If we want it to lead into talk_person we can call that separately. Only one event per interaction.
+            $ talk_action.call_action(picked_option)
+            if talk_action in picked_option.on_talk_event_list: #This shouldn't come up much, but it an event is double removed this helps us fail gracefully.
+                $ picked_option.on_talk_event_list.remove(talk_action)
+
         else:
-            $ picked_option.draw_person() #the_animation = sudden_bounce_animation) TODO: Experiment more with this once we are predicting images a little bit.
-            $ talk_action = pick_room_talk_event(picked_option)
-
-            if talk_action:
-                #If there are any events we want to trigger it happens instead of talking to the person. If we want it to lead into talk_person we can call that separately. Only one event per interaction.
-                $ talk_action.call_action(picked_option)
-                if talk_action in picked_option.on_talk_event_list: #This shouldn't come up much, but it an event is double removed this helps us fail gracefully.
-                    $ picked_option.on_talk_event_list.remove(talk_action)
-
+            if picked_option.title is None:
+                "You decide to approach the stranger and introduce yourself."
             else:
-                if picked_option.title is None:
-                    "You decide to approach the stranger and introduce yourself."
-                else:
-                    "You approach [picked_option.title] and chat for a little bit."
-                    $ picked_option.call_dialogue("greetings")
+                "You approach [picked_option.title] and chat for a little bit."
+                $ picked_option.call_dialogue("greetings")
 
-                if picked_option.has_taboo(["underwear_nudity","bare_tits", "bare_pussy"]) and picked_option.judge_outfit(picked_option.outfit, -30): #If she's in anything close to slutty she's self-conscious enough to coment on it.
-                    if picked_option.outfit.vagina_visible() and picked_option.has_taboo("bare_pussy") and picked_option.outfit.tits_visible() and picked_option.has_taboo("bare_tits"):
-                        "[picked_option.title] doesn't say anything about it, but seems uncomfortable being naked in front of you."
-                        "As you talk she seems to become more comfortable with her own nudity, even if she isn't thrilled by it."
+            if picked_option.has_taboo(["underwear_nudity","bare_tits", "bare_pussy"]) and picked_option.judge_outfit(picked_option.outfit, -30): #If she's in anything close to slutty she's self-conscious enough to coment on it.
+                if picked_option.outfit.vagina_visible() and picked_option.has_taboo("bare_pussy") and picked_option.outfit.tits_visible() and picked_option.has_taboo("bare_tits"):
+                    "[picked_option.title] doesn't say anything about it, but seems uncomfortable being naked in front of you."
+                    "As you talk she seems to become more comfortable with her own nudity, even if she isn't thrilled by it."
 
-                    if picked_option.outfit.vagina_visible() and picked_option.has_taboo("bare_pussy"):
-                        "[picked_option.title] doesn't say anything about it, but angles her body to try and conceal her bare pussy from you."
-                        "As you talk she seems to become more comfortable, even if she isn't thrilled about it."
+                if picked_option.outfit.vagina_visible() and picked_option.has_taboo("bare_pussy"):
+                    "[picked_option.title] doesn't say anything about it, but angles her body to try and conceal her bare pussy from you."
+                    "As you talk she seems to become more comfortable, even if she isn't thrilled about it."
 
-                    elif picked_option.outfit.tits_visible() and picked_option.has_taboo("bare_tits"):
-                        "[picked_option.title] doesn't say anything about it, but brings her arms up to try and conceal her tits."
-                        if picked_option.has_large_tits():
-                            "Her large chest isn't easy to hide, and she quickly realises it's hopeless."
-                        else:
-                            "As you talk she seems to become more comfortable, and eventually lets her arms drop again."
+                elif picked_option.outfit.tits_visible() and picked_option.has_taboo("bare_tits"):
+                    "[picked_option.title] doesn't say anything about it, but brings her arms up to try and conceal her tits."
+                    if picked_option.has_large_tits():
+                        "Her large chest isn't easy to hide, and she quickly realises it's hopeless."
+                    else:
+                        "As you talk she seems to become more comfortable, and eventually lets her arms drop again."
 
-                    elif ((picked_option.outfit.wearing_panties() and not picked_option.outfit.panties_covered()) or (picked_option.outfit.wearing_bra() and not picked_option.outfit.bra_covered())) and picked_option.has_taboo("underwear_nudity"):
-                        "[picked_option.title] doesn't say anything about it, but she tries to cover up her underwear with her hands."
-                        "As you talk she seems to become more comfortable, and eventually she lets her arms drop to her sides."
+                elif ((picked_option.outfit.wearing_panties() and not picked_option.outfit.panties_covered()) or (picked_option.outfit.wearing_bra() and not picked_option.outfit.bra_covered())) and picked_option.has_taboo("underwear_nudity"):
+                    "[picked_option.title] doesn't say anything about it, but she tries to cover up her underwear with her hands."
+                    "As you talk she seems to become more comfortable, and eventually she lets her arms drop to her sides."
 
-                    $ picked_option.update_outfit_taboos()
-            call talk_person(picked_option) from _call_talk_person
+                $ picked_option.update_outfit_taboos()
+        call talk_person(picked_option) from _call_talk_person
 
     elif isinstance(picked_option, Action):
         $ picked_option.call_action()
@@ -10200,7 +10396,7 @@ label interview_action_description:
             call hire_select_process(candidates) from _call_hire_select_process
             $ candidates = [] #Prevent it from using up extra memory
 
-            if not _return == "None":
+            if not _return == "None" and isinstance(_return, Person):
                 $ new_person = _return
                 $ new_person.generate_home() #Generate them a home location so they have somewhere to go at night.
                 call hire_someone(new_person, add_to_location = True) from _call_hire_someone #

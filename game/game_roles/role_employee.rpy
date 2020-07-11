@@ -139,6 +139,7 @@ label employee_pay_cash_bonus(the_person):
                 $ the_person.add_situational_slut("situation", 10, "He's given me such a generous bonus, I should repay the favour!")
                 call fuck_person(the_person) from _call_fuck_person_3
                 #Now that you've had sex, we calculate the change to her stats and move on.
+                $ the_person.clear_situational_slut("situation")                
                 $ the_person.review_outfit()
             else:
                 the_person.char "Wow... this is amazing sir. I'll do everything I can for you and the company!"
@@ -237,8 +238,8 @@ label employee_performance_review(the_person):
                     mc.name "I'm really sorry to do this [the_person.title], but your performance lately just doesn't justify what I'm paying you."
                     mc.name "I'm going to have to cut your pay by 10%%."
                     $ the_person.change_salary(-cut_amount)
-                    $ the_person.change_happiness(-15-mc.charisma)
-                    $ the_person.change_obedience(-8-mc.charisma)
+                    $ the_person.change_happiness(-(15-mc.charisma))
+                    $ the_person.change_obedience(-(8-mc.charisma))
                     if the_person.get_job_happiness_score() > 0:
                         $ the_person.draw_person(position = "sitting", emotion = "sad")
                         the_person.char "I... I understand."
@@ -331,7 +332,7 @@ label employee_performance_review(the_person):
                     if the_report.get("girl orgasms", 0) > 0: #We made her cum! Congradulations!
                         $ the_person.change_happiness(5)
                         $ the_person.change_obedience(-10)
-                        the_person.char "You just can't resist pleasing me, can you [the_person.mc_title]? I thought I wasn't suppose to cum?"
+                        the_person.char "You just can't resist pleasing me, can you [the_person.mc_title]? I thought I wasn't supposed to cum?"
                         "[the_person.title] seems smug about her orgasmic victory."
 
                     elif the_report.get("end arousal", 0) >= 80:

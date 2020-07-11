@@ -180,6 +180,14 @@ init -1 python:
         
         return [prostitute_action]
 
+    def get_student_role_actions():
+        #STUDENT ACTIONS#
+        #student_study_meetup_action = Action("Tutor her. {image=gui/heart/Time_Advance.png}", student_study_meetup_requirement, "student_study_meetup")
+        student_reintro_action = Action("Ask about tutoring her", student_reintro_requirement, "student_reintro")
+        student_study_propose_action = Action("Tutor her {image=gui/heart/Time_Advance.png}", student_study_propose_requirement, "student_study_propose")
+
+        return [student_reintro_action, student_study_propose_action]
+
 label instantiate_roles(): #This section instantiates all of the key roles in the game. It is placed here to ensure it is properly created, saved, ect. by Renpy.
     #All of the role labels and requirements are defined in their own file, but their Action representations are stored here for saving purposes.
     python:
@@ -205,6 +213,8 @@ label instantiate_roles(): #This section instantiates all of the key roles in th
         aunt_role = Role("Aunt", get_aunt_role_actions())
 
         cousin_role = Role("Cousin", get_cousin_role_actions())
+
+        student_role = Role("Student", get_student_role_actions())
 
         #COUSIN After start actions# - Actions that are meant to be added to her action list after the game has begun.
         #cousin_role.actions.append(cousin_talk_boobjob_again_action)

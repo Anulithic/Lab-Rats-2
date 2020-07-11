@@ -182,7 +182,7 @@ label mom_seduction_refuse(the_person):
         the_person.char "Oh my god, what are you saying [the_person.mc_title]! I'm your mother, we certainly couldn't do anything... physical!"
 
     elif the_person.sluttiness < 50:
-        the_person.char "I'm sorry [the_person.mc_title], but we really shouldn't be doing anything together any more. It's just... not the way we're suppose to act."
+        the_person.char "I'm sorry [the_person.mc_title], but we really shouldn't be doing anything together any more. It's just... not the way we're supposed to act."
 
     else:
         the_person.char "I'm sorry [the_person.mc_title], I know how much you like to spend time with me, but now isn't a good time for me. I'll make it up to you though, I promise."
@@ -217,7 +217,7 @@ label mom_flirt_response_mid(the_person):
         the_person.char "Oh [the_person.mc_title], you shouldn't be saying things like that about me."
         mc.name "Like what? That you're hot?"
         the_person.char "Yes, that. I appreciate the thought, but I'm still your mother."
-        mc.name "That doesn't make me blind. I'm just telling you what I see [the_person.title], it's suppose to be a compliment."
+        mc.name "That doesn't make me blind. I'm just telling you what I see [the_person.title], it's supposed to be a compliment."
         "She sighs and smiles."
         the_person.char "Well then thank you for the compliment. Come here."
         "[the_person.possessive_title] gives you a quick, motherly hug."

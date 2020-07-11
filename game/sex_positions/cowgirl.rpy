@@ -44,7 +44,7 @@ label intro_cowgirl(the_girl, the_location, the_object):
 
 label taboo_break_cowgirl(the_girl, the_location, the_object):
     "[the_girl.possessive_title] leads you to the [the_object.name]."
-    the_girl.char "Like down for me [the_girl.mc_title]..."
+    the_girl.char "Lie down for me [the_girl.mc_title]..."
     "You nod and follow her instructions. She steps over you and kneels down, straddling your hips."
     if the_girl.effective_sluttiness(cowgirl.associated_taboo) > cowgirl.slut_cap:
         "She reaches between her legs and grabs your cock, bringing it towards her and running the tip against her clit."

@@ -94,7 +94,7 @@ label change_titles_person(the_person):
 
         "Change how you refer to her (tooltip)Change your possessive title for this girl. A possessive title takes the form \"your employee\", \"your sister\", etc. It can also just be their name repeated. Different combinations of stats, roles, and personalities unlock different titles.":
             $ title_choice = new_possessive_title_menu(the_person)
-            if not (title_choice == "Back" or the_person.possessive_title ==  the_person.create_formatted_title(the_person.possessive_title)):
+            if not (title_choice == "Back" or the_person.possessive_title == the_person.create_formatted_title(title_choice)):
                 "You decide to start referring [the_person.name] [the_person.last_name] as [title_choice] instead of [the_person.possessive_title] when you're talking about her."
                 $ the_person.set_possessive_title(title_choice)
     return
@@ -513,7 +513,7 @@ label demand_strip_naked_label(the_person):
                     mc.name "No, we're going to stay right here."
                     "[the_person.possessive_title] doesn't argue. She just blushes and starts to strip down."
 
-                "Stay right here\n{color=#ff0000}{size=18}Requires: 140 Obedience{/size}{/color} (disabled)" if the_person.obedience < 170:
+                "Stay right here\n{color=#ff0000}{size=18}Requires: 170 Obedience{/size}{/color} (disabled)" if the_person.obedience < 170:
                     pass
         else:
             "[the_person.possessive_title] nods and starts to enthusiastically strip down."
@@ -528,9 +528,8 @@ label demand_strip_naked_label(the_person):
             "She starts to strip down for you."
 
     $ naked_strip_description(the_person)
-    $ the_person.update_outfit_taboos()
 
-    if the_person.effective_sluttiness() < (80 - (5*the_person.get_opinion_score("not wearing anything"))): # She's shy
+    if the_person.update_outfit_taboos() or the_person.effective_sluttiness() < (80 - (5*the_person.get_opinion_score("not wearing anything"))): # She's shy
         the_person.char "What would you like me to do now?"
         "She instinctively puts her hands behind her back while she waits for your instructions."
         mc.name "Give me a spin, I want to see your ass."

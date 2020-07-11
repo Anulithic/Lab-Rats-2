@@ -288,7 +288,7 @@ label lily_flirt_response_high(the_person):
                     mc.name "I'll save all the really dirty stuff for when we're alone then."
                     the_person.char "Oh my god, you're so bad!"
                     "She blushes and slaps you playfully on the shoulder."
-                    the_person.char "Isn't my big brother suppose to be taking care of me? You're just going to get us in trouble!"
+                    the_person.char "Isn't my big brother supposed to be taking care of me? You're just going to get us in trouble!"
                     mc.name "Don't worry, I'll always be around to take care of you. We're just having a little fun."
                     "[the_person.possessive_title] smiles and gives you a quick hug."
 
@@ -479,7 +479,7 @@ label lily_being_watched(the_person, the_watcher, the_position):
     else: #the_person.sluttiness < the_position.slut_cap and the_watcher.sluttiness < the_position.slut_cap:
         #They're both into it but not fanatical about it.
         the_person.char "[the_watcher.title], I'm so glad you don't think this is too weird."
-        the_person.char "I know it's suppose to be wrong, but then why does it feel so good?"
+        the_person.char "I know it's supposed to be wrong, but then why does it feel so good?"
         $ the_person.change_arousal(1)
         $ the_person.change_slut_temp(1)
         "[the_person.title] seems more comfortable [the_position.verbing] you with [the_watcher.title] around."

@@ -23,7 +23,7 @@ init -2 python:
         return False
 
     def cousin_blackmail_intro_requirement(the_person):
-        if the_person in lily_bedroom.people and __builtin__.len(lily_bedroom.people) == 1: #Only triggers when she's in there alone (and after the event has been added to the trigger list)
+        if the_person in lily_bedroom.people and __builtin__.len(lily_bedroom.people) == 1 and the_person.event_triggers_dict.get("blackmail_level", -1) < 0: #Only triggers when she's in there alone (and after the event has been added to the trigger list)
             return True
         return False
 
@@ -851,7 +851,7 @@ label cousin_boobjob_ask_label(the_person):
             the_person.char "Wait, you do?"
             mc.name "Of course I do. It's what my business does. I have a dose right here, if you'd like to try it out."
             the_person.char "And this stuff really works? I always thought you were running a scam."
-            mc.name "Yes, it really works. Do you want it or not."
+            mc.name "Yes, it really works. Do you want it or not?"
             "She eyes you cautiously, then nods."
             the_person.char "Fine, give it here."
             call give_serum(the_person) from _call_give_serum_15
@@ -959,7 +959,7 @@ label cousin_talk_boobjob_again_label(the_person):
             the_person.char "Wait, you do?"
             mc.name "Of course I do. It's what my business does. I have a dose right here, if you'd like to try it out."
             the_person.char "And this stuff really works? I always thought you were running a scam."
-            mc.name "Yes, it really works. Do you want it or not."
+            mc.name "Yes, it really works. Do you want it or not?"
             "She eyes you cautiously, then nods."
             the_person.char "Fine, give it here."
             call give_serum(the_person) from _call_give_serum_16

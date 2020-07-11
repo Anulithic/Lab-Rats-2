@@ -1855,7 +1855,7 @@ label work_chat_crisis_label:
                     the_person.char "Oh my god, stop [the_person.mc_title]! Could you imagine if someone heard you talking like that?"
                     "She bites her lip and smiles. You catch her eyes flick down to your crotch for a split second."
                     $ the_person.change_slut_temp(5)
-                    the_person.char "But thank you, I like hearing it. Now don't you have work you're suppose to be doing?"
+                    the_person.char "But thank you, I like hearing it. Now don't you have work you're supposed to be doing?"
 
     elif the_person.effective_sluttiness() < 60: #Moderate sluttiness
         "After a minute or two [the_person.title] stands up and stretches."
@@ -2229,7 +2229,7 @@ label cat_fight_crisis_label():
                 winner.char "Hear that? We're going to have to sort this out, right here. Right now."
                 "[winner.title] takes a step towards [loser.title], invading her personal space."
                 $ loser.draw_person(emotion = "angry")
-                loser.char "What, is that suppose to scare me. Back up."
+                loser.char "What, is that supposed to scare me? Back up."
                 "[loser.title] plants a hand on [winner.title]'s chest and shoves her backwards. [winner.title] stumbles a step and bumps into a desk behind her."
                 $ winner.draw_person(emotion = "angry")
                 winner.char "Oh that's fucking IT! COME HERE BITCH!"
@@ -2283,7 +2283,7 @@ label cat_fight_crisis_label():
                 winner.char "Hear that? We're going to have to sort this out, right here. Right now."
                 "[winner.title] takes a step towards [loser.title], invading her personal space."
                 $ loser.draw_person(emotion = "angry")
-                loser.char "What, is that suppose to scare me. Back up."
+                loser.char "What, is that supposed to scare me? Back up."
                 "[loser.title] plants a hand on [winner.title]'s chest and shoves her backwards. [winner.title] stumbles a step and bumps into a desk behind her."
                 $ winner.draw_person(emotion = "angry")
                 winner.char "Oh that's fucking IT! COME HERE BITCH!"
@@ -2567,7 +2567,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                     $ the_person.draw_person(emotion="angry")
                     $ the_person.change_happiness(-10)
                     $ the_person.change_obedience(-5)
-                    the_person.char "Really? I'm just suppose to take a completely untested drug because it might make you more money? That's fucking ridiculous and we both know it."
+                    the_person.char "Really? I'm just supposed to take a completely untested drug because it might make you more money? That's fucking ridiculous and we both know it."
                     "[the_person.possessive_title] puts the serum down on the lab bench and crosses her arms."
                     the_person.char "Just get out of here and I'll finish the initial testing in a safe environment."
                     mc.name "Fine, just make sure you get it done."
@@ -4592,7 +4592,7 @@ label mom_morning_surprise_label():
     else:
         # First we need to take her and remove enough clothing that we can get to her vagina, otherwise none of this stuff makes sense.
         # We do that by getting her lowest level pieces of bottom clothing and removing it, then working our way up until we can use her vagina.
-        # This makes sure skirts are kept on (because this is suppose to be a quicky).
+        # This makes sure skirts are kept on (because this is supposed to be a quicky).
         $ bottom_list = the_person.outfit.get_lower_ordered()
         $ removed_something = False
         $ the_index = 0
@@ -4613,7 +4613,7 @@ label mom_morning_surprise_label():
                 $ the_person.change_happiness(5)
                 $ the_person.change_love(2)
                 "You lie back relax as [the_person.possessive_title] lowers herself down onto your hard cock."
-                call fuck_person(the_person, start_position = cowgirl, start_object = bedroom.get_object_with_name("bed"), skip_intro = True, girl_in_charge = True) from _call_fuck_person_15
+                call fuck_person(the_person, start_position = cowgirl, start_object = bedroom.get_object_with_name("bed"), skip_intro = True, girl_in_charge = True,position_locked=True,self_strip=False) from _call_fuck_person_15
                 $ the_report = _return
                 if the_report.get("girl orgasms", 0) > 0:
                     $ the_person.change_love(5)
@@ -5423,7 +5423,7 @@ label cousin_tease_crisis_label():
                         "Send [the_person.title] some money\n{color=#ff0000}{size=18}Costs: $100{/size}{/color} (disabled)" if mc.business.funds < 100:
                             pass
 
-                        "Blackmail her for some nudes" if the_person.event_triggers_dict.get("blackmail_level",-1) > 0 and the_person.event_triggers_dict.get("last_blackmailed", -5) + 5 < day:
+                        "Blackmail her for some nudes" if the_person.event_triggers_dict.get("blackmail_level",-1) > 0 and the_person.event_triggers_dict.get("last_blackmailed", -5) + 5 <= day:
                             $ the_person.event_triggers_dict["last_blackmailed"] = day
                             if the_person.event_triggers_dict.get("blackmail_level",1) == 1:
                                 mc.name "How about this, you send them over and I don't say anything to your mom about you stealing from my sister."
@@ -5468,7 +5468,7 @@ label cousin_tease_crisis_label():
                             $ the_person.change_obedience(3)
                             $ the_person.change_slut_temp(2)
 
-                        "Blackmail her for some nudes\n{color=#ff0000}{size=18}Blackmailed too recently{/size}{/color} (disabled)" if the_person.event_triggers_dict.get("blackmail_level",-1) == -1 or the_person.event_triggers_dict.get("last_blackmailed", -5) + 5 >= day:
+                        "Blackmail her for some nudes\n{color=#ff0000}{size=18}Blackmailed too recently{/size}{/color} (disabled)" if the_person.event_triggers_dict.get("blackmail_level",-1) > 0 and the_person.event_triggers_dict.get("last_blackmailed", -5) + 5 > day:
                             pass
 
 
