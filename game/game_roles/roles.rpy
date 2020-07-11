@@ -69,7 +69,7 @@ init -1 python:
             menu_tooltip = "A bonus in cold hard cash is good for obedience and happiness. The larger the reward the greater the effect.")
         employee_performance_review = Action("Start a performance review {image=gui/heart/Time_Advance.png}", employee_performance_review_requirement , "employee_performance_review",
             menu_tooltip = "Bring her to your office for a performance review. Get her opinion about her job, reward, punish, or fire her as you see fit. Can only be done once every seven days.")
-        employee_paid_serum_test = Action("Test serum\nCosts: $100", employee_paid_serum_test_requirement, "employee_paid_serum_test_label",
+        employee_paid_serum_test = Action("Test serum\n{color=#ff0000}{size=18}Costs: $100{/size}{/color}", employee_paid_serum_test_requirement, "employee_paid_serum_test_label",
             menu_tooltip = "Pay her to willingly take a dose of serum, per company policy.")
         employee_unpaid_serum_test = Action("Test serum", employee_unpaid_serum_test_requirement, "employee_unpaid_serum_test_label",
             menu_tooltip = "Give her a dose of serum to test on herself, per company policy.")
@@ -161,21 +161,21 @@ init -1 python:
 
     def get_girlfriend_role_actions():
         ask_break_up_action = Action("Break up with her", ask_break_up_requirement, "ask_break_up_label", menu_tooltip = "Breaking up may break her heart, but it'll be easier on her than catching you with another woman.")
-        ask_get_boobjob_action = Action("Ask her to get a boob job\nCosts: $7000", ask_get_boobjob_requirement, "ask_get_boobjob_label", menu_tooltip = "A little silicone goes a long way. Ask her to get breast enhancement surgery for you.")
+        ask_get_boobjob_action = Action("Ask her to get a boob job\n{color=#ff0000}{size=18}Costs: $7000{/size}{/color}", ask_get_boobjob_requirement, "ask_get_boobjob_label", menu_tooltip = "A little silicone goes a long way. Ask her to get breast enhancement surgery for you.")
         girlfriend_ask_trim_pubes_action = Action("Ask her to trim her pubes", girlfriend_ask_trim_pubes_requirement, "girlfriend_ask_trim_pubes_label", menu_tooltip = "Ask her to do a little personal landscaping. Tell her to wax it off, grow it out, or shape it into anything in between.")
 
         return [ask_break_up_action, ask_get_boobjob_action, girlfriend_ask_trim_pubes_action]
 
     def get_paramour_role_actions():
         plan_fuck_date_action = Action("Plan a fuck date at her place", fuck_date_requirement, "plan_fuck_date_label", menu_tooltip = "Pick a night to go over there and spend nothing but \"quality time\" with each other.")
-        ask_get_boobjob_action = Action("Ask her to get a boob job\nCosts: $7000", ask_get_boobjob_requirement, "ask_get_boobjob_label", menu_tooltip = "A little silicone goes a long way. Ask her to get breast enhancement surgery for you.")
+        ask_get_boobjob_action = Action("Ask her to get a boob job\n{color=#ff0000}{size=18}Costs: $7000{/size}{/color}", ask_get_boobjob_requirement, "ask_get_boobjob_label", menu_tooltip = "A little silicone goes a long way. Ask her to get breast enhancement surgery for you.")
         girlfriend_ask_trim_pubes_action = Action("Ask her to trim her pubes", girlfriend_ask_trim_pubes_requirement, "girlfriend_ask_trim_pubes_label", menu_tooltip = "Ask her to do a little personal landscaping. Tell her to wax it off, grow it out, or shape it into anything in between.")
         ask_leave_SO_action = Action("Ask her to leave her significant other for you", ask_leave_SO_requirement, "ask_leave_SO_label", menu_tooltip = "This affair has been secret long enough! Ask her to leave her significant other and make your relationship official.")
     
         return [plan_fuck_date_action, ask_get_boobjob_action, girlfriend_ask_trim_pubes_action, ask_leave_SO_action]
 
     def get_prostitute_role_actions():
-        prostitute_action = Action("Pay her for sex\nCosts: $200", prostitute_requirement, "prostitute_label",
+        prostitute_action = Action("Pay her for sex\n{color=#ff0000}{size=18}Costs: $200{/size}{/color}", prostitute_requirement, "prostitute_label",
             menu_tooltip = "You know she's a prostitute, pay her to have sex with you.")
         
         return [prostitute_action]

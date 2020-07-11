@@ -3795,7 +3795,7 @@ init -2 python:
 
         def remove_all_relationships(self, the_person): #Clears this person out of the relationship database (if, for example, we want to delete a person from the game)
             for relationship in self.get_relationship_list(the_person):
-                self.relationship.remove(relationship)
+                self.relationships.remove(relationship)
 
         def improve_relationship(self, person_a, person_b, visible = None): #Improves a non-familial relationship between the two people.
             the_relationship = self.get_relationship(person_a, person_b)
