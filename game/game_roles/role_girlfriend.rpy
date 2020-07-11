@@ -22,11 +22,11 @@ init -1 python:
         if the_person.sluttiness < (40 - the_person.get_opinion_score("showing her tits") * 5):
             return False
         elif the_person.obedience < obedience_required:
-            return "Requires: " + str(obedience_required)
+            return "Requires: " + str(obedience_required) + " Obedience"
         elif the_person.event_triggers_dict.get("getting boobjob", False):
-            return "Boobjob already scheduled."
+            return "Boobjob already scheduled"
         elif the_person.tits == "FF":
-            return "Boobs are as large as they can become."
+            return "At maximum size"
         else:
             return True
 
