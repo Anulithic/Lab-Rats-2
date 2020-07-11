@@ -334,8 +334,8 @@ init -1:
             the_person.fertility_percent += 70
             the_person.lactation_sources += 3
 
-            the_person.tits = get_larger_tits(the_person.tits) #Her tits start to swell.
-            the_person.tits = get_larger_tits(the_person.tits)
+            if rank_tits(the_person.tits) < 7:
+                the_person.tits = get_larger_tits(the_person.tits) #Her tits start to swell.
             the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] + 0.2 #As her tits get larger they also become softer, unlike large fake tits. (Although even huge fake tits get softer)
 
             display_name = the_person.create_formatted_title("???")
@@ -346,14 +346,14 @@ init -1:
             if add_to_log:
                 mc.log_event(display_name + ": Human Breeding started", "float_text_grey")
                 if the_person in mc.location.people: #If you're here applying this trait in person it causes her to exclaim.
-                    renpy.say(display_name,"Oh my god my tits feel... bigger!")
+                    renpy.say(display_name,"Huh... my chest feels tender...")
 
         def nora_reward_hucow_trait_on_remove(the_person, add_to_log):
             the_person.bc_penalty -= 75
             the_person.fertility_percent -= 70
             the_person.lactation_sources -= 3
-            the_person.tits = get_smaller_tits(the_person.tits) #Her tits start to swell.
-            the_person.tits = get_smaller_tits(the_person.tits)
+            if rank_tits(the_person.tits) < 7:
+                the_person.tits = get_smaller_tits(the_person.tits) #Her tits shrink back down.
             the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] - 0.2 #As her tits get larger they also become softer, unlike large fake tits. (Although even huge fake tits get softer)
 
             display_name = the_person.create_formatted_title("???")
