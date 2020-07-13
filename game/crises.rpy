@@ -1,4 +1,4 @@
-﻿## This file holds all of the descriptions for the crises that can (and will) arise during play.
+## This file holds all of the descriptions for the crises that can (and will) arise during play.
 ## They are instances of the Action class and hold:
 ## 1) A name and/or short description. Unlikely to ever be publicly shown for these events
 ## 2) A requirement function. Used to determine if the crisis is possible.
@@ -3393,7 +3393,7 @@ label friends_help_friends_be_sluts_label():
             "You watch them walk out then get back to work."
 
 
-    else:
+    else: #Our sluttiest is very slutty
         if person_two.effective_sluttiness() < 20:
             # The sluttier girl is talking about how horny she's feeling today when you walk in. Her friend seems embarrassed to be hearing about it.
             # The sluttier girl then spanks/plays with the less slutty girls ass for your benefit.
@@ -3437,10 +3437,10 @@ label friends_help_friends_be_sluts_label():
         elif person_two.effective_sluttiness() < 40:
             "You decide to take a walk, both to stretch your legs and to make sure your staff are staying on task."
             "When you pass by the break room you overhear [person_one.title] and [person_two.title] chatting. You stop at the door and listen for a moment."
-            # The sluttier girl is talking about the less slutty girls tits when you walk in. She wants you to give a comparison, the less slutty girl begrudgingly agrees
+            # The sluttier girl is talking about the less slutty girl's tits when you walk in. She wants you to give a comparison, the less slutty girl begrudgingly agrees.
             # Note: At high love she hints that she's doing this as a favour to you.
             $ person_one.draw_person()
-            if rank_tits(person_one.tits) < rank_tits(person_two.tits):
+            if rank_tits(person_one.tits) > rank_tits(person_two.tits):
                 # The slutty girl wants smaller, perkier tits.
                 person_one.char "Look at them though, they're the perfect shape. Mine just don't have the same perk yours do."
                 $ person_two.draw_person()
@@ -3463,7 +3463,7 @@ label friends_help_friends_be_sluts_label():
             mc.name "Settle what?"
             person_one.char "[person_two.title] won't admit she's got the better tits of the two of us. Talk some sense into her for me."
             $ person_two.draw_person()
-            person_two.char "Oh god, what are you getting us into."
+            person_two.char "Oh god, what are you getting us into?"
             menu:
                 "[person_one.title] has nicer tits": #She's already slutty, but gets a love boost
                     "You take a moment to consider, then nod towards [person_one.title]."
@@ -3474,9 +3474,9 @@ label friends_help_friends_be_sluts_label():
                     $ person_one.change_happiness(5)
                     $ person_one.change_love(1 + person_one.get_opinion_score("showing her tits"))
                     $ person_two.draw_person()
-                    person_two.char "See? Now that we've settled that, can we get back to work. It feels weird to be talking about our breasts with our boss."
+                    person_two.char "See? Now that we've settled that, can we get back to work? It feels weird to be talking about our breasts with our boss."
                     $ person_one.draw_person()
-                    person_one.char "I suppose. Thanks for the help [person_one.mc_title]."
+                    person_one.char "I suppose. Thanks for the help, [person_one.mc_title]."
 
                 "[person_two.title] has nicer tits": # She gets a sluttiness boost along with a small love boost.
                     if rank_tits(person_one.tits) > rank_tits(person_two.tits):
@@ -3488,7 +3488,7 @@ label friends_help_friends_be_sluts_label():
                     $ person_two.draw_person()
                     $ person_two.change_slut_temp(2 + person_one.get_opinion_score("showing her tits"))
                     $ person_two.change_love(1 + person_one.get_opinion_score("showing her tits"))
-                    person_two.char "Fine, I guess my tits are pretty nice. Shouldn't we be getting back to work."
+                    person_two.char "Fine, I guess my tits are pretty nice. Shouldn't we be getting back to work?"
                     $ person_one.draw_person()
                     person_one.char "I suppose. Thanks for the help [person_one.mc_title]."
                     "She gives you a smile and a wink, then leaves the room with [person_two.title]."
@@ -3510,7 +3510,7 @@ label friends_help_friends_be_sluts_label():
                             $ the_item = person_one.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
                         $ del the_item
                         "She pulls her tits out for you, displaying them proudly."
-                        if person_two.outfit.tits_visible():
+                        if person_one.outfit.tits_visible():
                             $ person_one.break_taboo("bare_tits")
                             person_one.char "There, what do you think now [person_one.mc_title]?"
 
@@ -3552,7 +3552,7 @@ label friends_help_friends_be_sluts_label():
                             $ the_item = person_two.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
 
                         $ del the_item
-                        if person_two.get_opinion_score("showing her tits") > 0:
+                        if person_two.get_opinion_score("showing her tits") < 0:
                             "When she has her tits out she crosses her arms in front of her in a small attempt to preserve her modesty."
                             $ person_one.draw_person()
                             person_one.char "[person_one.mc_title] can't see them if you keep them covered up. Here..."
@@ -3561,11 +3561,11 @@ label friends_help_friends_be_sluts_label():
                         else:
                             "When she has her tits out she puts her hands on her hips and smiles at you, exposed and ready for your inspection."
                             $ person_one.draw_person()
-                            person_one.char "That's it, look at these puppies [person_one.title]..."
+                            person_one.char "That's it, look at these puppies, [person_one.mc_title]..."
                             $ person_two.draw_person()
                             "She gets behind her friend and cups her breasts, giving them a squeeze."
 
-                        $ person_one.break_taboo("bare_tits")
+                        $ person_two.break_taboo("bare_tits")
                         person_two.char "Hey, go easy on them! Well then [person_two.mc_title], who's your pick? Me or [person_one.title]?"
                     menu:
                         "[person_one.title] has nicer tits": #She's already slutty, but gets a love boost
