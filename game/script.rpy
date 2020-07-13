@@ -3119,7 +3119,7 @@ init -2 python:
             self.sex_record["Vaginal Creampies"] += 1
 
             # Pregnancy Check #
-            if persistent.pregnancy_pref > 0 and pregnant_role not in self.special_role:
+            if persistent.pregnancy_pref > 0 and not pregnant_role in self.special_role:
                 if persistent.pregnancy_pref == 1 and self.on_birth_control: #Establish how likely her birth contorl is to work (if needed, and if present)
                     bc_percent = 100 - self.bc_penalty
                 elif persistent.pregnancy_pref == 2 and self.on_birth_control:
@@ -3138,7 +3138,7 @@ init -2 python:
                 else:
                     modified_fertility = self.fertility_percent
 
-                if preg_chance < modified_fertility and pregnant_role not in self.special_role: #There's a chance she's pregnant
+                if preg_chance < modified_fertility:
                     if bc_chance >= bc_percent : # Birth control failed to prevent the pregnancy
                         become_pregnant(self) #Function in role_pregnant establishes all of the pregnancy related variables and events.
 
