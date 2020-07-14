@@ -162,10 +162,9 @@ init -2 python:
             return True
 
     def demand_strip_requirement(the_person):
-        if not (demand_strip_tits_requirement(the_person) or demand_strip_underwear_requirement(the_person) or demand_strip_naked_requirement(the_person)):
-            return False
-        else:
+        if demand_strip_tits_requirement(the_person) == True or demand_strip_underwear_requirement(the_person) == True or demand_strip_naked_requirement(the_person) == True:
             return True
+        return False
 
     def demand_bc_requirement(the_person):
         if persistent.pregnancy_pref == 0: #Don't talk about pregnancy if we don't want any of it.

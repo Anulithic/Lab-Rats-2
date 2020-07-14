@@ -1,22 +1,34 @@
 # Contains all of the information related to characters being pregnant.
 
 init -1 python:
-    def pregnant_announce_requirement(the_person, start_day):
+    def preg_announce_requirement(the_person, start_day):   # VREN
+        return pregnant_announce_requirement(the_person, start_day)
+
+    def pregnant_announce_requirement(person, start_day):
         if day >= start_day:
             return True
+        return False
 
-    def pregnant_transform_requirement(the_person):
-        if day >= the_person.event_triggers_dict.get("preg_transform_day", 0):
+    def preg_transform_requirement(the_person): # VREN
+        return pregnant_transform_requirement(the_person)
+
+    def pregnant_transform_requirement(person):
+        if day >= person.event_triggers_dict.get("preg_transform_day", 0):
             return True
         return False
 
-    def pregnant_tits_requirement(the_person):
-        if day >= the_person.event_triggers_dict.get("preg_tits_date", 0):
-            return True
+    def preg_tits_requirement(the_person):      # VREN
+        return pregnant_tits_requirement(the_person)
 
+    def pregnant_tits_requirement(person):
+        if day >= person.event_triggers_dict.get("preg_tits_date", 0):
+            return True
         return False
 
-    def pregnant_tits_announcement_requirement(the_person):
+    def pregnant_tits_annouce_requirement(the_person):  # VREN
+        return True
+
+    def pregnant_tits_announcement_requirement(person):
         return True
 
     def become_pregnant(the_person): # Called when a girl is knocked up. Establishes all of the necessary bits of info.
@@ -61,6 +73,7 @@ label pregnant_announce(the_person):
      #It's been a long time since this event was added. She's surprised to see you.
     #if the_person.event_triggers_dict.get("preg_accident", False):
         #It was an accident.
+    $ the_person.draw_person()
     $ the_person.event_triggers_dict["preg_knows"] = True #Set here and in the larger tits, represents the person knowing they're pregnant so they don't ask for condoms ect.
     $ was_accident = the_person.event_triggers_dict.get("preg_accident", False)
     "[the_person.title] walks over to you as soon as she sees you."
