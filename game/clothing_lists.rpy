@@ -397,7 +397,7 @@ init -1:
         dress_list.append(thin_dress)
 
         summer_dress_bottom = Clothing("Summer Dress", 2, True, False, "Summer_Dress", False, False, 0, is_extension = True)
-        summer_dress = Clothing("Summer Dress", 2, True, True, "Summer_Dress", True, False, 0, has_extension = summer_dress_bottom, whiteness_adjustment = 0.1, display_name = "dress",
+        summer_dress = Clothing("Summer Dress", 2, True, True, "Summer_Dress", True, False, 1, has_extension = summer_dress_bottom, whiteness_adjustment = 0.1, display_name = "dress",
             constrain_regions = [torso_region, stomach_region, skirt_region],
             crop_offset_dict = {"cowgirl":(136,276), "missionary":(202,201), "kissing":(155,179), "sitting":(283,282), "against_wall":(130,168), "back_peek":(107,206), "blowjob":(113,319), "stand4":(128,199), "stand5":(111,184), "kneeling1":(150,319), "walking_away":(126,189), "doggy":(163,166), "stand2":(76,209), "stand3":(95,175)})
         dress_list.append(summer_dress)
