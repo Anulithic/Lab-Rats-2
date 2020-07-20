@@ -213,12 +213,12 @@ label employee_performance_review(the_person):
                     $ the_report = _return
                     $ the_person.clear_situational_slut("seduction_approach")
                     $ the_person.clear_situational_obedience("seduction_approach")
-                    if the_report.get("girl orgasms", 0) > 0: #We made her cum! Congradulations!
+                    if the_report.get("girl orgasms", 0) > 1: #We made her cum! Congratulations!
                         $ the_person.change_happiness(20)
                         $ the_person.change_slut_temp(5)
                         $ the_person.change_love(2)
                         the_person.char "Oh [the_person.mc_title], that was wonderful! I couldn't have asked for a better performance bonus!"
-                    if the_report.get("girl orgasms", 0) > 0:
+                    elif the_report.get("girl orgasms", 0) > 0:
                         $ the_person.change_happiness(5)
                         $ the_person.change_slut_temp(2)
                         the_person.char "Well, that was a good time [the_person.mc_title]. It's a lot more fun than a normal performance bonus, that's for sure!"
@@ -329,7 +329,7 @@ label employee_performance_review(the_person):
                     $ the_report = _return
                     $ the_person.clear_situational_slut("seduction_approach")
                     $ the_person.clear_situational_obedience("seduction_approach")
-                    if the_report.get("girl orgasms", 0) > 0: #We made her cum! Congradulations!
+                    if the_report.get("girl orgasms", 0) > 0: #We made her cum! Congratulations!
                         $ the_person.change_happiness(5)
                         $ the_person.change_obedience(-10)
                         the_person.char "You just can't resist pleasing me, can you [the_person.mc_title]? I thought I wasn't supposed to cum?"

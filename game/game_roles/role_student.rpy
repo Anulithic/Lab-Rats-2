@@ -197,7 +197,7 @@ label student_study_university(the_person):
         if current_marks > 80:
                 mc.name "Fantastic! A little more work and you'll be the best in your class!"
                 the_person.char "Thanks, you've really helped everything come together!"
-                "Vren" "This section of the game is under construction. In v0.30.1 you will have the ability to hire [the_person.title] once her marks are high enough."
+                "Vren" "This section of the game is under construction. In [config.version] you will have the ability to hire [the_person.title] once her marks are high enough."
         elif current_marks > 50:
             mc.name "That sounds like a pass to me!"
             the_person.char "Yeah! I need to convince Professor [nora.last_name] to shift more weight to my exam, but I might be able to do this!"
@@ -362,7 +362,7 @@ label student_study_home(the_person):
     if current_marks > 80:
             mc.name "Fantastic! A little more work and you'll be the best in your class!"
             the_person.char "Thanks, you've really helped everything come together!"
-            "Vren" "This section of the game is under construction. In v0.30.1 you will have the ability to hire [the_person.title] once her marks are high enough."
+            "Vren" "This section of the game is under construction. In [config.version] you will have the ability to hire [the_person.title] once her marks are high enough."
     elif current_marks > 50:
         mc.name "That sounds like a pass to me!"
         the_person.char "Yeah! I need to convince Professor [nora.last_name] to shift more weight to my exam, but I might be able to do this!"

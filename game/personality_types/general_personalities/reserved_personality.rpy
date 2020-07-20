@@ -580,7 +580,7 @@ label reserved_flirt_response_girlfriend(the_person):
                     "You give her butt one last squeeze, then slide your hand off."
 
         else:
-            # the_person.char "Oh [the_person, mc_title], you're so sweet. Come on, kiss me!"
+            # the_person.char "Oh [the_person.mc_title], you're so sweet. Come on, kiss me!"
             "She smiles and sighs happily."
             the_person.char "Ahh, you're so sweet. Here..."
             "[the_person.possessive_title] leans in and kisses you. Her lips lingering against yours for a few long seconds."

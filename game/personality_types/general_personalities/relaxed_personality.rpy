@@ -558,7 +558,7 @@ label relaxed_flirt_response_girlfriend(the_person):
         # There are other people around, so she'll only start making out with you if she's slutty.
         if the_person.effective_sluttiness("kissing") < (25 - (5*the_person.get_opinion_score("public_sex"))):
             # Not very slutty, so she wants to find somewhere private
-            the_person.char "Oh [the_person, mc_title], you're so sweet!"
+            the_person.char "Oh [the_person.mc_title], you're so sweet!"
             "She leans in and kisses you on the cheek a few times. When she leans back she glances around the room and blushes."
             the_person.char "Do you... want to find someplace quiet where I can kiss you a few more times?"
             menu:

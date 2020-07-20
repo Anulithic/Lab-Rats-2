@@ -107,7 +107,8 @@ label ask_break_up_label(the_person):
     the_person.char "Okay... I don't know what to say."
     $ the_person.change_love(-10)
     mc.name "I'm sorry, but it's just the way things are."
-    $ the_person.special_role.remove(girlfriend_role)
+    if girlfriend_role in the_person.special_role:
+        $ the_person.special_role.remove(girlfriend_role)
     return
 
 label ask_be_girlfriend_label(the_person):

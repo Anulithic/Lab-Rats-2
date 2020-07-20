@@ -68,6 +68,9 @@ init -1 python:
             return True
         return False
 
+    def tit_shrink_announcement_requirement(the_person):
+        return True
+
 
 label pregnant_announce(the_person):
      #It's been a long time since this event was added. She's surprised to see you.
@@ -329,21 +332,25 @@ init 2 python:
         person.kids += 1 #TODO: add a new role related to a girl being a mother of your kid?
 
         tit_shrink_one_day = day + renpy.random.randint(7,14)
-        tit_shrink_one = Action("Tits Shrink One", tit_shrink_requirement, "tits_shrink", args = [person, True], requirement_args = [person, tit_shrink_one_day])
-        tit_shrink_one_announcement_action = Action("Tits Shrink One Announcement", tit_shrink_requirement, "tits_shrink_announcement_one", args = tit_shrink_one_day, requirement_args = tit_shrink_one_day)
+        tit_shrink_one = Action("Tits Shrink One", tit_shrink_requirement, "tits_shrink", args = [person, True, add_tits_shrink_one_announcement], requirement_args = [person, tit_shrink_one_day])
+        mc.business.mandatory_morning_crises_list.append(tit_shrink_one) #Events for her breasts to return to their normal size.
 
         tit_shrink_two_day = day + renpy.random.randint(21,35)
-        tit_shrink_two = Action("Tits Shrink Two", tit_shrink_requirement, "tits_shrink", args = [person, False], requirement_args = [person, tit_shrink_two_day])
-        tit_shrink_two_announcement_action = Action("Tits Shrink Two Announcement", tit_shrink_requirement, "tits_shrink_announcement_two", args = tit_shrink_two_day, requirement_args = tit_shrink_two_day)
-
-        mc.business.mandatory_morning_crises_list.append(tit_shrink_one) #Events for her breasts to return to their normal size.
+        tit_shrink_two = Action("Tits Shrink Two", tit_shrink_requirement, "tits_shrink", args = [person, False, add_tits_shrink_two_announcement], requirement_args = [person, tit_shrink_two_day])
         mc.business.mandatory_morning_crises_list.append(tit_shrink_two)
-
-        person.on_talk_event_list.append(tit_shrink_one_announcement_action) #And here is where she tells you about those changes
-        person.on_talk_event_list.append(tit_shrink_two_announcement_action)
 
         if pregnant_role in person.special_role:
             person.special_role.remove(pregnant_role)
+        return
+
+    def add_tits_shrink_one_announcement(person):
+        tit_shrink_one_announcement_action = Action("Tits Shrink One Announcement", tit_shrink_announcement_requirement, "tits_shrink_announcement_one", event_duration = 28)
+        person.on_talk_event_list.append(tit_shrink_one_announcement_action) #And here is where she tells you about those changes
+        return
+
+    def add_tits_shrink_two_announcement(person):
+        tit_shrink_two_announcement_action = Action("Tits Shrink Two Announcement", tit_shrink_announcement_requirement, "tits_shrink_announcement_two", event_duration = 28)
+        person.on_talk_event_list.append(tit_shrink_two_announcement_action)
         return
 
 label pregnant_finish(the_person):
@@ -365,18 +372,15 @@ label pregnant_finish(the_person):
     return
 
 
-label tits_shrink(the_person, reduce_lactation):
+label tits_shrink(the_person, reduce_lactation, announcement_function):
     python:
         the_person.lactation_sources -= 1
         the_person.tits = get_smaller_tits(the_person.tits)
         the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] - 0.1
+        announcement_function(the_person)
     return
 
-label tits_shrink_announcement_one(day_shrunk, the_person):
-    #She lets you know that her tits are getting back to normal (Base reaction based on opinion and sluttiness).
-    if day - day_shrunk >= 7:
-        return # If it's been a week since it's happened just move on and don't comment on it.
-
+label tits_shrink_announcement_one(the_person):
     the_person.char "Hey [the_person.mc_title]."
     "[the_person.possessive_title] sighs and looks down at her chest. She cups a boob and rubs it gently."
     the_person.char "It looks like my milk is starting to dry up. I'm going to miss having my tits that big..."
@@ -387,15 +391,11 @@ label tits_shrink_announcement_one(day_shrunk, the_person):
         $ the_person.change_arousal(10)
         "She nods and sighs happily."
     else:
-        the_person.char "I won't miss milk soaking through all my bras. That was a huge pain."
+        the_person.char "I won't miss milk soaking through all my clothing. That was a huge pain."
     call talk_person(the_person) from _call_talk_person_12
     return
 
-label tits_shrink_announcement_two(day_shrunk, the_person):
-    #She lets you know that her tits are getting back to normal (Base reaction based on opinion and sluttiness).
-    if day - day_shrunk >= 7:
-        return # If it's been a week since it's happened just move on and don't comment on it.
-
+label tits_shrink_announcement_two(the_person):
     the_person.char "Hey [the_person.mc_title]."
     "[the_person.possessive_title] sighs and looks down down at her chest. She cups one of her boobs and rubs it gently."
     the_person.char "My chest is back to it's old size. I had gotten so use to them when I was pregnant that these feel tiny now."
