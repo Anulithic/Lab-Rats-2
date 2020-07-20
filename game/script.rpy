@@ -926,81 +926,93 @@ init -2 python:
             elif self.team_effectiveness < 50:
                 self.team_effectiveness = 50
 
-        def update_employee_status(self, new_person):
-            if new_person.event_triggers_dict.get("employed_since", -1) == -1:
-                new_person.event_triggers_dict["employed_since"] = day
-                self.listener_system.fire_event("new_hire", the_person = new_person)
+        def update_employee_status(self, person):
+            if person.event_triggers_dict.get("employed_since", -1) == -1:
+                person.event_triggers_dict["employed_since"] = day
+                self.listener_system.fire_event("new_hire", the_person = person)
 
             for other_employee in self.get_employee_list():
-                town_relationships.begin_relationship(new_person, other_employee) #They are introduced to everyone at work, with a starting value of "Acquaintance"
+                town_relationships.begin_relationship(person, other_employee) #They are introduced to everyone at work, with a starting value of "Acquaintance"
 
-        def add_employee_research(self, new_person, add_to_location = False):
-            self.research_team.append(new_person)
-            new_person.special_role.append(employee_role)
-            new_person.job = self.get_employee_title(new_person)
-            new_person.set_work([1,2,3], self.r_div)
-            self.update_employee_status(new_person)
-            if add_to_location:
-                self.r_div.add_person(new_person)
+        def add_employee_research(self, person, add_to_location = False):
+            if not person in self.research_team:
+                self.research_team.append(person)
+            if not employee_role in person.special_role:
+                person.special_role.append(employee_role)
+            person.job = self.get_employee_title(person)
+            person.set_work([1,2,3], self.r_div)
+            self.update_employee_status(person)
+            if add_to_location and not person in self.r_div.people:
+                self.r_div.add_person(person)
 
-        def add_employee_production(self, new_person, add_to_location = False):
-            self.production_team.append(new_person)
-            new_person.special_role.append(employee_role)
-            new_person.job = self.get_employee_title(new_person)
-            new_person.set_work([1,2,3], self.p_div)
-            self.update_employee_status(new_person)
-            if add_to_location:
-                self.p_div.add_person(new_person)
+        def add_employee_production(self, person, add_to_location = False):
+            if not person in self.production_team:
+                self.production_team.append(person)
+            if not employee_role in person.special_role:
+                person.special_role.append(employee_role)
+            person.job = self.get_employee_title(person)
+            person.set_work([1,2,3], self.p_div)
+            self.update_employee_status(person)
+            if add_to_location and not person in self.p_div.people:
+                self.p_div.add_person(person)
 
-        def add_employee_supply(self, new_person, add_to_location = False):
-            self.supply_team.append(new_person)
-            new_person.special_role.append(employee_role)
-            new_person.job = self.get_employee_title(new_person)
-            new_person.set_work([1,2,3], self.s_div)
-            self.update_employee_status(new_person)
-            if add_to_location:
-                self.s_div.add_person(new_person)
+        def add_employee_supply(self, person, add_to_location = False):
+            if not person in self.supply_team:
+                self.supply_team.append(person)
+            if not employee_role in person.special_role:
+                person.special_role.append(employee_role)
+            person.job = self.get_employee_title(person)
+            person.set_work([1,2,3], self.s_div)
+            self.update_employee_status(person)
+            if add_to_location and not person in self.s_div.people:
+                self.s_div.add_person(person)
 
-        def add_employee_marketing(self, new_person, add_to_location = False):
-            self.market_team.append(new_person)
-            new_person.special_role.append(employee_role)
-            new_person.job = self.get_employee_title(new_person)
-            new_person.set_work([1,2,3], self.m_div)
-            self.update_employee_status(new_person)
-            if add_to_location:
-                self.m_div.add_person(new_person)
+        def add_employee_marketing(self, person, add_to_location = False):
+            if not person in self.market_team:
+                self.market_team.append(person)
+            if not employee_role in person.special_role:
+                person.special_role.append(employee_role)
+            person.job = self.get_employee_title(person)
+            person.set_work([1,2,3], self.m_div)
+            self.update_employee_status(person)
+            if add_to_location and not person in self.m_div.people:
+                self.m_div.add_person(person)
 
-        def add_employee_hr(self, new_person, add_to_location = False):
-            self.hr_team.append(new_person)
-            new_person.special_role.append(employee_role)
-            new_person.job = self.get_employee_title(new_person)
-            new_person.set_work([1,2,3], self.h_div)
-            self.update_employee_status(new_person)
-            if add_to_location:
-                self.h_div.add_person(new_person)
+        def add_employee_hr(self, person, add_to_location = False):
+            if not person in self.hr_team:
+                self.hr_team.append(person)
+            if not employee_role in person.special_role:
+                person.special_role.append(employee_role)
+            person.job = self.get_employee_title(person)
+            person.set_work([1,2,3], self.h_div)
+            self.update_employee_status(person)
+            if add_to_location and not person in self.h_div.people:
+                self.h_div.add_person(person)
 
-        def remove_employee(self, the_person):
-            if the_person in self.research_team:
-                self.research_team.remove(the_person)
-            elif the_person in self.production_team:
-                self.production_team.remove(the_person)
-            elif the_person in self.supply_team:
-                self.supply_team.remove(the_person)
-            elif the_person in self.market_team:
-                self.market_team.remove(the_person)
-            elif the_person in self.hr_team:
-                self.hr_team.remove(the_person)
+        def remove_employee(self, person):
+            if person in self.research_team:
+                self.research_team.remove(person)
+            if person in self.production_team:
+                self.production_team.remove(person)
+            if person in self.supply_team:
+                self.supply_team.remove(person)
+            if person in self.market_team:
+                self.market_team.remove(person)
+            if person in self.hr_team:
+                self.hr_team.remove(person)
 
-            the_person.set_work(None,None)
-            the_person.special_role.remove(employee_role)
+            person.set_work(None, None)
 
-            if the_person == self.head_researcher:
+            if employee_role in person.special_role:
+                person.special_role.remove(employee_role)
+
+            if person is self.head_researcher:
                 self.fire_head_researcher()
 
-            if the_person == self.company_model:
+            if person is self.company_model:
                 self.fire_company_model()
 
-            self.listener_system.fire_event("fire_employee", the_person = the_person)
+            self.listener_system.fire_event("fire_employee", the_person = person)
 
         def get_employee_list(self):
             return self.research_team + self.production_team + self.supply_team + self.market_team + self.hr_team

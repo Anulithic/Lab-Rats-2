@@ -108,8 +108,8 @@ init -2 python:
             return True
 
     def command_requirement(the_person):
-        if the_person.obedience < 100:
-            return "Requires: 100 Obedience"
+        if the_person.obedience < 105:
+            return "Requires: 105 Obedience"
         elif mc.energy < 10:
             return "Not enough {image=gui/extra_images/energy_token.png}"
         else:
