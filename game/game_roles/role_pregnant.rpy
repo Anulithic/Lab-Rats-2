@@ -147,8 +147,13 @@ label pregnant_announce(the_person):
             the_person.char "I took a test and it looks like you finally knocked me up. I'm going to have your baby."
 
         the_person.char "You don't need to do anything special, I'm going to take care of everything for us. I just wanted you to know."
-        mc.name "Okay, I love you [the_person.title]."
-        the_person.char "I love you too [the_person.mc_title]."
+        if the_person.love > 0:
+            mc.name "Okay, I love you [the_person.title]."
+            the_person.char "I love you too [the_person.mc_title]."
+        else:
+            mc.name "Okay, I appreciate you telling me [the_person.title]."
+            the_person.char "I still hate you, [the_person.mc_title]."
+
         "[the_person.possessive_title] gives you a tight hug."
 
     elif the_person.relationship != "Single": # You aren't having a formal affair, but she's in a relationship. More of a "one night stand" kind of thing.
