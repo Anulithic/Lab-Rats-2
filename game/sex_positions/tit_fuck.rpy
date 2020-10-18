@@ -46,7 +46,8 @@ label taboo_break_tit_fuck(the_girl, the_location, the_object):
     $ the_girl.call_dialogue(tit_fuck.associated_taboo+"_taboo_break")
     "She lets go of your hands and you slide them over her breasts. They're soft and heavy with a pleasant jiggle to them."
     mc.name "These feel amazing. Could you use them to take care of this?"
-    "You grind your erection against [the_girl.title]'s thigh while you squeeze her tits."
+    if not mc.recently_orgasmed:
+        "You grind your erection against [the_girl.title]'s thigh while you squeeze her tits."
     #TODO: Maybe also a taboo break for touching your penis
     if the_girl.effective_sluttiness(tit_fuck.associated_taboo) > tit_fuck.slut_cap:
         the_girl.char "Of course I can. You're going to have to let go of these first though."

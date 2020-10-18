@@ -5,6 +5,34 @@
 ## 3) An effect label. Points towards a label that will run the actual event, compute final effects, and take input from the player.
 
 
+## Guidelines for what each level of stats represents or allows.
+# Sluttiness:
+# 0-10: Baseline normal views on what is acceptable behaviour and dress. Relationships progress with Love, sex only happens in private.
+# 11-21: Touching, groping is fine unless there is a good reason not to (in relationship, related). Reliant on circumstance to start making out. Outfits may be provocative but do not outright reveal anything.
+# 21-40: Willing to give handjobs, be fingered, have her tits groped. Willing to forego panties or a bra, but not be fully nude. Willing to start fooling around any time. Girls in relationships or who are related begin to consider kissing, groping. Most girls are willing to start an affair if they also Love you.
+# 41-60: Willing to give blowjobs, recieve head, and have missionary sex if nothing else is holding them back. When having sex girls will usually require you to wear a condom, especially if they are not on birth control.  Willing to go semi-nude and begin to be fine with having sex in public.
+# 61-80: Willing to have all types of vaginal sex and to start having anal. Girls who are related to you will want to have anal sex instead of vaginal. Girls will ask, but don't require you to wear a condom, even if they are not on birth control. Willing to go fully nude. Orgasms are a suitable reward, orgasm denial is a suitable punishment.
+# 81-100: Willing to have all types of sex, and to go fully nude or be adorned with lingerie and/or fetish gear. Girls will ask you not to wear a condom, even if not on birth control.
+# 100+: Even girls related to you will have any type of sex and ask you not to wear a condom.
+#
+# Love:
+# 0-: Active dislike/hate. The girl knows you, she just doesn't like you! Even slutty girls will be turned off by spending time with you.
+# 0-20: New friend. The girl is usually happy to spend time chatting with you, but only about common topics.
+# 21-40: Good friend. The girl is happy to talk, and even to flirt. The girl will go on lunch dates with you. If she is in a relationship she will stress that you are "just friends".
+# 41-60: Great friends. The girl is happy to spend a lot of time with you, and if she is single is open to some "friends with benefits" sex. Even girls in relationships will let you take them out to the movies or dinner.
+# 61-80: Girlfriend/Paramour. If the girl is single she will be happy to start a formal relationship with you, unless she is also related to you. Even girls in relationships may be open to having sex, but they are much more likely to demand a condom or ask you to pull out. Girls who are slutty will want to be in a long term affair with you.
+# 81-100: Devoted partner. Paramours will leave their SO for you if you ask them to, and girlfriends will have sex with you as long as you are in private. Even 0 sluttiness girls who you are't dating are willing to give you blowjobs if you flirt a little bit first.
+# 100+: Infatuation. Girlfriends and paramours will have any sort of sex with you in private. Girls you aren't dating will be willing to have sex if you ask, just to spend more time with you.
+#
+# Obedience:
+# 80-: Actively disobedient. Often doesn't even bother to ask your opinion, or will be angry if you don't do what she says.
+# 81-100: Disobedient. You have no influence over her actions, and she will often do things without you asking.
+# 101-120: Obedient. You have some influence over her actions. You may suggest small changes, like giving her new titles. Se may ask you before stripping down during sex, as long as she isn't too turned on. You can use your influence to push her slightly further than she is comfortable during sex.
+# 121-140: Highly Obedient. You have significant influence over her actions. You may require her to do major actions that she might not want to, like testing serum for you or staying still while you grope her. You may also tell her what she should and should not wear. You can use your influence to push her much furthur during sex, or have someone with no Love or Sluttiness kiss or touch you anyways. You can ask her to show her tits to you at any time.
+# 141-160: Subservient. You have a very significant amount of influence. Even in the heat of the moment she will defer to you before taking clothes off or changing position. You can push her to do very slutty things, like give you a blowjob, even without her being slutty or in love. You can ask her to strip naked at any time.
+# 161+: Highly Subservient. There is little you cannot ask her to do. She will have sex with you, even in public, and even with no love or sluttiness.
+
+
 ## Potential new crises ##
 # Lily is going on a date. Forbid her, help her dress, fuck her first, etc.
 # Girl is seen not wearing uniform - Leads to potential for punishment (level of punishment might depend on other corporate policies)
@@ -125,6 +153,17 @@ init 1 python:
             return True
         return False
 
+    def person_at_home(the_person): #Returns true if the person is at home somewhere.
+        if the_person in hall.people or the_person in bedroom.people or the_person in lily_bedroom.people or the_person in mom_bedroom.people or the_person in kitchen.people:
+            return True
+        return False
+
+    def person_at_work(the_person): #Returns True if the_person is at whatever location their work location is
+        if the_person.work.has_person(the_person):
+            return True
+        else:
+            return False
+
     #Defining the requirement to be tested.
     def broken_AC_crisis_requirement():
         if mc.business.is_open_for_business(): #Only trigger if people are in the office.
@@ -162,18 +201,22 @@ init 2 python:
         mc.log_event("All Production Staff: +10 Sluttiness","float_text_pink")
         return
 
-label broken_AC_crisis_label:
+label broken_AC_crisis_label():
+    $ temp_sluttiness_increase = 20 #This is a bonus to sluttiness when stripping down because of the heat.
     $ the_person = broken_AC_crisis_get_sluttiest_person()
     if the_person is None:
         return
 
+    $ mc.business.p_div.show_background()
+
     "There is a sudden bang in the office, followed by a strange silence. A quick check reveals the air conditioning has died!"
     "The machines running at full speed in the production department kick out a significant amount of heat. Without air condition the temperature quickly rises to uncomfortable levels."
+    $ the_group = GroupDisplayManager(mc.business.production_team, primary_speaker = the_person)
     $ mc.business.p_div.show_background()
-    #We're going to use the most slutty girl of the group lead the pack. She'll be the one we pay attention to.
-    $ the_person.draw_person()
-    if len(mc.business.production_team) == 0:
-        "The air conditioner was under warranty, and a quick call has one of their repair men over in a couple of hours. Until then [the_person.name] wants to know what to do."
+    $ the_group.draw_group()
+    if len(mc.business.production_team) == 1:
+        $ sole_worker = mc.business.production_team[0]
+        "The air conditioner was under warranty, and a quick call has one of their repair men over in a couple of hours. Until then [sole_worker.title] wants to know what to do."
     else:
         "The air conditioner was under warranty, and a quick call has one of their repair men over in a couple of hours. Until then, the production staff want to know what to do."
 
@@ -202,7 +245,6 @@ label broken_AC_crisis_label:
                     the_person.char "Let's do it girls! I can't be the only one who loves an excuse to flash her tits, right?"
 
             else: #There's just one person here, have them strip down.
-                $ the_person.draw_person()
                 mc.name "[the_person.title], I know it's uncomfortable in here right now, but we're going to have to make due."
                 mc.name "If you feel like it would help to take something off, I'm lifting the dress code until the air condition is fixed."
                 if the_person.effective_sluttiness() < 20:
@@ -210,14 +252,14 @@ label broken_AC_crisis_label:
                 else:
                     the_person.char "I might as well. You don't mind seeing a little skin, do you?"
 
+
             #First, we'll get a copy of the lead girls outfit to use as a tester.
             $ test_outfit = the_person.outfit.get_copy()
-            $ removed_something = False
-
+            $ removed_anything = False
             $ the_clothing = test_outfit.remove_random_any(top_layer_first = True, exclude_feet = True) #Remove something from our test outfit.
             while the_clothing and the_person.judge_outfit(test_outfit, 20): #This will loop over and over until she is out of things to remove OR nolonger can strip something that is appropriate.
                 #Note: there can be some variation in this event depending on if the upper or lower was randomly checked first.
-                $ the_person.draw_animated_removal(the_clothing) #Draw the item being removed from our current outfit
+                $ the_group.draw_animated_removal(the_person, the_clothing = the_clothing) #Draw the item being removed from our current outfit
                 #$ the_person.outfit = test_outfit.get_copy() #Swap our current outfit out for the test outfit. Changed in v0.24.1
                 $ the_person.apply_outfit(test_outfit, ignore_base = True, update_taboo = False) #Swap our current outfit out for the test outfit, apply any taboo effects that happen as a result.
                 $ ran_num = renpy.random.randint(0,4)
@@ -282,33 +324,38 @@ label broken_AC_crisis_label:
                     $ girl_choice = _return
 
                     "You pay special attention to [girl_choice.title] as she follows the lead of [the_person.possessive_title]."
-                    $ test_outfit = girl_choice.outfit.get_copy()
-                    $ removed_something = False
+                    $ the_group.set_primary(girl_choice)
 
-                    $ the_clothing = test_outfit.remove_random_any(top_layer_first = True, exclude_feet = True) #Remove something from our test outfit.
-                    while the_clothing and girl_choice.judge_outfit(test_outfit, 20): #This will loop over and over until she is out of things to remove OR nolonger can strip something that is appropriate.
-                        #Note: there can be some variation in this event depending on if the upper or lower was randomly checked first.
-                        $ girl_choice.draw_animated_removal(the_clothing) #Animate the removal.
-                        # $ girl_choice.outfit = test_outfit.get_copy() #Swap outfits so we can keep updating Changed v0.24.1
-                        $ girl_choice.apply_outfit(test_outfit, ignore_base = True) #Ignore base because it's already a copy with their accessories added.
-                        $ ran_num = renpy.random.randint(0,4)
-                        if ran_num == 0 or not removed_something:
-                            "[girl_choice.title] pulls off her [the_clothing.name] and puts it aside." #Always called first.
-                        elif ran_num == 1:
-                            "[girl_choice.title] takes off her [the_clothing.name] and adds it to the pile of clothing."
-                        elif ran_num == 2:
-                            "[girl_choice.title] strips off her [the_clothing.name] and tosses it to the side."
-                        elif ran_num == 3:
-                            "[girl_choice.title] removes her [the_clothing.name] and tosses it with the rest of her stuff."
-                        else: # ran_num == 4:
-                            "[girl_choice.title] quickly slides off her [the_clothing.name] and leaves it on the ground."
-                        $ removed_something = True
-                        $ the_clothing = test_outfit.remove_random_any(top_layer_first = True, exclude_feet = True)
+                    $ removed_something = True
+                    $ choice_removed_anything = False
+                    while removed_something:
+                        $ removed_something = False
+                        python:
+                            for a_girl in mc.business.production_team:
+                                test_outfit = a_girl.outfit.get_copy()
+                                the_clothing = test_outfit.remove_random_any(top_layer_first = True, exclude_feet = True)
+                                if the_clothing and a_girl.judge_outfit(test_outfit, temp_sluttiness_increase):
+                                    the_group.draw_animated_removal(a_girl, make_primary = False, the_clothing = the_clothing)
+                                    removed_something = True
+                                    if a_girl == girl_choice:
+                                        # TODO: Special dialogue because she's the girl we're paying attention to.
+                                        choice_removed_anything = True
+                                        random_strip_descrip = renpy.random.randint(0,4)
+                                        if random_strip_descrip == 0:
+                                            renpy.say("",girl_choice.title + " pulls off her " + the_clothing.display_name + " and puts it aside.")
+                                        elif random_strip_descrip == 1:
+                                            renpy.say("",girl_choice.title + " takes off her " + the_clothing.display_name + " and adds it to the pile of clothing.")
+                                        elif random_strip_descrip == 2:
+                                            renpy.say("",girl_choice.title + " strips off her " + the_clothing.display_name + " and tosses it to the side.")
+                                        elif random_strip_descrip == 3:
+                                            renpy.say("",girl_choice.title + " removes her " + the_clothing.display_name + " and tosses it with the rest of her stuff.")
+                                        else: # random_strip_descrip == 4:
+                                            renpy.say("",girl_choice.title + " quickly slides off her " + the_clothing.display_name + " and leaves it on the ground.")
 
-                    $ del test_outfit
-                    $ del the_clothing
+                        if removed_something:
+                            "..."
 
-                    if removed_something:
+                    if choice_removed_anything = True:
                         if girl_choice.outfit.tits_visible() and girl_choice.outfit.vagina_visible():
                             "Once she's done stripping [girl_choice.possessive_title] is practically naked."
                             if girl_choice.has_taboo(["bare_pussy","bare_tits"]):
@@ -356,25 +403,26 @@ label broken_AC_crisis_label:
                     "The other girls exchange glances, and everyone seems decides it's best not to take this too far."
                     "They get back to work fully dressed, and soon the repair man has shown up. The problem turns out to be a quick fix, and production is back to a comfortable temperature within a couple of hours."
             else:
-                if removed_something:
+                if removed_anything:
                     "[the_person.title] gets back to work. Working in her stripped down attire seems to make her more comfortable with the idea in general."
                     "The repair man shows up early, and you lead him directly to the AC unit. The problem turns out to be a quick fix, and production is back to a comfortable temperature within a couple of hours."
                 else:
                     "[the_person.title] gets back to work, still fully clothed."
                     "The repair man shows up early, and you lead him directly to the the AC unit. The problem turns out to be a quick fix, and production is back to a comfortable temperature within a couple of hours."
 
-            if removed_something:
+            if removed_anything:
                 $ broken_AC_crisis_update_sluttiness();
 
         "Tell everyone to strip down and keep working\n{color=#ff0000}{size=18}Requires: [casual_uniform_policy.name]{/color} (disabled)" if not casual_uniform_policy.is_active():
             pass
-    $renpy.scene("Active")
+    $ clear_scene()
+    $ the_group = None
     return
 
 init 1 python:
     def get_drink_crisis_requirement():
         if anyone_else_in_office():
-            if len(mc.location.people) > 0: #We want this to trigger when the mc is at work and there's someone else in the room.
+            if mc.location.get_person_count() > 0: #We want this to trigger when the mc is at work and there's someone else in the room.
                 return True
         return False
 
@@ -395,17 +443,24 @@ label get_drink_crisis_label():
     mc.name "Yeah, I was going to get some coffee. Do you want anything?"
     $ coffee = get_random_coffee_style()
     the_person.char "Sure. [coffee], please."
-    $ renpy.scene("Active")
+    $ clear_scene()
     "You nod and head to the little break room in the office. It doesn't take you long to have both of your drinks made up."
     menu:
-        "Add a dose of serum to [the_person.title]'s drink":
+        "Add a dose of serum to [the_person.title]'s drink" if mc.inventory.get_any_serum_count() > 0:
             call give_serum(the_person) from _call_give_serum_1
             $ the_person.draw_person(emotion = "happy")
-            "Once you're finished making your drinks you head back to the office. You put [the_person.title]'s coffee down in front of her."
+            if _return:
+                "Once you're finished making your drinks you head back to the office. You put [the_person.title]'s coffee down in front of her."
+            else:
+                "You decide not to add anything to her drink, and instead just bring it back to her in the office."
+
+
             the_person.char "Thanks [the_person.mc_title]."
             mc.name "No problem at all."
-            $ renpy.scene("Active")
+            $ clear_scene()
 
+        "Add a dose of serum to [the_person.title]'s drink\n{color=#ff0000}{size=18}Requires: Serum{/size}{/color} (disabled)" if mc.inventory.get_any_serum_count() == 0:
+            pass
 
         "Leave her drink alone":
             "You decide not to test a dose of serum out on [the_person.title] and take the drinks back."
@@ -533,7 +588,7 @@ label no_uniform_punishment_label():
                             mc.name "Actually I can. You're welcome to check your contract - the latest uniform changes everyone signed off on made it official company policy."
                             "[the_person.possessive_title] stammers for a moment."
                             the_person.char "Ugh! Fine!"
-                            $ renpy.scene("Active")
+                            $ clear_scene()
                             "She storms off to the washroom. You wait outside until she's changed."
                             the_person.char "This is humiliating."
                         python:
@@ -598,14 +653,14 @@ label no_uniform_punishment_label():
                     $ the_person.review_outfit()
                     "You leave [the_person.title] to get cleaned up and get back to work."
 
-    $renpy.scene("Active")
+    $ clear_scene()
     return
 
 
 init 1 python:
     def office_flirt_requirement():
         if anyone_else_in_office():
-            if len(mc.location.people) > 0: # Requires you to be in the office during work hours and for other people to be with you.
+            if mc.location.get_person_count() > 0: # Requires you to be in the office during work hours and for other people to be with you.
                 return True
         return False
 
@@ -613,7 +668,7 @@ init 1 python:
     crisis_list.append([office_flirt_crisis,5])
 
 label office_flirt_label():
-    if not len(mc.location.people) > 0:
+    if not mc.location.get_person_count() > 0:
         return #Someone must have quit or moved, so we no longer have anyone to flirt with
 
     $ the_person = get_random_from_list(mc.location.people)
@@ -764,8 +819,8 @@ label office_flirt_label():
                         $ the_person.draw_person(position="walking_away")
                         "[the_person.title] winks at you, then turns back to the shelf and resumes her search. When she finds it she walks back past you, making sure to shake her ass as you watch."
 
-                    $ del test_outfit
-                    $ del the_item
+                    $ test_outfit = None
+                    $ the_item = None
 
                 else:
                     "With nothing covering her up you're able to get a great look of [the_person.title]'s shapely butt. She works it around for a minute or two while you watch from your desk."
@@ -826,7 +881,7 @@ label office_flirt_label():
                         $ the_person.change_obedience(2)
                         $ slut_report = the_person.change_slut_temp(10)
                         "She winks and walks past your desk, making sure to shake her ass as you watch."
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 
@@ -1050,7 +1105,7 @@ label extra_mastery_crisis_label():
 
     $ del the_research
     $ del the_trait
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -1113,13 +1168,12 @@ label trait_for_side_effect_label():
             mc.name "I don't think the side effects are acceptable. Revert back to a more stable version and keep going from there."
 
     the_person.char "Understood sir, I'll make the changes to all of the documentation."
-    $ renpy.scene("Active")
 
     python:
         del the_trait
         del the_side_effect
         del the_design
-        renpy.scene("Active")
+        clear_scene()
     return
 
 init 1 python:
@@ -1152,7 +1206,7 @@ label water_spill_crisis_label():
     $ thinks_appropriate = the_person.judge_outfit(test_outfit,10) #Does she think it's appropriate to strip off her top when it's wet?
     if not thinks_appropriate:
         the_person.char "I'm so sorry about this [the_person.mc_title], I just... I just need to go and dry this off!"
-        $ renpy.scene("Active")
+        $ clear_scene()
         "[the_person.title] runs off towards the bathroom."
         $ the_clothing.colour[3] *= 1.25
         "After a few minutes she's back, with her [the_clothing.name] dried off and no longer transparent."
@@ -1226,7 +1280,7 @@ label water_spill_crisis_label():
                 "Dry it off now":
                     mc.name "You go dry it off, I'll wait here for you."
                     the_person.char "I'll be back as soon as I can."
-                    $ renpy.scene("Active")
+                    $ clear_scene()
                     "[the_person.title] runs off towards the bathroom."
                     $ the_clothing.colour[3] *= 1.25
                     "After a few minutes she's back, with her [the_clothing.name] dried off and no longer transparent."
@@ -1264,7 +1318,7 @@ label water_spill_crisis_label():
 
     $ the_clothing = None
     $ del test_outfit
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -1351,7 +1405,7 @@ label home_fuck_crisis_label():
                 the_person.char "Mmm, that was just what I needed [the_person.mc_title]. Ah..."
                 $ the_person.draw_person(position = "sitting")
                 "You and [the_person.title] lounge around for a few minutes until she has completely recovered."
-                $ the_person.apply_outfit(the_person.planned_outfit)
+                $ the_person.apply_outfit()
                 $ the_person.draw_person()
                 the_person.char "I had a great time [the_person.mc_title], but I should be getting home. Could you call me a cab?"
 
@@ -1360,17 +1414,17 @@ label home_fuck_crisis_label():
                 $ the_person.change_love(-2)
                 $ the_person.change_happiness(-5)
                 $ the_person.change_obedience(-2)
-                $ the_person.apply_outfit(the_person.planned_outfit)
+                $ the_person.apply_outfit()
                 $ the_person.draw_person()
                 the_person.char "Screw it, I'll take care of this at home! Call me a cab, please."
             else:
                 $ the_person.change_obedience(-2)
                 $ the_person.change_happiness(-5)
-                $ the_person.apply_outfit(the_person.planned_outfit)
+                $ the_person.apply_outfit()
                 $ the_person.draw_person()
                 the_person.char "Ugh, fuck! This is worse than it was before! Screw it, I'll take care of this at home. Call me a cab, please."
 
-            $ renpy.scene("Active")
+            $ clear_scene()
             "A few minutes later [the_person.title] is gone, and you're able to get back to bed."
 
         "Ask her to leave (tooltip)She would love to climax, but seems like she would be very disappointed if you can't get here there.":
@@ -1482,7 +1536,7 @@ label quitting_crisis_label(the_person): #The person tries to quit, you have a c
             "[the_person.possessive_title] leaves, and you return to what you were doing."
             $ mc.business.remove_employee(the_person)
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -1630,14 +1684,14 @@ label invest_rep_visit_label(rep_name):
 
             $ del flirt_requires_string
             $ del seduce_requires_string
-            $ renpy.scene("Active")
+            $ clear_scene()
             $ office.show_background()
             "Half an hour later there is a knock on your office door."
             mc.name "Come in."
             $ helper.draw_person()
             helper.char "All done with the tour. Let me know if you need anything else."
             "[rep_name] steps into your office and [helper.title] closes the door behind him. [rep_name] sits down in the chair on the opposite side of your desk."
-            $ renpy.scene("Active")
+            $ clear_scene()
             if renpy.random.randint(0,100) < success_chance:
                 rep_name "I won't waste any more of your time [mc.name], I can say with certainty that my investors are going to be interested in investing in your business."
                 mc.name "I'm glad to hear it."
@@ -1665,58 +1719,9 @@ label invest_rep_visit_label(rep_name):
     return
 
 init 1 python:
-    def work_relationship_change_crisis_requirement():
-        if mc.business.is_open_for_business():
-            if mc.business.get_employee_count() >= 2: #Quick check to avoid doing a full array check on a starting company
-                if town_relationships.get_business_relationships(types = "Acquaintance"):
-                    return True
-        return False
-    work_relationship_change_crisis = Action("Work Relationship Change Crisis", work_relationship_change_crisis_requirement, "work_relationship_change_label")
-    crisis_list.append([work_relationship_change_crisis,12])
-
-label work_relationship_change_label():
-    $ the_relationship = get_random_from_list(town_relationships.get_business_relationships())
-    if the_relationship is None:
-        return
-
-    if renpy.random.randint(0,1) == 0:
-        $ person_one = the_relationship.person_a
-        $ person_two = the_relationship.person_b
-    else:
-        $ person_one = the_relationship.person_b
-        $ person_two = the_relationship.person_a
-
-    $ friend_chance = 50
-    python:
-        for an_opinion in person_one.opinions:
-            if person_one.get_opinion_score(an_opinion) == person_two.get_opinion_score(an_opinion):
-                friend_chance += 10
-            elif (person_one.get_opinion_score(an_opinion) > 0 and person_two.get_opinion_score(an_opinion) < 0) or (person_two.get_opinion_score(an_opinion) > 0 and person_one.get_opinion_score(an_opinion) < 0):
-                friend_chance += -10
-
-        friend_chance += (person_one.get_opinion_score("small talk")*5) + (person_two.get_opinion_score("small talk")*5)
-
-
-    if renpy.random.randint(0,100) < friend_chance:
-        #Their relationship improves
-        $ town_relationships.improve_relationship(person_one, person_two)
-        if mc.is_at_work():
-            "While working you notice [person_one.title] and [person_two.title] are spending more time together. They seem to have become friends!"
-    else:
-        #Their relationship worsens
-        $ town_relationships.worsen_relationship(person_one, person_two)
-        if mc.is_at_work():
-            "While working you notice [person_one.title] and [person_two.title] aren't getting along with each other. They seem to have developed an unfriendly rivalry."
-
-    $ the_relationship = None
-    $ person_one = None
-    $ person_two = None
-    return
-
-init 1 python:
     def work_chat_crisis_requirement():
         if mc.business.is_open_for_business() and mc.is_at_work():
-            if len(mc.location.people) > 0: #If we're open for business and there are people in the same location as us
+            if mc.location.get_person_count() > 0: #If we're open for business and there are people in the same location as us
                 return True
         return False
 
@@ -1745,7 +1750,7 @@ label work_chat_crisis_label:
 
     $ the_person.draw_person(position = "sitting")
     "[the_person.title] sits beside you while you're working."
-    if len(mc.location.people) <= 1: #it's just you and her.
+    if mc.location.get_person_count() <= 1: #it's just you and her.
         the_person.char "It's nice to have some company, glad you're here [the_person.mc_title]."
     else:
         the_person.char "Glad to have you helping out [the_person.mc_title]."
@@ -1783,7 +1788,7 @@ label work_chat_crisis_label:
 
             "Talk about her body":
                 mc.name "Hey, I wanted to tell you that you're looking really good. You must really take care of yourself."
-                if len(mc.location.people) <= 1:
+                if mc.location.get_person_count() <= 1:
                     the_person.char "Oh, well thank you. Should we really be talking about that though?"
                     "She looks away, a little embarrassed."
                     mc.name "There's nobody else around; I don't think there's anything wrong with appreciating the work someone puts into making sure they look good."
@@ -1873,7 +1878,7 @@ label work_chat_crisis_label:
         the_person.char "It's nice having you here as a distraction [the_person.mc_title]. Sitting at a desk all day drives me a little stir crazy."
         $ the_person.draw_person(position="sitting")
 
-        if len(mc.location.people) <= 1:
+        if mc.location.get_person_count() <= 1:
             if not the_person.get_opinion_score("public sex") < 0:
                 "She sits back down beside you. You work together for a few more minutes before she sighs and puts her pen down again."
                 if the_person.obedience < 110:
@@ -1997,7 +2002,7 @@ label work_chat_crisis_label:
                 mc.name "Having fun?"
                 the_person.char "Oh! I'm sorry I just..."
                 "She keeps moving her hand, fingering herself below the desk."
-                if len(mc.location.people) > 2:
+                if mc.location.get_person_count() > 2:
                     the_person.char "I can't focus and need to do relax. Keep your voice down, I don't want everyone to know."
                 else:
                     $ other_people = []
@@ -2017,7 +2022,7 @@ label work_chat_crisis_label:
                             "You turn your chair to face [the_person.title] and spread your legs. She reaches over with her free hand and plants it on your crotch."
                             $ the_person.change_obedience(the_person.get_opinion_score("giving handjobs"))
                             the_person.char "Oh god, it's so nice and big..."
-                            "She rubs your dick with her hand, feeling it's outline through your pants."
+                            "She rubs your dick with her hand, feeling its outline through your pants."
                             "You're thinking about pulling your cock out for [the_person.title] when she takes her hand off of you and sits back in her office chair."
 
                         "Say no":
@@ -2101,7 +2106,7 @@ label work_chat_crisis_label:
                     $ the_person.change_obedience(5)
                     $ the_person.change_happiness(-5)
                     "She looks a little disappointed, but goes back to her work immediately."
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -2134,22 +2139,24 @@ label cat_fight_crisis_label():
         $ person_one = the_relationship.person_b
         $ person_two = the_relationship.person_a
 
+    $ the_group = GroupDisplayManager([person_one, person_two], primary_speaker = person_one)
+
+
     person_one.char "Excuse me, [person_one.mc_title]?"
-    $ person_one.draw_person(emotion = "angry")
+    $ the_group.draw_group(person_one, emotion = "angry")
     "You feel a tap on your back while you're working. [person_one.title] and [person_two.title] are glaring at each other while they wait to get your attention."
     person_one.char "I was just in the break room and saw [person_two.title] digging around in the fridge looking for other people's lunches."
-    $ person_two.draw_person(emotion = "angry") #TODO: Build in better support for multi character drawing.
+    $ the_group.draw_group(person_two, emotion = "angry")
     person_two.char "That's a lie and you know it! I was looking for my own lunch and you're just trying to get me in trouble!"
     "[person_two.title] looks at you and pleads."
     person_two.char "You have to believe me, [person_one.title] is making all of this up! That's just the kind of thing she would do, too."
+    $ the_group.draw_group(person_one, emotion = "angry")
     if person_two.effective_sluttiness() > 50:
-        $ person_one.draw_person(emotion = "angry")
         person_one.char "Jesus, why don't you just suck his cock and get it over with. That's how you normally convince people, right?"
     else:
-        $ person_one.draw_person(emotion = "angry")
         person_one.char "Oh boo hoo, you got caught and now you're going to get in trouble. Jesus, is this what you're always like?"
     "[person_two.title] spins to glare at [person_one.title]."
-    $ person_two.draw_person(emotion = "angry")
+    $ the_group.draw_group(person_two, emotion = "angry")
     if person_one.effective_sluttiness() > 50:
         person_two.char "At least I'm not slave to some guys dick like you are. You're such a worthless slut."
     else:
@@ -2158,18 +2165,18 @@ label cat_fight_crisis_label():
     menu:
         "Side with [person_one.title]":
             #Obedience and happiness boost to p1, reduction for p2
-            call cat_fight_pick_winner(person_one,person_two) from _call_cat_fight_pick_winner
+            call cat_fight_pick_winner(person_one,person_two, the_group) from _call_cat_fight_pick_winner
 
 
         "Side with [person_two.title]":
             #Obedience and happiness boost to p2, reductio n for p1
-            call cat_fight_pick_winner(person_two,person_one) from _call_cat_fight_pick_winner_1
+            call cat_fight_pick_winner(person_two,person_one, the_group) from _call_cat_fight_pick_winner_1
 
 
         "Stop the argument, side with no one":
             #Obedience boost to both, happiness drop to both. At high sluttiness have them "kiss and make up"
             mc.name "Enough! I can't be the arbitrator for every single conflict we have in this office. You two are going to have to figure this out between yourselves."
-            $ person_one.draw_person(emotion = "sad")
+            $ the_group.draw_group(person_one, emotion = "angry")
             person_one.char "But sir..."
             if person_one.effective_sluttiness() > 40 and person_two.effective_sluttiness() > 40:
                 mc.name "I said enough. Clearly you need help sorting this out."
@@ -2177,78 +2184,83 @@ label cat_fight_crisis_label():
                 mc.name "The two of you are part of a larger team. I need you to work together."
                 "You bring the girls hands together and wrap yours around both of theirs."
                 person_one.char "Sorry sir, you're right."
-                $ person_two.draw_person(emotion = "sad")
+                $ the_group.draw_group(person_two, emotion = "angry")
                 person_two.char "You're right, I'm sorry sir. And I'm sorry [person_one.title]."
                 "You bring your hands back, leaving [person_one.title] and [person_two.title] holding hands. They look away from each other sheepishly."
                 mc.name "Good to hear. Now kiss and make up, then you can get back to work."
                 "The girls glance at you, then at each other. After a moment of hesitation [person_two.title] leans forward and kisses [person_one.title] on the lips."
                 "You watch for a moment as your two employees kiss next to your desk. What starts out as a gentle peck turns into a deep, heavy kiss."
-                $ person_two.draw_person()
+                $ the_group.draw_group(person_one)
                 "[person_one.title] breaks the kiss and steps back, blushing and panting softly."
                 $ person_one.change_obedience(5)
                 $ slut_report = person_one.change_slut_temp(10)
                 person_one.name "I should... I should get back to work. Sorry for causing any trouble."
-                $ person_two.draw_person(position = "walking_away")
+                $ the_group.draw_group(person_one, position = "walking_away")
                 "[person_two.title] watches [person_one.title] leave, eyes lingering on her ass as she walks away."
                 mc.name "Go on, you should get back to work too."
-                $ person_one.draw_person()
+                $ the_group.draw_group(person_two)
                 $ person_two.change_obedience(5)
                 $ slut_report = person_two.change_slut_temp(10)
                 "You give [person_two.title] a light slap on the butt to pull her attention back to you. She nods quickly and heads the other way."
                 $ town_relationships.improve_relationship(person_one, person_two)
-                $ renpy.scene("Active")
+                $ clear_scene()
 
             else:
                 mc.name "I said enough. Now do you need my help talking this out?"
                 $ person_one.change_happiness(-5)
                 $ person_one.change_obedience(+5)
                 person_one.char "No sir, I think we will be alright."
-                $ person_two.draw_person(emotion = "sad")
+                $ the_group.draw_group(person_two, emotion = "sad")
                 $ person_two.change_happiness(-5)
                 $ person_two.change_obedience(+5)
                 person_two.char "Understood sir, there won't be any more problems."
                 mc.name "Good to hear. Now get back to work."
-                $ renpy.scene("Active")
+                $ clear_scene()
 
 
         "Stay silent and let them fight it out":
             "Both of the girls look at you, waiting to see who's side you take."
-            mc.name "This isn't my fight. You two are going to have to sort this out yourselves."
+            mc.name "This fight isn't my problem. You two are going to have to sort this out yourselves."
             $ town_relationships.worsen_relationship(person_one, person_two)
             if renpy.random.randint(0,1) == 0: #Establish a winner and loser for the fight, random here so that the earlier section of the event doesn't suggest which one it is.
                 $ winner = person_one
                 $ loser = person_two
+                $ the_group = GroupDisplayManager([winner, loser], primary_speaker = winner)
             else:
                 $ winner = person_two
                 $ loser = person_one
+                $ the_group = GroupDisplayManager([loser, winner], primary_speaker = loser)
 
             if person_one.effective_sluttiness("underwear_nudity") < 30 or person_two.effective_sluttiness("underwear_nudity") < 30:
                 #Catfight starts! Neither is particularly slutty, fight ends once one has their clothing damaged (if they're wearing some clothing, make sure to account for that).
                 #Random piece of clothing is lost from a random member of the fight, after which time they run off to get things organized again.
-                $ winner.draw_person(emotion = "angry")
+                $ the_group.draw_person(winner, emotion = "angry")
                 winner.char "Hear that? We're going to have to sort this out, right here. Right now."
                 "[winner.title] takes a step towards [loser.title], invading her personal space."
-                $ loser.draw_person(emotion = "angry")
+                $ the_group.draw_person(loser, emotion = "angry")
                 loser.char "What, is that supposed to scare me? Back up."
                 "[loser.title] plants a hand on [winner.title]'s chest and shoves her backwards. [winner.title] stumbles a step and bumps into a desk behind her."
-                $ winner.draw_person(emotion = "angry")
+                $ the_group.draw_person(winner, emotion = "angry")
                 winner.char "Oh that's fucking IT! COME HERE BITCH!"
                 "[winner.title] throws herself at [loser.title]. Before you can say anything else they're grabbing at each others hair, yelling and screaming as they bounce around the office."
                 $ the_clothing = loser.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True)
                 if the_clothing:
                     "While they fight [winner.title] gets a hold of [loser.title]'s [the_clothing.name]. She tugs on it hard while she swings [loser.title] around and there's a loud rip."
-                    $ loser.draw_animated_removal(the_clothing, emotion = "angry")
+                    $ the_group.draw_animated_removal(loser, the_clothing = the_clothing, emotion = "angry")
                     loser.char "Ugh, look what you've done! Give that back!"
                     "[winner.title] throws the torn garment to [loser.title] and smiles in victory."
-                    $ winner.draw_person(emotion = "happy")
+                    $ the_group.draw_person(winner, emotion = "happy")
                     winner.char "I hope that teaches you a lesson."
                     $ loser.draw_person(emotion = "sad")
                     $ loser.change_obedience(-5)
                     $ loser.change_happiness(-5)
                     $ slut_report = loser.change_slut_temp(5)
                     loser.char "Fuck you. Bitch."
-                    $ loser.draw_person(position = "walking_away")
+                    $ the_group.draw_person(loser, position = "walking_away")
                     "[loser.title] grabs her [the_clothing.name] and hurries off to find somewhere private."
+                    $ the_group.remove_person(loser)
+                    $ clear_scene()
+                    $ the_group.draw_person(winner, emotion = "happy")
                     $ winner.draw_person(emotion = "happy")
                     $ winner.change_obedience(-5)
                     $ winner.change_happiness(5)
@@ -2257,20 +2269,21 @@ label cat_fight_crisis_label():
                     "She smooths her hair back and gets back to work. You decide to do the same."
                 else:
                     "After a minute of fighting [winner.title] gets her hands on [loser.title]'s hair and yanks on it hard. [loser.title] yells and struggles, but it's clear she's lost."
-                    $ loser.draw_person(emotion = "angry")
+                    $ the_group.draw_person(loser, emotion = "angry")
                     loser.char "Fine! Fine, you win!"
-                    $ winner.draw_person(emotion = "happy")
+                    $ the_group.draw_person(winner, emotion = "happy")
                     "[winner.title] pushes [loser.title] away from her and smiles in victory."
                     winner.char "I hope that teaches you a lesson."
-                    $ loser.draw_person(emotion = "sad")
+                    $ the_group.draw_person(loser, emotion = "sad")
                     $ loser.change_obedience(-5)
                     $ loser.change_happiness(-5)
                     $ slut_report = loser.change_slut_temp(5)
+                    $ the_group.draw_person(loser, position = "walking_away")
                     loser.char "Fuck you. Bitch."
-                    $ loser.draw_person(position = "walking_away")
-                    $ loser.draw_person(position = "walking_away")
                     "[loser.title] storms off to find somewhere private to nurse her wounds."
-                    $ winner.draw_person(emotion = "happy")
+                    $ the_group.remove_person(loser)
+                    $ clear_scene()
+                    $ the_group.draw_person(winner, emotion = "happy")
                     $ winner.change_obedience(-5)
                     $ winner.change_happiness(5)
                     "[winner.title] looks at you, out of breath but obviously a little smug."
@@ -2279,13 +2292,13 @@ label cat_fight_crisis_label():
                 $ the_clothing = None
             else: #both >= 40
                 #Girls start pulling clothing off of each other on purpose until one is naked enough to be very embarrassed, then they give up.
-                $ winner.draw_person(emotion = "angry")
+                $ the_group.draw_person(winner, emotion = "angry")
                 winner.char "Hear that? We're going to have to sort this out, right here. Right now."
                 "[winner.title] takes a step towards [loser.title], invading her personal space."
-                $ loser.draw_person(emotion = "angry")
+                $ the_group.draw_person(loser, emotion = "angry")
                 loser.char "What, is that supposed to scare me? Back up."
                 "[loser.title] plants a hand on [winner.title]'s chest and shoves her backwards. [winner.title] stumbles a step and bumps into a desk behind her."
-                $ winner.draw_person(emotion = "angry")
+                $ the_group.draw_person(winner, emotion = "angry")
                 winner.char "Oh that's fucking IT! COME HERE BITCH!"
                 "[winner.title] throws herself at [loser.title]. Before you can say anything else they're grabbing at each others hair, yelling and screaming as they bounce around the office."
                 $ the_clothing = loser.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True)
@@ -2293,40 +2306,40 @@ label cat_fight_crisis_label():
                     $ ran_num = renpy.random.randint(0,3)
                     if ran_num == 0:
                         "[winner.title] grabs [loser.title] by the [the_clothing.name] and yanks her around. There's a loud rip and the piece of clothing comes free."
-                        $ loser.draw_animated_removal(the_clothing, emotion = "angry")
+                        $ the_group.draw_animated_removal(loser, the_clothing = the_clothing, emotion = "angry")
                         loser.char "You bitch!"
                     elif ran_num == 1:
                         "[loser.title] circles around [winner.title], then runs forward yelling and screaming. [winner.title] pushes her to the side, then grabs her by the [the_clothing.name] and tries to pull her to the ground."
                         "The girls struggle until [loser.title]'s [the_clothing.name] comes free and they separate. [winner.title] drops it to the ground."
-                        $ loser.draw_animated_removal(the_clothing, emotion = "angry")
+                        $ the_group.draw_animated_removal(loser, the_clothing = the_clothing, emotion = "angry")
                         loser.char "You'll pay for that, slut!"
                     elif ran_num == 2:
                         "[winner.title] and [loser.title] collide, screaming profanities at each other."
                         "You aren't sure exactly what happens, but when they separate [winner.title] is holding a piece of fabric that use to be [loser.title]'s [the_clothing.name]."
-                        $ loser.draw_animated_removal(the_clothing, emotion = "angry")
+                        $ the_group.draw_animated_removal(loser, the_clothing = the_clothing, emotion = "angry")
                         loser.char "Is that all you've got?"
                     else: #ran_num == 3
                         "[loser.title] gets an arm around [winner.title]'s waist and pushes her against a desk. The two grapple for a moment, then [winner.title] grabs [loser.title] by the [the_clothing.name] and pulls until the piece of clothing rips off."
-                        $ loser.draw_animated_removal(the_clothing, emotion = "angry")
+                        $ the_group.draw_animated_removal(loser, the_clothing = the_clothing, emotion = "angry")
                         loser.char "Fuck, you're going to pay for that!"
 
                     $ ran_num = renpy.random.randint(0,2)
                     if ran_num == 0: #Doesn't actually return the favour, because she's the loser she only does it %66 of the time.
-                        $ winner.draw_person(emotion = "angry")
+                        $ the_group.draw_person(winner, emotion = "angry")
                         "[winner.title] laughs and crouches low."
                         winner.char "Come on! Come and get it, you cocksucking whore!"
                     elif ran_num == 1:
-                        $ winner.draw_person(emotion = "angry")
+                        $ the_group.draw_person(winner, emotion = "angry")
                         winner.char "Do you think I'm afraid of you? Come on!"
                         $ other_clothing = winner.outfit.remove_random_any(top_layer_first = True, exclude_feet = True)
                         if other_clothing:
                             "[winner.title] rushes forward and grabs at [loser.title]. [loser.title] manages to get the upper hand, grabbing onto [winner.title]'s [other_clothing.name] and whipping her around. With a sharp rip it comes free."
-                            $ winner.draw_animated_removal(other_clothing, emotion = "angry")
+                            $ the_group.draw_animated_removal(winner, the_clothing = other_clothing, emotion = "angry")
                             winner.char "Get over here!"
 
                     elif ran_num == 2:
                         $ other_clothing = winner.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True)
-                        $ winner.draw_animated_removal(other_clothing, emotion = "angry")
+                        $ the_group.draw_animated_removal(winner, the_clothing = other_clothing, emotion = "angry")
                         if other_clothing:
                             "[winner.title] screams loudly and tries to grab [loser.title] by the waist. [loser.title] is fast enough to get to the side. She grabs [loser.title]'s [other_clothing.name] and yanks on it hard."
                             "[winner.title] struggles for a moment, then manages to slip free of the garment and steps back. [loser.title] drops it to the ground and they square off again."
@@ -2336,43 +2349,45 @@ label cat_fight_crisis_label():
                     $ the_clothing = loser.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True)
                 $ the_clothing = None
 
-                $ loser.draw_person(emotion = "sad")
+                $ the_group.draw_person(loser, emotion = "sad")
                 "[loser.title] looks down at herself. She seems to realise for the first time how little she's wearing now."
                 loser.char "Look what you've done! Oh god, I need to... I need to go!"
                 if loser.sluttiness > 80 and winner.sluttiness > 80:
                     "[loser.title] turns to hurry away, but [winner.title] swoops in and grabs her from behind."
                     loser.char "Hey!"
-                    $ winner.draw_person(emotion = "happy")
+                    $ the_group.draw_person(winner, emotion = "happy")
                     winner.char "You're not going anywhere, not yet!"
                     "[winner.title] reaches a hand down between [loser.title]'s legs, running her finger over her coworkers pussy."
-                    $ loser.change_arousal(5) #The girls arousal gain is the base gain + 10% per the characters skill in that category.
-                    $ loser.draw_person()
+                    $ loser.change_arousal(5)
+                    $ the_group.draw_person(winner, make_primary = False, emotion = "happy", the_animation = tit_bob, animation_effect_strength = 0.2)
+                    $ the_group.draw_person(loser, position = "against_wall", the_animation = tit_bob, animation_effect_strength = 0.2) #TODO: Experiment with different settings here
                     loser.char "Hey... that's not fair! I... ah..."
                     "[loser.title] stops fighting almost immediately, leaning against [winner.title] and breathing heavily. You've got a front row seat as [winner.title] starts to finger [loser.title]."
                     $ loser.change_arousal(15)
-                    $ loser.draw_person()
+                    $ the_group.draw_person(loser, position = "against_wall", the_animation = tit_bob, animation_effect_strength = 0.4)
                     loser.char "Oh god... [winner.title], just... Ah!"
                     "[winner.title] isn't going easy on [loser.title]. She shivers and bucks against [winner.title]."
                     $ loser.change_arousal(25)
-                    $ loser.draw_person()
+                    $ the_group.draw_person(loser, position = "against_wall", the_animation = tit_bob, animation_effect_strength = 0.6)
                     "[winner.title] speeds up, pumping her fingers in and out of [loser.title]'s exposed cunt. She moans loudly and rolls her hips against [winner.title]'s."
                     $ loser.change_arousal(25)
-                    $ winner.draw_person()
+                    $ the_group.draw_person(winner, emotion = "happy", the_animation = tit_bob, animation_effect_strength = 0.6)
                     winner.char "You thought you could get away easy, huh? Well now I'm going to make you cum right here, you dirty little slut!"
                     $ loser.change_arousal(25)
-                    $ loser.draw_person()
+                    $ the_group.draw_person(loser, position = "against_wall", the_animation = tit_bob, animation_effect_strength = 0.8)
                     "[loser.title] looks right into your eyes. She doesn't look embarrassed - in fact it looks like she's turned on by you watching her get finger banged right in the middle of the office."
                     loser.char "I'm going to... I'm going to... AH!"
                     $ loser.change_arousal(25)
-                    $ loser.draw_person(emotion = "orgasm")
+                    $ the_group.draw_person(loser, position = "against_wall", emotion = "orgasm", the_animation = tit_bob, animation_effect_strength = 1.0)
                     winner.char "That's it, cum for me slut!"
                     "[loser.title] screams loudly and shivers wildly. She only stays on her feet because [winner.title] is holding her in place."
                     $ loser.change_slut_core(10)
-                    $ slut_report = loser.change_slut_temp (25)
+                    $ slut_report = loser.change_slut_temp(25)
                     $ loser.change_happiness(10)
                     $ loser.change_obedience(-5)
-                    "[winner.title] holds [loser.title] up a little longer, then lets her go. [loser.title] stumbles forward on wobbly legs until she finds a chair to collapse into. She pants loudly."
-                    $ winner.draw_person(emotion = "happy")
+                    $ the_group.draw_person(loser, position = "blowjob", emotion = "orgasm", the_animation = tit_bob, animation_effect_strength = 0.2)
+                    "[winner.title] holds [loser.title] up a little longer, then lets her go. [loser.title] stumbles forward on wobbly legs, before falling to her knees and panting."
+                    $ the_group.draw_person(winner, emotion = "happy")
                     $ winner.change_slut_core(5)
                     $ slut_report = winner.change_slut_temp(15)
                     $ winner.change_obedience(-5)
@@ -2384,20 +2399,24 @@ label cat_fight_crisis_label():
                     $ slut_report = loser.change_slut_temp(10)
                     $ loser.change_obedience(-10)
                     $ loser.change_happiness(-10)
-                    $ loser.draw_person(position = "walking_away")
+                    $ the_group.draw_person(loser, position = "walking_away")
                     "[loser.title] gathers up what clothes she can from the ground, then hurries away to find somewhere private."
-                    $ winner.draw_person(emotion = "happy")
+                    $ the_group.draw_person(winner, emotion = "happy")
                     "[winner.title] watches [loser.title] leave, panting heavily."
                     $ slut_report = loser.change_slut_temp(5)
                     $ winner.change_obedience(-10)
                     $ winner.change_happiness(10)
+                    $ the_group.remove_person(loser, new_primary = winner)
+                    $ clear_scene()
+                    $ the_group.redraw_scene()
                     winner.char "Hah... I knew I had that..."
                     "[winner.title] takes a look down at herself."
-                    winner.char "I should probably go get cleaned up too. Sorry about all of this sir."
+                    winner.char "I should probably go get cleaned up too. Sorry about all of this [winner.mc_title]."
                     "[winner.title] leaves and you get back to work."
             python:
                 del winner
                 del loser
+
 
     python:
         del relationship
@@ -2405,22 +2424,24 @@ label cat_fight_crisis_label():
         del person_one
         del person_two
     
-    $ renpy.scene("Active")
+    $ the_group = None
+    $ clear_scene()
     return
 
-label cat_fight_pick_winner(winner, loser):
-    $ loser.draw_person(emotion = "angry")
+label cat_fight_pick_winner(winner, loser, the_group):
+
+    $ the_group.draw_person(loser, emotion = "angry")
     $ loser.change_happiness(-5)
     $ loser.change_obedience(-5)
     mc.name "Enough! [loser.title], I don't want to hear anything about this from you again. Consider this a formal warning."
     loser.char "Wait, but I..."
     mc.name "That's the end of it, now I want both of you to get back to work. Thank you for bringing this to my attention [winner.title]."
-    $ winner.draw_person(emotion = "happy")
+    $ the_group.draw_person(winner, emotion = "happy")
     $ winner.change_happiness(5)
     $ winner.change_obedience(5)
     winner.char "My pleasure sir, just trying to keep things orderly around here."
     "[winner.title] shoots a smug look at [loser.title] then turns around and walks away. [loser.title] shakes her head and storms off in the other direction."
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -2490,7 +2511,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                     the_person.char "Of course. If nothing else comes up we will send the design to production. You can have the production line changed over whenever you wish."
                     the_person.char "I'll put the prototype serum in the stockpile as well, if you need it."
                     $ mc.business.inventory.change_serum(the_serum, 1)
-                    $ renpy.scene("Active")
+                    $ clear_scene()
                     return
 
         else: # The MC is somewhere else, bring them to the lab for this.
@@ -2517,7 +2538,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                     the_person.char "I'll put the prototype serum in the stockpile as well, if you need it."
                     "[the_person.title] hangs up."
                     $ mc.business.inventory.change_serum(the_serum, 1)
-                    $ renpy.scene("Active")
+                    $ clear_scene()
                     return
 
         ## Test the serum out on someone.
@@ -2545,7 +2566,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                     mc.name "I'm sure you will. Keep up the good work."
 
                 "You leave [the_person.title] to to her work in the lab and return to what you were doing."
-                $renpy.scene("Active")
+                $ clear_scene()
                 return
 
             "Test the [the_serum.name] on someone":
@@ -2555,7 +2576,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                 $ selected_person = _return
                 if not selected_person == the_person:
                     mc.name "[the_person.title], fetch me [selected_person.name]."
-                    $ renpy.scene("Active")
+                    $ clear_scene()
                     "She nods and heads off. Soon after [selected_person.name] is standing in front of you."
                     $ selected_person.draw_person()
                     selected_person.char "You wanted me sir?"
@@ -2573,7 +2594,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                     mc.name "Fine, just make sure you get it done."
                     the_person.char "That's what I'm paid for, isn't it?"
                     "You leave [the_person.title] to her to work in the lab and return to what you were doing."
-                    $renpy.scene("Active")
+                    $ clear_scene()
                     return
 
                 elif the_person.obedience < 120:
@@ -2593,7 +2614,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                             the_person.char "Fine, then I'll just have to put this new design through the normal safety tests. I'll have the results for you as soon as possible."
                             mc.name "Fine, just make sure you get it done."
                             "[the_person.possessive_title] nods. You leave her to work in the lab and return to what you were doing."
-                            $renpy.scene("Active")
+                            $ clear_scene()
                             return
 
                 else:
@@ -2609,7 +2630,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
         mc.name "Thank you for the help [the_person.title]."
         "You leave her to get back to her work and return to what you were doing."
         $ the_person.change_obedience(5)
-        $ renpy.scene("Active")
+        $ clear_scene()
 
     else: #There's nobody else in the lab, guess you've done all the hard work yourself!
         "You finish work on your new serum design, dubbing it \"[the_serum.name]\"."
@@ -2702,7 +2723,7 @@ label daughter_work_crisis_label():
                             $ the_person.change_obedience(1)
                             "She takes the resume back and steps away from your desk, defeated."
                             the_person.char "Right, of course. Sorry for wasting up your time."
-                        $ renpy.scene("Active")
+                        $ clear_scene()
                         return
             elif promised_sex:
                 the_person.char "There's nothing I could do? Nothing at all?"
@@ -2718,7 +2739,7 @@ label daughter_work_crisis_label():
                     $ the_person.change_obedience(1)
                     "She takes the resume back and steps away from your desk, defeated."
                     the_person.char "Right, of course. Sorry for wasting up your time."
-                $ renpy.scene("Active")
+                $ clear_scene()
                 return
 
             else:
@@ -2726,7 +2747,7 @@ label daughter_work_crisis_label():
                 $ the_person.change_happiness(-3)
                 the_person.char "I understand. Sorry for taking up your time."
                 "She collects the resume and leaves your office."
-                $ renpy.scene("Active")
+                $ clear_scene()
                 return
 
     $ the_daughter = the_person.generate_daughter() #Produces a person who has a high chance to share characteristics with her mother.
@@ -2772,7 +2793,7 @@ label daughter_work_crisis_label():
             the_person.char "I understand, thank you for at least taking a look for me."
 
     $ del the_daughter
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 init 1 python:
@@ -2862,7 +2883,7 @@ label horny_at_work_crisis_label():
 
     menu:
         "Ignore it\n{color=#ff0000}{size=18}-10%% Business Efficiency{/size}{/color} (tooltip)Ignore your arousal through sheer willpower. It might save you some embarrassment, but your business efficiency is sure to suffer.":
-            $ renpy.scene("Active")
+            $ clear_scene()
             "Putting mind over matter into action you redouble your efforts. Time seems to pass slowly and it seems like you're getting no work done at all."
             $ mc.business.change_team_effectiveness(-10)
             "When your erection dies down and you're able to think clearly again you're sure you've made several paperwork mistakes. Sorting this out will take yet more work."
@@ -2875,7 +2896,7 @@ label horny_at_work_crisis_label():
 
 
         "Jerk off at your desk, loud and proud (tooltip)Your company, your rules, right?" if mc.location.people:
-            $ renpy.scene("Active")
+            $ clear_scene()
             # Girls around the room react. If some are particularly obedient and slutty they will offer to help get you off.
             "You wheel your chair back to give yourself some space, then unzip your pants and pull out your cock. You relax and start to jerk yourself off."
             $ unhappy_people = [] #They're surprised/shocked/disgusted that you're doing this.
@@ -2904,41 +2925,63 @@ label horny_at_work_crisis_label():
 
             if unhappy_people: #There's someone in this list.
                 $ main_unhappy_person = get_random_from_list(unhappy_people) #Someone to lead the unhappy group, if there is more than one person.
-                $ main_unhappy_person.draw_person(emotion = "angry")
-                "It doesn't take long for [main_unhappy_person.title] to notice what you're doing. She does a double take, before gasping and yelling out."
+                $ the_group = GroupDisplayManager(unhappy_people, primary_speaker = main_unhappy_person)
+                $ clear_scene()
+                # $ the_group.draw_group(position = "sitting", emotion = "angry")
+
+                $ main_unhappy_person.draw_person(position = "sitting")
+                if mc.location.get_person_count() == 1: #She's the only person in the room.
+                    "It doesn't take long for [main_unhappy_person.title] to notice what you're doing. When she glances over she does a double take before gasping and yelling out."
+                else: #It's more than one person
+                    "It doesn't take long for someone to notice what you're doing. When [main_unhappy_person.title] glances at you she does a double take before gasping and yelling out."
                 main_unhappy_person.char "Oh my god, what are you doing? [main_unhappy_person.mc_title], are you insane?!"
+                if mc.location.get_person_count() == 1:
+                    $ clear_scene()
+                    $ the_group.draw_group(position = "sitting", emotion = "angry")
+                    "The rest of the office girls look up from their work, surprised by the sudden interruption."
                 "You lock eyes with her as you stroke your cock."
                 mc.name "I'm taking a break and blowing off some steam. If you're uncomfortable you're welcome to leave."
 
                 $ main_unhappy_person.change_happiness(-30)
-                $ main_unhappy_person.change_obedience(1)
+                $ main_unhappy_person.change_obedience(-2)
                 $ main_unhappy_person.change_slut_temp(2)
-                "She tries to glare at you, but her eyes keep flashing to your erect penis. She finally pulls herself away and storms out of the room."
+
+                "She tries to glare at you, but she can't keep her eyes from drifting down to your hard shaft."
+                "When it becomes clear you aren't going to stop, let alone apologize, she stands up and storms out of the room."
                 $ unhappy_people.remove(main_unhappy_person)
+                $ mc.location.move_person(main_unhappy_person, lobby)
                 if len(unhappy_people) == 0: #She was the only other unhappy person, we're done here
                     pass
                 elif len(unhappy_people) == 1:
                     $ other_person = get_random_from_list(unhappy_people)
-                    "[other_person.title] joins her as she leaves, giving you the same look of disgust."
+                    "[other_person.title] joins her as she leaves, giving you the same look of disgust as she gets up from her desk."
                     $ del other_person
                 else:
                     #There are two or more people. Let's construct a title string!
-                    $ unhappy_string = format_group_of_people(unhappy_people) + " storm out of the room with her."
+                    $ unhappy_string = format_group_of_people(unhappy_people) + " storm out of the room with her, shaking their heads as they leave."
                     $ renpy.say("",unhappy_string)
                 python:
                     for unhappy_person in unhappy_people: #Note that the main person was removed from the list so these penalties aren't being applied twice.
                         unhappy_person.change_happiness(-30)
-                        unhappy_person.change_obedience(1)
+                        unhappy_person.change_obedience(-2)
                         unhappy_person.change_slut_temp(2)
+                        mc.location.move_person(unhappy_person, lobby) #Move everyone to the lobby so they aren't considered observers for the rest of teh event.
+                #TODO: ALso move them to the lobby so they aren't considered watchers forthe rest of the event.
+                $ clear_scene() #TODO We should have an event for the angry girls coming back (maybe we need a general apology event?)
 
             if neutral_people:
+                $ the_group = GroupDisplayManager(neutral_people)
+                $ the_group.draw_group(position = "sitting")
                 if len(neutral_people) > 1:
-                    $ neutral_string = format_group_of_people(neutral_people) + " see what you're doing, but none of them seem upset by it."
+                    $ neutral_string = format_group_of_people(neutral_people) + " all see you jerking off at your desk, but none of them seem upset or surprised by it."
                 else:
-                    $ neutral_string = format_group_of_people(neutral_people) + " sees what you're doing, but she doesn't seem upset by it."
+                    $ neutral_string = format_group_of_people(neutral_people) + " notices you jerking off, but she doesn't seem upset or surprised by it."
                 $ renpy.say("",neutral_string)
 
                 if masturbating_people:
+                    python:
+                        for mast_person in masturbating_people:
+                            the_group.draw_person(mast_person, make_primary = False, emotion = "happy")
                     $ renpy.random.shuffle(masturbating_people)
                     if len(masturbating_people) == 1:
                         $ masturbating_string = format_group_of_people(masturbating_people) + " even joins in, quietly sliding her hand down to her crotch and rubbing her pussy."
@@ -2950,9 +2993,13 @@ label horny_at_work_crisis_label():
 
             if helpful_people:
                 $ helpful_person = get_random_from_list(helpful_people)
-                $ helpful_person.draw_person()
+                $ clear_scene()
+                $ helpful_person.draw_person(emotion = "happy")
                 "[helpful_person.title] gets up from her desk and comes over, eyes transfixed on your swollen cock."
                 helpful_person.char "Would you like to use me to take care of that?"
+                $ the_group = GroupDisplayManager(helpful_people, primary_speaker = helpful_person)
+                $ clear_scene()
+                $ the_group.draw_group(emotion = "happy")
                 if len(helpful_people) > 1: #More than one person, so describe them!
                     $ others = helpful_people[:]
                     $ others.remove(helpful_person)
@@ -2991,7 +3038,7 @@ label horny_at_work_crisis_label():
                     "You catch your breath and sit up."
                     mc.name "Whew. Now you can be helpful by getting that cleaned up for me."
                     if licker is not None:
-                        $ licker.draw_person(position = "doggy")
+                        $ the_group.draw_person(licker, position = "doggy", emotion = "happy")
                         "Before you even finish the sentence [licker.title] is on her hands and knees, lowering her face to the floor."
                         licker.char "Right away!"
                         $ licker.change_obedience(2)
@@ -3002,16 +3049,56 @@ label horny_at_work_crisis_label():
 
                 else:
                     "You stand up, pants around your ankles, and motion for [the_choice.title] to come over to you."
+                    $ clear_scene()
                     call fuck_person(the_choice, private = False, skip_intro = True) from _call_fuck_person_29
                     $ the_report = _return
                     $ the_choice.review_outfit()
+                    $ helpful_people.remove(the_choice)
+                    $ wants_to_continue = True
+                    while mc.energy >= 20 and len(helpful_people) > 0 and wants_to_continue:
+                        $ the_group.redraw_group()
+                        $ the_group.draw_person(the_choice, position = "sitting", emotion = "happy")
+                        if the_report.get("girl orgasms", 0) > 0:
+                            "[the_choice.title] goes back to her desk and sits down when you're finished with her. She spreads her legs and starts to touch herself."
+                        else:
+                            "[the_choice.title] stumbles back to her desk and collapses into her chair, legs still quivering."
+
+                        if len(helpful_people) > 1:
+                            "The other girls are still standing next to your desk, and you haven't exhausted yourself quite yet..."
+                        else:
+                            $ renpy.say("", helpful_people[0].title + " is still standing next to your desk, and you haven't exhausted yourself quite yet...")
+
+                        $ display_list = helpful_people[:]
+                        $ exit_option = "Finish up."
+                        $ display_list.append(exit_option)
+                        call screen person_choice(display_list, person_prefix = "Pick")
+                        if _return == exit_option:
+                            if len(helpful_people) > 1:
+                                "You wave the girls back to their desk. They seem disappointed they didn't get a chance to service you."
+                            else:
+                                "You wave her back to her desk. She seems disappointed that she didn't get a chance to service you."
+                            $ wants_to_continue = False
+
+                        else:
+                            $ the_choice = _return
+                            mc.name "[the_choice.title], you're next."
+                            "She nods and smiles, stepping forward."
+                            $ clear_scene()
+                            call fuck_person(the_choice, private = False) from _call_fuck_person_89
+                            $ the_report = _return
+                            $ the_choice.review_outfit()
+                            $ helpful_people.remove(the_choice)
 
                     if the_report.get("guy orgasms",0) == 0:
-                        "You still haven't gotten off, so you stroke your cock until you cum. With that finally taken care of, you get yourself cleaned up and get back to work."
+                        "You've worn yourself out, but you still haven't gotten off. You relax in your office chair and stroke yourself off until you cum."
+                        "With that finally taken care of, you get yourself cleaned up and get back to work."
                         "Thanks to your post orgasm clarity you're able to focus perfectly."
                     else:
-                        "You get yourself cleaned up and get back to work. You're able to focus perfectly now thanks to your post orgasm clarity."
-                $ the_choice = None
+                        "You sit back down in your office chair, feeling satisfied."
+                        "After getting yourself cleaned up you're able to focus perfectly again and you get back to work."
+
+
+
             else: #You get yourself off.
                 "You pull up some porn and, with skill trained over many years, jerk yourself off to completion in a few minutes."
                 "When you're finished you clean up and get back to work with your mind clear and able to focus."
@@ -3031,7 +3118,7 @@ label horny_at_work_crisis_label():
                 a_person = None
 
         "Sneak away to the bathroom and jerk off (tooltip)A few minutes in private should fix this right up." if mc.location.people: #If there are people around here's an option to jerk off. There might
-            $ renpy.scene("Active")
+            $ clear_scene()
             "You're going to need to get this taken care of if you want to get any work done."
             "You get up from your desk and head for the washrooms, attempting to hide your erection from your staff as you go."
 
@@ -3061,7 +3148,7 @@ label horny_at_work_crisis_label():
                             mc.name "You run along, I've still got to deal with this."
                             $ your_follower.draw_person(position = "walking_away")
                             "She leaves you alone in the bathroom, and you jerk yourself off to completion."
-                            $ renpy.scene("Active")
+                            $ clear_scene()
                         else:
                             "You and [your_follower.possessive_title] leave the bathroom together."
                         "When you get back to your desk you find you're finally able to focus again."
@@ -3074,7 +3161,7 @@ label horny_at_work_crisis_label():
                         your_follower.char "I... Oh, I'm sorry [your_follower.mc_title], I don't know what I was thinking..."
                         $ your_follower.draw_person(position = "walking_away")
                         "She blushes and turns around, leaving quickly." 
-                        $ renpy.scene("Active")
+                        $ clear_scene()
                         "You pull up some porn on your phone and get comfortable, jerking yourself off until you cum."
                         "When you're finished you clean up and get back to work, your mind now crystal clear."
 
@@ -3105,7 +3192,8 @@ label horny_at_work_crisis_label():
                 $ the_person.draw_person(position = "walking_away")
                 "Before you can say anything more she turns around and hurries out of the room."
                 the_person.char "I really need to go..."
-                $ renpy.scene("Active")
+                "You sigh and give up on your hopes of a quick release."
+                $ clear_scene()
 
 
             else:
@@ -3116,33 +3204,59 @@ label horny_at_work_crisis_label():
 
                 #TODO: Make sure all of this is context aware in some way for other people in the room.
                 $ willingness_value = the_person.sluttiness + (the_person.obedience - 100) + the_person.get_opinion_score("being submissive") * 10
-                if len(mc.location.people) > 1:
+                if mc.location.get_person_count() > 1:
                     $ willingness_value += the_person.get_opinion_score("public sex") * 10
+
+                $ others = mc.location.people[:]
+                $ others.remove(the_person)
+
+                $ the_group = GroupDisplayManager(mc.location.people, primary_speaker = the_person)
+                $ the_group.draw_group(position = "sitting")
+                $ the_group.draw_person(the_person)
                 menu:
                     "Make her strip while you jerk off": #The basic version if you've picked this path always enabled due to earlier checks, so we don't bother with a failure state
-                        mc.name "Well, I'd like you to give me some entertainment while I take care of this. Give me a little dance."
-                        $ others = mc.location.people[:]
-                        $ others.remove(the_person)
+                        mc.name "Well, I'd like you to give me some entertainment while I take care of this. Strip down and give me a little dance."
                         if others:
                             "[the_person.title] looks around the room, then back to you and whispers."
-                            the_person.char "What about the other people.?"
+                            the_person.char "What about the other people?"
                             mc.name "I'm sure they won't mind, and if they do they can take it up with me. Come on, I need to get back to work."
                         else:
                             "[the_person.title] looks around the empty room, then back to you and shrugs."
 
                         the_person.char "Fine."
-                        "You smile and turn your chair to face her. You unzip your pants and grab onto your hard cock, stroking it slowly."
+                        if others:
+                            "You slide your chair back and turn it to face her. You unzip your pants, grabbing your already-hard cock to stroke it."
+                            $ lead_other = get_random_from_list(others)
+                            $ the_group.draw_person(lead_other, position = "sitting")
+                            "[lead_other.title] glances over and notices you jerking off at your desk in front of [the_person.title]."
+                            if lead_other.effective_sluttiness() < 20:
+                                lead_other.char "Oh my god, [lead_other.mc_title], what are you doing?"
+                                $ the_group.draw_person(the_person)
+                                the_person.char "It's okay [lead_other.title], this is my fault. I've gotten [the_person.mc_title] too horny to work."
+                                the_person.char "So I'm going to help him cum."
+
+                            else:
+                                lead_other.char "[the_person.title], what are you doing?"
+                                $ the_group.draw_person(the_person)
+                                the_person.char "I've gotten [the_person.mc_title] too excited, so I'm going to help him jerk off."
+
+                            the_person.char "Don't mind us, I'll try and make this quick."
+                        else:
+                            "You smile and turn your chair to face her. You unzip your pants and grab onto your hard cock, stroking it slowly."
+
                         $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True) #If that fails we need to strip off her top, because she might have a dress style thing on blocking it.
                         while the_item is not None:
-                            $ the_person.draw_animated_removal(the_item)
+                            $ the_group.draw_animated_removal(the_person, the_clothing = the_item)
                             "[the_person.title] strips off her [the_item.name] while you watch."
                             $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True)
-                        $ del the_item
+                        $ the_item = None
                         "When [the_person.possessive_title] is finished stripping down she puts her hands on her hips and watches you jerk off."
 
                         $ the_person.discover_opinion("not wearing anything")
                         $ the_person.change_slut_temp(the_person.get_opinion_score("not wearing anything")+1)
                         $ the_person.change_obedience(the_person.get_opinion_score("not wearing anything")+1)
+
+
                         if the_person.get_opinion_score("not wearing anything") > 0:
                             "She doesn't seem to care about being naked in front of you; if anything she seems to be enjoying the experience."
                             the_person.char "Do you have a good view?"
@@ -3177,7 +3291,7 @@ label horny_at_work_crisis_label():
                         "She gives you a quick smile."
                         $ others = None
                         $ the_person.review_outfit()
-                        $ renpy.scene("Active")
+                        $ clear_scene()
                         "You pull your pants up and get yourself organized, then turn your attention back to your work with a crystal clear mind."
 
 
@@ -3185,16 +3299,23 @@ label horny_at_work_crisis_label():
                         mc.name "Well, I need this taken care of so I can get back to work. I want you to get under my desk and suck me off."
                         $ willingness_value += the_person.get_opinion_score("giving blowjobs") * 10
                         if willingness_value >= blowjob.slut_requirement:
-                            if (the_person.get_opinion_score("public sex") > 0 and len(mc.location.people) > 1) or the_person.get_opinion_score("giving blowjobs") > 0:
+                            if (the_person.get_opinion_score("public sex") > 0 and mc.location.get_person_count() > 1) or the_person.get_opinion_score("giving blowjobs") > 0:
                                 the_person.char "Okay, if that's what you need."
                                 "She gets onto her hands and knees, crawling under your desk and nestling herself between your legs."
                             else:
-                                the_person.char "Really? I..."
+                                if mc.location.get_person_count() > 1:
+                                    the_person.char "But... What if someone notices?"
+                                    mc.name "I'm sure they will be impressed by what a good job you're doing sucking my cock."
+
+                                else:
+                                    the_person.char "Really? I..."
+
                                 mc.name "Come on, I don't have all day. I need to get back to work."
                                 "She hesitates, but after a second of thought she sighs and gets onto her hands and knees, crawling under your desk and nestling herself between your legs."
-                            $ the_person.draw_person(position = "blowjob")
+                            $ the_group.draw_person(the_person, position = "blowjob")
                             "You unzip your pants and pull them down, letting your hard cock fall out onto [the_person.possessive_title]'s face."
                             "She places her hands on your thighs and slides your cock into her mouth, licking the tip to get it wet before slipping it further back."
+                            $ clear_scene()
                             call fuck_person(the_person, private = False, start_position = blowjob, skip_intro = True, position_locked = True) from _call_fuck_person_31
                             $ the_report = _return
                             $ the_person.review_outfit()
@@ -3209,7 +3330,7 @@ label horny_at_work_crisis_label():
                             $ the_person.change_happiness(-10)
                             $ the_person.change_obedience(-3)
                             "She stammers for something more to say before settling on storming out of the room instead."
-                            $ renpy.scene("Active")
+                            $ clear_scene()
                             "Frustrated, her rejection has at least taken your mind off of your erection and you're able to get back to work eventually."
 
 
@@ -3224,25 +3345,46 @@ label horny_at_work_crisis_label():
                             else:
                                 "You grab [the_person.possessive_title] by her hips and lay her down in front of you, spreading her legs around you."
 
-                            $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True) #Start by stripping off her bottom.
-                            while (the_item is not None and not the_person.outfit.vagina_available()):
-                                $ the_person.draw_animated_removal(the_item)
-                                if the_person.outfit.vagina_available():
-                                    "You pull off her [the_item.name] and reveal her pussy, ready for you to use."
-                                else:
-                                    "You pull off her [the_item.name], getting closer to revealing her pussy for you to use."
-                                $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
+                            if others and the_person.effective_sluttiness() < (80 - 10*the_person.get_opinion_score("public sex")):
+                                the_person.char "Ah! Wait, what will the other girls think?"
+                                mc.name "I'm sure they'll let us know."
+                            elif the_person.relationship != "Single" and affair_role not in the_person.special_role:
+                                $ so_title = SO_relationship_to_title(the_person.relationship)
+                                the_person.char "Wait, I have a [so_title]! I shouldn't let you do this!"
+                                "Despite her protest she doesn't try to stand back up or get you out from between her thighs."
+                            else:
+                                the_person.char "Ah!"
 
-                            $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove= True) #If that fails we need to strip off her top, because she might have a dress style thing on blocking it.
-                            while (the_item is not None and not the_person.outfit.vagina_available()):
-                                $ the_person.draw_animated_removal(the_item)
-                                if the_person.outfit.vagina_available():
-                                    "You pull off her [the_item.name] and reveal her pussy, ready for you to use."
-                                else:
-                                    "You pull off her [the_item.name], getting closer to revealing her pussy for you to use."
-                                $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove= True)
+                            if the_person.outfit.can_half_off_to_vagina():
+                                $ strip_list = the_person.outfit.get_half_off_to_vagina_list()
+                                python:
+                                    for clothing in strip_list:
+                                        the_person.draw_animated_removal(the_item, half_off_instead = True)
+                                        if the_person.outfit.vagina_available():
+                                            renpy.say("","You pull her " + clothing.display_name + " out of the way so you can get to her pussy.")
+                                        else:
+                                            renpy.say("","You pull her " + clothing.display_name + " out of the way.")
 
-                            $ del the_item
+                            else: #We need to strip her down completely. TODO: We need a way to determine if we can strip someone half down, then pull things aside (ie. pull off pants, pull panties to the side)
+                                $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True) #Start by stripping off her bottom.
+                                while (the_item is not None and not the_person.outfit.vagina_available()):
+                                    $ the_person.draw_animated_removal(the_item)
+                                    if the_person.outfit.vagina_available():
+                                        "You pull off her [the_item.name] and reveal her pussy, ready for you to use."
+                                    else:
+                                        "You pull off her [the_item.name], getting closer to revealing her pussy for you to use."
+                                    $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
+
+                                $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove= True) #If that fails we need to strip off her top, because she might have a dress style thing on blocking it.
+                                while (the_item is not None and not the_person.outfit.vagina_available()):
+                                    $ the_person.draw_animated_removal(the_item)
+                                    if the_person.outfit.vagina_available():
+                                        "You pull off her [the_item.name] and reveal her pussy, ready for you to use."
+                                    else:
+                                        "You pull off her [the_item.name], getting closer to revealing her pussy for you to use."
+                                    $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove= True)
+
+                            $ the_item = None
                             if the_person.outfit.vagina_available():
                                 "You unzip your pants and pull out your hard cock, laying it onto [the_person.title]'s crotch. You rub the shaft against her pussy lips, teasing her with the tip each time."
                                 call condom_ask(the_person) from _call_condom_ask_3
@@ -3273,2577 +3415,9 @@ label horny_at_work_crisis_label():
                             $ the_person.change_happiness(-10)
                             $ the_person.change_obedience(-3)
                             "She stammers for something more to say before settling on storming out of the room instead."
-                            $ renpy.scene("Active")
+                            $ clear_scene()
                             "Frustrated, her rejection has at least taken your mind off of your erection and you're able to get back to work eventually."
 
-    $ renpy.scene("Active")
-    return
-
-init 1 python:
-    def friends_help_friends_be_sluts_requirement():
-        if mc.is_at_work() and mc.business.is_open_for_business():
-            if town_relationships.get_business_relationships(["Friend","Best Friend"]):
-                return True
-        return False
-
-    friends_help_friends_be_sluts_crisis = Action("Friends Help Friends Be Sluts",friends_help_friends_be_sluts_requirement,"friends_help_friends_be_sluts_label")
-    crisis_list.append([friends_help_friends_be_sluts_crisis,5])
-
-label friends_help_friends_be_sluts_label():
-    #A slutty girl helps her less slutty friend be more slutty.
-
-    $ the_relationship = get_random_from_list(town_relationships.get_business_relationships(["Friend","Best Friend"])) #Get a random rival or nemesis relationship within the company
-    if the_relationship is None:
-        return
-    $ person_one = None #Sluttier person
-    $ person_two = None #Person being convinced to be sluttier.
-    if the_relationship.person_a.effective_sluttiness() > the_relationship.person_b.effective_sluttiness():
-        $ person_one = the_relationship.person_a
-        $ person_two = the_relationship.person_b
-    else:
-        $ person_one = the_relationship.person_b
-        $ person_two = the_relationship.person_a
-
-    if person_one.effective_sluttiness() < 30: #If our slutty person isn't very slutty in the first place.
-        "You decide to take a walk, both to stretch your legs and to make sure your staff are staying on task."
-        "When you peek in the break room you see [person_one.title] and [person_two.title] chatting with each other as they make coffee."
-        $ person_one.draw_person()
-        person_one.char "... Following so far? Then he takes your..."
-        "You can't quite hear what they're talking about. [person_two.title] gasps and blushes."
-        $ person_two.draw_person()
-        person_two.char "No! Does that even..."
-        $ person_one.draw_person()
-        person_one.char "It feels amazing! Or so I've been told."
-        $ person_two.draw_person()
-        "[person_two.title] shakes her head in disbelief and turns away. When she notices you in the doorway she gasps and stammers."
-        person_two.char "[person_two.mc_title], we were just... I was just... How much did you hear of that?"
-        person_two.char "Oh no, this is so embarrassing!"
-        $ person_one.draw_person()
-        person_one.char "[person_two.title], relax. Sorry [person_one.mc_title], we were just chatting about some girl stuff."
-        person_one.char "She doesn't have much experience, so I was just explaining..."
-        $ person_two.draw_person()
-        person_two.char "[person_one.title]! [person_two.mc_title] doesn't need to hear about this."
-        mc.name "This isn't highschool, I'm not going to punish you for being bad girls and talking about sex."
-        $ person_one.draw_person()
-        person_one.char "Well maybe she wants to be punished a little. Maybe a quick spanking?"
-        "[person_one.possessive_title] slaps [person_two.title]'s butt."
-        $ person_two.draw_person()
-        person_two.char "Hey! That's... Come on [person_one.title], we should get back to work. Goodbye [person_one.mc_title]."
-        "She hurries out of the room, blushing."
-        $ person_one.change_slut_temp(2)
-        $ person_one.draw_person()
-        person_one.char "She's so cute when she's embarrassed. See you around [person_two.mc_title]."
-
-    elif person_one.effective_sluttiness() < 60: #Our sluttiest is moderately slutty
-        "You decide to take a walk, both to stretch your legs and to make sure your staff are staying on task."
-        "You're passing by the break room when an unusual noise catches your attention. It sounds like distant and passionate feminine moaning."
-        "Intrigued, you peak your head in and see [person_one.title] and [person_two.title]. They are staring intently at one of their phones."
-        if person_two.effective_sluttiness() < 30: #But the other girl is low sluttiness.
-            # The sluttier is showing her friend some porn. She panics/is embarrassed when you walk in and see what it is
-            "You clear your throat and [person_two.title] yelps and spins around."
-            $ person_two.draw_person()
-            person_two.char "[person_two.mc_title]! I was... We were..."
-            $ person_one.draw_person()
-            "[person_one.title] rolls her eyes and speaks up."
-            person_one.char "I was just showing [person_two.title] a video I found last night. I thought she might be into it."
-            person_one.char "Do you want to see?"
-            $ person_two.draw_person()
-            person_two.char "[person_one.title]! I'm sorry [person_two.mc_title], I know this isn't what we should be doing here."
-            mc.name "Why would I care? You're taking a break and relaxing the way you want to."
-            "The moans from the phone grow louder. You notice [person_one.possessive_title] has turned her attention back to the screen."
-            mc.name "[person_one.title] seems to have the right idea."
-            $ person_one.draw_person()
-            person_one.char "Yeah, just relax [person_two.title]. You said you had something you wanted to show me too, right?"
-            "She hands the phone to [person_two.title], who looks at you and takes it hesitantly."
-            $ person_two.draw_person()
-            person_two.char "You're sure?"
-            mc.name "Of course I'm sure, but if I'm making you self conscious I'll give you some privacy."
-            mc.name "Once you're done your break I expect to see you both back at work."
-            $ person_two.change_slut_temp(3)
-            $ person_two.change_obedience(2)
-            "You leave the room, and a few seconds later you can hear them resume watching porn together."
-
-        else: #And her friend is pretty slutty too.
-            # You catch them watching some porn on break, the less slutty is slightly worried about you seeing but neither mind a ton.
-            "You clear your throat and both girls look up."
-            $ person_one.draw_person()
-            person_one.char "Oh, hey [person_one.mc_title]."
-            $ person_two.draw_person()
-            person_two.char "Hi [person_two.mc_title], we were just taking our break together."
-            "The moaning on the phone grows louder and [person_two.title] seems suddenly self conscious."
-            person_two.char "I hope you don't mind that we're watching... [person_one.title] just wanted to show me something quickly."
-            mc.name "I certainly don't mind."
-            $ person_one.draw_person()
-            person_one.char "I told you it was fine. I found this last night and thought it was so hot. Do you want to take a look [person_one.mc_title]."
-            "She holds her phone up for you to see. You lean in close and join the ladies watching porn on [person_one.title]'s phone."
-            # Discover something new about her sexuality
-            $ person_one.discover_opinion(person_one.get_random_opinion(include_known = True, include_sexy = True, include_normal = False, only_positive = True))
-            $ person_one.discover_opinion(person_one.get_random_opinion(include_known = True, include_sexy = True, include_normal = False, only_positive = True))
-            $ person_one.change_love(1)
-            $ person_two.change_slut_temp(3+person_two.get_opinion_score("public sex"))
-            $ person_two.change_love(1)
-            "After a few minutes the video ends and you've discovered a few things about [person_one.title]'s sexual preferences."
-            $ person_two.draw_person()
-            person_two.char "You're right [person_one.title], that was hot. Can you send that to me for later?"
-            $ person_one.draw_person()
-            person_one.char "Sure thing. We should be getting to work before [person_one.mc_title] gets too distracted though."
-            "Her eyes drift conspicuously down your body to the noticeable bulge in your pants."
-            $ person_two.draw_person()
-            person_two.char "Uh, right. Talk to you later [person_two.mc_title]."
-            "You watch them walk out then get back to work."
-
-
-    else: #Our sluttiest is very slutty
-        if person_two.effective_sluttiness() < 20:
-            # The sluttier girl is talking about how horny she's feeling today when you walk in. Her friend seems embarrassed to be hearing about it.
-            # The sluttier girl then spanks/plays with the less slutty girls ass for your benefit.
-            # When you walk in the sluttier girl makes some passes at you that her friend apologizes for, but that you reenforce.
-            "You're thinking about taking a break and stretching your legs when you see [person_one.title] and [person_two.title] through your office door."
-            "They're talking quietly with each other, totally oblivious of the fact that you can hear what they are saying."
-            $ person_one.draw_person()
-            person_one.char "I can't wait to get home, I've been feeling so worked up all day I just want to get naked and have some me time."
-            person_one.char "I got a new vibrator and it's mind blowing. I want to be riding it all day long now."
-            $ person_two.draw_person()
-            person_two.char "[person_one.title], you're such a slut!"
-            $ person_one.draw_person()
-            person_one.char "Oh come on, so are you. Wouldn't you like to be at home right now with a vibe pressed up against your clit?"
-            $ person_two.draw_person()
-            "[person_two.title] laughs and shrugs, then suddenly tenses up and starts to blush when she notices you at the door."
-            person_two.char "Uh, hello [person_two.mc_title]. I was just... Uhh..."
-            $ person_one.draw_person()
-            person_one.char "Hey [person_one.mc_title], don't mind her, she's just horny and thinking about her vibrator at home."
-            $ person_two.draw_person()
-            person_two.char "Shut up, [person_two.mc_title] doesn't want to hear about this."
-            $ person_one.draw_person()
-            person_one.char "Sure he does, men love to hear about slutty, horny women. Right [person_one.mc_title]?"
-            $ person_two.draw_person()
-            person_two.char "I'm so sorry [person_two.mc_title], she doesn't know what she's saying."
-            mc.name "I think she does, because I agree, especially when they're as beautiful as you two."
-            $ person_one.draw_person()
-            person_one.char "See? Come on, we should probably get back to work. Nice seeing you [person_one.mc_title]."
-            $ person_two.draw_person()
-            person_two.char "Uh... See you around."
-            "They head for the door. [person_one.title] pauses and waits for [person_two.title] to pass her."
-            $ person_one.draw_person()
-            "She looks at you and winks, then gives her friend a hard slap on the ass."
-            person_one.char "After you!"
-            $ person_two.draw_person()
-            person_two.char "Ah! You..."
-            "You hear them chatting and laughing as they head back to work."
-            $ person_one.change_obedience(1)
-            $ person_two.change_slut_temp(3)
-            $ person_two.change_obedience(2)
-
-        elif person_two.effective_sluttiness() < 40:
-            "You decide to take a walk, both to stretch your legs and to make sure your staff are staying on task."
-            "When you pass by the break room you overhear [person_one.title] and [person_two.title] chatting. You stop at the door and listen for a moment."
-            # The sluttier girl is talking about the less slutty girl's tits when you walk in. She wants you to give a comparison, the less slutty girl begrudgingly agrees.
-            # Note: At high love she hints that she's doing this as a favour to you.
-            $ person_one.draw_person()
-            if rank_tits(person_one.tits) > rank_tits(person_two.tits):
-                # The slutty girl wants smaller, perkier tits.
-                person_one.char "Look at them though, they're the perfect shape. Mine just don't have the same perk yours do."
-                $ person_two.draw_person()
-                person_two.char "But they're so nice and big, I'd kill to have them like that. I bet they're nice and soft, too."
-                $ person_one.draw_person()
-                person_one.char "Want to give them a feel? I... Oh, hey [person_one.mc_title]."
-
-            else:
-                # The slutty girl wants larger tits.
-                person_one.char "Look at those puppies, they're the perfect size. I'd kill for a pair of tits like yours."
-                $ person_two.draw_person()
-                person_two.char "They're big, but yours look perkier. I know lots of guys who are into that."
-                $ person_one.draw_person()
-                person_one.char "I still just want to grab yours by the handful and... Oh, hey [person_one.mc_title]."
-            "[person_one.possessive_title] notices you at the door."
-            $ person_two.draw_person()
-            person_two.char "Ah, hi... We were just getting back to work, right [person_one.title]?"
-            $ person_one.draw_person()
-            person_one.char "Yeah, in a moment. [person_one.mc_title], you're just who we need right now to settle this for us."
-            mc.name "Settle what?"
-            person_one.char "[person_two.title] won't admit she's got the better tits of the two of us. Talk some sense into her for me."
-            $ person_two.draw_person()
-            person_two.char "Oh god, what are you getting us into?"
-            menu:
-                "[person_one.title] has nicer tits": #She's already slutty, but gets a love boost
-                    "You take a moment to consider, then nod towards [person_one.title]."
-                    if rank_tits(person_one.tits) < rank_tits(person_two.tits):
-                        mc.name "I've got to give it to [person_one.title]. I like them perky."
-                    else:
-                        mc.name "I've got to give it to [person_one.title]. I like them big."
-                    $ person_one.change_happiness(5)
-                    $ person_one.change_love(1 + person_one.get_opinion_score("showing her tits"))
-                    $ person_two.draw_person()
-                    person_two.char "See? Now that we've settled that, can we get back to work? It feels weird to be talking about our breasts with our boss."
-                    $ person_one.draw_person()
-                    person_one.char "I suppose. Thanks for the help, [person_one.mc_title]."
-
-                "[person_two.title] has nicer tits": # She gets a sluttiness boost along with a small love boost.
-                    if rank_tits(person_one.tits) > rank_tits(person_two.tits):
-                        mc.name "I've got to give it to [person_two.title]. I like them perky."
-                    else:
-                        mc.name "I've got to give it to [person_two.title]. I like them big."
-                    $ person_one.draw_person()
-                    person_one.char "Exactly! You're just going to have to accept that you're smoking hot [person_two.title]."
-                    $ person_two.draw_person()
-                    $ person_two.change_slut_temp(2 + person_one.get_opinion_score("showing her tits"))
-                    $ person_two.change_love(1 + person_one.get_opinion_score("showing her tits"))
-                    person_two.char "Fine, I guess my tits are pretty nice. Shouldn't we be getting back to work?"
-                    $ person_one.draw_person()
-                    person_one.char "I suppose. Thanks for the help [person_one.mc_title]."
-                    "She gives you a smile and a wink, then leaves the room with [person_two.title]."
-
-                "I'm going to need a closer look" if not person_one.outfit.tits_visible() or not person_two.outfit.tits_visible(): #Requires high obedience, sluttiness, or a uniform policy for the less slutty girl.
-                    mc.name "Hmm. It's a close call, I'm going to need to take a moment for this and get a better look."
-                    $ person_one.draw_person()
-                    if person_one.outfit.tits_visible():
-                        # If her tits are already out then it must be her friend who has a shirt on.
-                        "[person_one.title] thrusts her chest forward and displays her tits proudly."
-                        person_one.char "Well, here are mine. Come on [person_two.title], whip 'em out!"
-                    else:
-                        person_one.char "Of course."
-                        $ the_item = person_one.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
-                        "[person_one.title] doesn't hesitate to strip off her [the_item.name]."
-                        while the_item is not None and not person_one.outfit.tits_visible():
-                            $ person_one.outfit.remove_clothing(the_item)
-                            $ person_one.draw_person()
-                            $ the_item = person_one.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
-                        $ del the_item
-                        "She pulls her tits out for you, displaying them proudly."
-                        if person_one.outfit.tits_visible():
-                            $ person_one.break_taboo("bare_tits")
-                            person_one.char "There, what do you think now [person_one.mc_title]?"
-
-                    if not person_two.outfit.tits_visible():
-                        $ person_two.draw_person()
-                        person_two.char "Oh my god, are we really doing this?"
-                        $ person_one.draw_person()
-                        person_one.char "Come on, cut loose a little! It's just a little friendly competition, right?"
-                        $ person_two.draw_person()
-                        $ the_item = person_two.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
-                        if person_two.get_opinion_score("showing her tits") > 0:
-                            $ person_two.discover_opinion("showing her tits")
-                            "[person_two.title] bites her lip and giggles."
-                            person_two.char "Fine! I can't believe I'm doing this!"
-                            "She starts to strip down, eagerly pulling off her [the_item.name]."
-                            $ person_two.change_slut_temp(person_two.discover_opinion("showing her tits"))
-                        elif person_two.obedience >= 120:
-                            person_two.char "Do you really want me to do this [person_two.mc_title]?"
-                            mc.name "I do, now show them to us."
-                            "She nods meekly and starts to strip down, starting with her [the_item.name]."
-                            $ person_two.change_obedience(1)
-                        elif corporate_enforced_nudity_policy.is_active() or maximal_arousal_uniform_policy.is_active():
-                            "[person_two.title] hesitates for a second."
-                            mc.name "Just consider this a temporary change to your uniform, [person_two.title]. I could have you walking around topless all day if I wanted to."
-                            person_two.char "Fine, I guess I did agree to that..."
-                            "She starts to strip down, starting with her [the_item.name]."
-                            $ person_two.change_obedience(1)
-                        else:
-                            person_two.char "I can't do this, [person_one.title]! You're crazy!"
-                            $ person_one.draw_person()
-                            "[person_one.title] jiggles her tits."
-                            person_one.char "Look at me, I'm doing it! Here, let me help you."
-                            $ person_two.draw_person()
-                            "[person_one.title] moves behind [person_two.title] and starts to dress her down, starting with her [the_item.name]."
-
-                        while the_item is not None and not person_two.outfit.tits_visible():
-                            $ person_two.outfit.remove_clothing(the_item)
-                            $ person_two.draw_person()
-                            $ the_item = person_two.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
-
-                        $ del the_item
-                        if person_two.get_opinion_score("showing her tits") < 0:
-                            "When she has her tits out she crosses her arms in front of her in a small attempt to preserve her modesty."
-                            $ person_one.draw_person()
-                            person_one.char "[person_one.mc_title] can't see them if you keep them covered up. Here..."
-                            $ person_two.draw_person()
-                            "[person_one.title] takes her friend's hands and move them to her hips, then cups them and gives them a squeeze in front of you."
-                        else:
-                            "When she has her tits out she puts her hands on her hips and smiles at you, exposed and ready for your inspection."
-                            $ person_one.draw_person()
-                            person_one.char "That's it, look at these puppies, [person_one.mc_title]..."
-                            $ person_two.draw_person()
-                            "She gets behind her friend and cups her breasts, giving them a squeeze."
-
-                        $ person_two.break_taboo("bare_tits")
-                        person_two.char "Hey, go easy on them! Well then [person_two.mc_title], who's your pick? Me or [person_one.title]?"
-                    menu:
-                        "[person_one.title] has nicer tits": #She's already slutty, but gets a love boost
-                            "You take a moment to consider both of their naked racks, then nod towards [person_one.title]."
-                            if rank_tits(person_one.tits) < rank_tits(person_two.tits):
-                                mc.name "I've got to give it to [person_one.title]. I like them perky."
-                            else:
-                                mc.name "I've got to give it to [person_one.title]. I like them big."
-                            $ person_one.draw_person()
-                            $ person_one.change_happiness(5)
-                            $ person_one.change_love(1 + person_one.get_opinion_score("showing her tits"))
-                            $ person_two.change_slut_temp(2 + person_two.get_opinion_score("showing her tits"))
-                            person_two.char "So I got naked just to lose, huh?"
-                            $ person_one.draw_person()
-                            person_one.char "I guess you did, but at least you get to see some nice tits."
-                            "She jiggles her chest at her friend, who laughs and waves her off."
-                            $ person_two.draw_person()
-                            person_two.char "Uh huh. Come on, you've had your fun. We need to get back to work."
-
-                        "[person_two.title] has nicer tits": # She gets a sluttiness boost along with a small love boost.
-                            if rank_tits(person_one.tits) > rank_tits(person_two.tits):
-                                mc.name "I've got to give it to [person_two.title]. I like them perky."
-                            else:
-                                mc.name "I've got to give it to [person_two.title]. I like them big."
-                            $ person_two.draw_person()
-                            person_two.char "Well, at least I didn't get naked just to lose."
-                            $ person_two.change_slut_temp(4 + person_one.get_opinion_score("showing her tits"))
-                            $ person_two.change_love(1 + person_one.get_opinion_score("showing her tits"))
-                            $ person_one.draw_person()
-                            person_one.char "You've got some award winning tits on you, you should be proud of them!"
-                            $ person_two.draw_person()
-                            person_two.char "I feel like [person_two.mc_title] was the real winner here. Come on, we should be getting back to work."
-                    $ person_one.draw_person()
-                    person_one.char "Yeah, you're probably right."
-                    "[person_one.title] gives you a smile and a wink, then leaves the room with [person_two.title]."
-                    $ person_one.review_outfit()
-                    $ person_two.review_outfit()
-
-        else: #She wants to suck your dick, but is embarassed about it.
-
-            "You're thinking about taking a break and stretching your legs when you see [person_one.title] and [person_two.title] through your office door."
-            "They're talking quietly with each other, occasionally glancing in your direction. When [person_two.title] sees you watching she looks away quickly."
-            "[person_one.title] stands up and grabs her friend's hand, pulling her out of her chair. They walk over to you together."
-            $ person_one.draw_person()
-            person_one.char "[person_one.mc_title], could me and [person_two.title] talk to you privately for a moment?"
-            if person_two.effective_sluttiness("sucking_cock") < 50: #She's embarassed, but wants to do it
-                $ person_two.draw_person()
-                person_two.char "It's nothing important, it could probably wait until later. In fact, never mind at all."
-                $ person_one.draw_person()
-                person_one.char "[person_two.title], I know you want to do this. Don't chicken out now."
-                mc.name "I can spare a moment. Close the door."
-                "[person_one.title] closes the door, then stands behind [person_two.title]."
-                mc.name "So, what can I help you two with?"
-                person_two.char "I... I mean, we... Uh..."
-                $ person_one.draw_person()
-                person_one.char "She's very nervous, let me her out help out."
-                if person_two.sex_record.get("Blowjobs", 0) == 0:
-                    person_one.char "[person_two.title] has always wanted to suck your cock, but was too scared to ask."
-                else:
-                    person_one.char "[person_two.title] really liked sucking your cock and wants to do it again, but was too scared to ask."
-                $ person_two.draw_person()
-                if person_two.get_opinion_score("giving blowjobs") < 0:
-                    $ person_two.discover_opinion("giving blowjobs")
-                    person_two.char "I actually don't like giving blowjobs, but [person_one.title] says it's an important skill for a woman to have."
-                else:
-                    "[person_two.possessive_title] nods, blushing intensely."
-                    person_two.char "I swear I don't normally do things like this..."
-
-            else: #She's a major slut herself and wants to get some dick down her throat.
-                $ person_two.draw_person()
-                person_two.char "It won't take long, I promise."
-                mc.name "I can spare a moment. Close the door."
-                "[person_one.title] closes the door, then stands behind [person_two.title]."
-                mc.name "So, what can I help you two with?"
-                person_two.char "I was talking to [person_one.title] and we started talking about your cock..."
-                if person_two.sex_record.get("Blowjobs", 0) > 0:
-                    person_two.char "It brought back some good memories, so I was hoping you'd let me suck you off."
-                else:
-                    person_two.char "I haven't had it in my mouth before, and I really want to. Would you let me suck you off?"
-
-
-            menu:
-                "Let [person_two.title] give you a blowjob":
-                    mc.name "I'm not about to say no to an offer like that."
-                    $ person_one.draw_person()
-                    if girlfriend_role in person_one.special_role or affair_role in person_one.special_role:
-                        person_one.char "I didn't think you would sweetheart."
-                        "[person_one.title] leans over your desk and gives you a kiss, then whispers in your ear."
-                        person_one.char "A little gift from me. You two have fun."
-                        "She smiles and steps out of the room, leaving you and [person_two.title] alone."
-
-                    else:
-                        person_one.char "I didn't think you would. You two enjoy yourselves."
-                        "She gives [person_two.title] a smack on the ass as she leaves the room."
-                        person_one.char "Go get him girl."
-
-                    $ mc.change_arousal(40)
-                    $ person_two.change_arousal(40)
-                    $ person_two.draw_person()
-                    call fuck_person(person_two, start_position = blowjob,  position_locked = True, affair_ask_after = True) from _call_fuck_person_18
-                    $ the_report = _return
-                    if the_report.get("guy orgasms", 0) > 0:
-                        "You sit down in your office chair, thoroughly drained. [person_two.title] smiles, seemingly proud of her work."
-                        mc.name "So, was that everything you wanted it to be?"
-                        person_two.char "It was fun, I can't wait to tell [person_one.title] all about it."
-
-                    else:
-                        "You sit down in your office chair and sigh."
-                        person_two.char "I'm sorry, I'm not doing a good job, am I?"
-                        mc.name "You were doing fine, I'm just not in the mood. You should get back to work."
-                        $ person_two.change_happiness(-5)
-                    $ person_two.review_outfit(dialogue = False)
-                    "[person_two.possessive_title] takes a moment to get herself tidied up, then steps out of your office."
-
-                "Decline her offer":
-                    mc.name "I'm flattered, but I'm not in the mood right now."
-                    person_two.char "Of course, sorry I even brought it up [person_two.mc_title]!"
-                    "She hurries out of your office. [person_one.title] shakes her head and sighs."
-                    $ person_one.draw_person()
-                    person_one.char "Really? I bring you a cute girl to suck your dick and you're not in the mood? I'll never understand men..."
-                    "She shrugs and leaves your office, following her friend."
-
-    python:
-        del person_one
-        del person_two
-        del the_relationship
-        renpy.scene("Active")
-    return
-
-
-
-#################
-## HOME CRISES ##
-#################
-
-init 1 python:
-    def mom_outfit_help_requirement():
-        if mc_at_home() and time_of_day==4 and (day%7==6 or day%7==0 or day%7==1 or day%7==2 or day%7==3): #It has to be a day before a weekday, so she has work in the morning.
-            return True
-        return False
-
-    mom_outfit_help_crisis = Action("Mom Outfit Help Crisis ",mom_outfit_help_requirement,"mom_outfit_help_crisis_label")
-    crisis_list.append([mom_outfit_help_crisis,5])
-
-label mom_outfit_help_crisis_label():
-    $ the_person = mom
-    # Your mom asks for help planning an outfit for the next day. As a bonus you get to watch her strip down between outfits (peek/don't peek decision given, she doesn't care at high sluttiness)
-    if not mom in mc.location.people:
-        #She's in a different room, shh calls you in.
-        the_person.char "[the_person.mc_title], can you help me with something for a moment?"
-        "You hear [the_person.possessive_title] call for you from her bedroom."
-        menu:
-            "Help [the_person.possessive_title]":
-                mc.name "Sure thing, I'll be right there."
-                $ mom_bedroom.show_background()
-                $ the_person.draw_person()
-                "You step into [the_person.possessive_title]. She's standing at the foot of her bed and laying out a few sets of clothing."
-                mc.name "Hey Mom, what's up?"
-
-            "Say you're busy":
-                mc.name "Sorry [the_person.title], I'm a little busy at the moment."
-                the_person.char "Okay, I'll ask your sister."
-                $ renpy.scene("Active")
-                return
-    else:
-        #She's in the room with you right now (how? no clue, but maybe it'll happen one day!)
-        $ the_person.draw_person()
-        the_person.char "[the_person.mc_title], could you help me with something for a moment?"
-        menu:
-            "Help [the_person.possessive_title]":
-                mc.name "Sure thing, what's up?"
-                "[the_person.possessive_title] goes over to her closet and pulls out a few sets of clothing. She starts to lay them out."
-
-            "Say you're busy":
-                mc.name "Sorry Mom, I should really be getting to bed."
-                the_person.char "That's okay [the_person.mc_title], I'll ask your sister then."
-                $ renpy.scene("Active")
-                return
-
-    the_person.char "I've got a meeting with an important client tomorrow and I don't know what I should wear."
-    the_person.char "Could you give me your opinion?"
-    mc.name "Of course, lets take a look!"
-    $ first_outfit = the_person.wardrobe.decide_on_outfit(the_person.sluttiness) # A normal outfit for her, made from her wardrobe.
-    $ second_outfit = None # Changes her goals based on how you respond to the first one (ie. she tones it down, makes it sluttier, or keeps it the way it is)
-    $ third_outfit = None # She asks you to put something together from her wardrobe. If it's reasonable for her she'll add it to her wardrobe.
-    $ caught = False #Did you get caught watching her strip
-
-    if the_person.effective_sluttiness(["underwear_nudity","bare_pussy","bare_tits"]) + the_person.love < 30: #She really doesn't want you to see anything
-        the_person.char "Okay, I'll need a moment to get changed."
-        mc.name "I can just turn around, if that would be faster."
-        the_person.char "I'll just be a second. Go on, out."
-        $ renpy.scene("Active")
-        "[the_person.possessive_title] shoos you out of her bedroom. You lean against her door and wait."
-        the_person.char "Okay, all done. Come on in!"
-
-    elif the_person.effective_sluttiness(["underwear_nudity","bare_pussy","bare_tits"]) + the_person.love < 50: #She just asks you to turn your back, so you can peek if you want.
-        the_person.char "Okay, I'll need a moment to get changed. Could you just turn around for a second?"
-        $ renpy.scene("Active")
-        "You nod and turn your back to [the_person.possessive_title]. You hear her moving behind you as she starts to get undressed."
-        menu:
-            "Try and peek":
-                # Chance to get spotted. Otherwise you get to watch as she strips clothing off one item at a time until she is naked.
-                $ the_person.draw_person()
-                "You shuffle to the side and manage to get a view of [the_person.possessive_title] using a mirror in the room."
-
-                $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                while strip_choice is not None and not caught:
-                    $ the_person.draw_animated_removal(strip_choice)
-                    "You watch as [the_person.possessive_title] take off her [strip_choice.name]."
-                    if renpy.random.randint(0,100) < 10: #you got caught
-                        the_person.char "I'll be done in just a second [the_person.mc_title]..."
-                        "Her eyes glance at the mirror you're using to watch her. You try to look away, but your eyes meet."
-                        $ the_person.draw_person(emotion = "angry")
-                        $ the_person.change_happiness(-5)
-                        $ the_person.change_slut_temp(1+the_person.get_opinion_score("not wearing anything"))
-                        the_person.char "[the_person.mc_title], are you watching me change!"
-                        mc.name "No, I... The mirror was just sort of there."
-                        "She covers herself with her hands and motions for the door."
-                        the_person.char "Could you wait outside, please?"
-                        $ renpy.scene("Active")
-                        "You hurry outside and close the door to [the_person.possessive_title]'s bedroom behind you."
-                        the_person.char "Okay, you can come back in."
-                        $ caught = True
-                    else:
-                        menu:
-                            "Keep watching":
-                                $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-
-                            "Stop peeking":
-                                "You pull your eyes away from the mirror and do your best not to peek."
-                                $ renpy.scene("Active")
-                                $ strip_choice = None
-
-                if not caught:
-                    "[the_person.possessive_title] finishes stripping down and starts to get dressed in her new outfit. After a few moments she's all put together again."
-                    the_person.char "Okay [the_person.mc_title], you can turn around now."
-
-            "Wait until she's done":
-                "You twiddle your thumbs until [the_person.possessive_title] is finished changing."
-                the_person.char "Okay, all done. You can turn around now."
-
-    else: #She's slutty enough that she doesn't care if you watch or not.
-        the_person.char "Just give me one second to get dressed [the_person.mc_title]."
-        "[the_person.possessive_title] starts to strip down in front of you."
-        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-        while strip_choice is not None:
-            $ the_person.draw_animated_removal(strip_choice)
-            "You watch as [the_person.possessive_title] take off her [strip_choice.name]."
-            $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-
-        "Once she's stripped naked she grabs her new outfit and starts to put it on."
-        if the_person.update_outfit_taboos(): #Some taboo was broken.
-            the_person.char "I should probably have told you to look away, but you don't mind, right?"
-            the_person.char "It's nothing you haven't seen when you were younger."
-            mc.name "I don't mind at all [the_person.title]."
-            "She smiles at you and finishes getting dressed again."
-
-
-    #$ the_person.outfit = first_outfit changed v0.24.1
-    $ the_person.apply_outfit(first_outfit, update_taboo = True)
-    $ the_person.draw_person()
-    the_person.char "Well, what do you think?"
-    "You take a moment to think before responding."
-    menu:
-        "Say it's too revealing":
-            mc.name "I don't think it's very appropriate for work Mom. Maybe you should try something a little less... revealing."
-            $ the_person.change_slut_temp(-2)
-            the_person.char "Maybe you're right. Okay, I'll try something a little more conservative for this next outfit."
-            $ second_outfit = the_person.wardrobe.decide_on_outfit(the_person.sluttiness-10, 0) #Note that if we have impossible values for this function it'll keep exanding the threshold until it's possible
-
-        "Say she looks beautiful in it":
-            mc.name "You look beautiful Mom, I think it would be perfect."
-            $ the_person.change_happiness(5)
-            $ the_person.change_love(1)
-            "She smiles and blushes."
-            the_person.char "You aren't just saying that, are you? I want your real opinion"
-            mc.name "It's a great look for you."
-            the_person.char "Great! I want to try another outfit before I settle on this one though, if you don't mind."
-            $ second_outfit = the_person.wardrobe.decide_on_outfit(the_person.sluttiness, 0)
-
-        "Say it's not revealing enough":
-            mc.name "I don't know Mom, it's a little stuffy, isn't it? Maybe you should pick something that's a little more modern and fun."
-            $ the_person.change_slut_temp(1+the_person.get_opinion_score("skimpy uniforms"))
-            $ the_person.discover_opinion("skimpy uniforms")
-            if the_person.get_opinion_score("skimpy uniforms") >= 0:
-                the_person.char "Do you think so? Maybe it is a little too conservative."
-                "She nods and turns towards her closet."
-                the_person.char "Okay, I'll give something else a try then."
-            else:
-                the_person.char "Oh no, I hate having to dress in those skimpy little outfits everyone wants their secretary in these days."
-                "She sighs and shrugs."
-                the_person.char "Well, if that's what you think I'll give something else a try."
-            $ second_outfit = the_person.wardrobe.decide_on_outfit(the_person.sluttiness+10, 10)
-
-
-    #Strip choices for the second peek section
-    if the_person.effective_sluttiness(["underwear_nudity","bare_pussy","bare_tits"]) + the_person.love < 35 or caught: #She really doesn't want you to see anything
-        the_person.char "Okay, I just need to get changed again."
-        $ renpy.scene("Active")
-        "[the_person.possessive_title] shoos you out of the room while she changes into her new outfit."
-        the_person.char "Okay, come in!"
-
-    elif the_person.effective_sluttiness(["underwear_nudity","bare_pussy","bare_tits"]) + the_person.love < 50: #She just asks you to turn your back, so you can peek if you want.
-        the_person.char "I'm going to need to get changed again."
-        $ renpy.scene("Active")
-        "You turn around to give her some privacy."
-        menu:
-            "Try and peek":
-                # Chance to get spotted. Otherwise you get to watch as she strips clothing off one item at a time until she is naked.
-                $ the_person.draw_person()
-                "You shuffle to the side and manage to get a view of [the_person.possessive_title] using a mirror in the room."
-                $ caught = False
-                $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                while strip_choice is not None and not caught:
-                    $ the_person.draw_animated_removal(strip_choice)
-                    "You watch as [the_person.possessive_title] take off her [strip_choice.name]."
-                    if renpy.random.randint(0,100) < 10: #you got caught
-                        the_person.char "I'll be done in just a second [the_person.mc_title]..."
-                        "Her eyes glance at the mirror you're using to watch her. You try to look away, but your eyes meet."
-                        $ the_person.draw_person(emotion = "angry")
-                        $ the_person.change_happiness(-5)
-                        $ the_person.change_slut_temp(1+the_person.get_opinion_score("not wearing anything"))
-                        the_person.char "[the_person.mc_title], are you watching me change!"
-                        mc.name "No, I... The mirror was just sort of there."
-                        "She covers herself with her hands and motions for the door."
-                        the_person.char "Could you wait outside, please?"
-                        $ renpy.scene("Active")
-                        "You hurry outside and close the door to [the_person.possessive_title]'s bedroom behind you."
-                        the_person.char "Okay, you can come back in."
-                        $ caught = True
-                    else:
-                        menu:
-                            "Keep watching":
-                                $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-
-                            "Stop peeking":
-                                "You pull your eyes away from the mirror and do your best not to peek."
-                                $ renpy.scene("Active")
-                                $ strip_choice = None
-
-                if not caught:
-                    "[the_person.possessive_title] finishes stripping down and starts to get dressed in her new outfit. After a few moments she's all put together again."
-                    the_person.char "Okay [the_person.mc_title], you can turn around now."
-
-            "Wait until she's done":
-                "You twiddle your thumbs until [the_person.possessive_title] is finished changing."
-                the_person.char "Okay, all done. You can turn around now."
-
-    else: #She's slutty enough that she doesn't care if you watch or not.
-        the_person.char "It'll just take me a second to get changed."
-        "[the_person.possessive_title] starts to strip down in front of you."
-        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-        while strip_choice is not None:
-            $ the_person.draw_animated_removal(strip_choice)
-            "You watch as [the_person.possessive_title] take off her [strip_choice.name]."
-            $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-
-        $ del strip_choice
-        "Once she's stripped naked she grabs another outfit and starts to put it on."
-
-    $ the_person.apply_outfit(second_outfit, update_taboo = True)
-    #$ the_person.outfit = second_outfit changed v0.24.1
-    $ the_person.draw_person()
-
-    the_person.char "Alright, there we go! Now, do you think this is better or worse than what I was just wearing?"
-    $ the_person.draw_person(position = "back_peek")
-    "She gives you a few turns, letting you get a look at the full outfit."
-    $ the_person.draw_person()
-    menu:
-        "Suggest the first outfit":
-            mc.name "I think you looked best in the first outfit, you should wear that."
-            "She smiles and nods."
-            $ the_person.change_happiness(5)
-            the_person.char "I think you're right, I'll put it away for tomorrow."
-
-        "Suggest the second outfit":
-            mc.name "I think this one suits you better, you should wear it tomorrow."
-            "She smiles and nods."
-            $ the_person.change_happiness(5)
-            the_person.char "I think you're right, it does look good on me."
-
-        "Suggest your own outfit":
-            mc.name "They both look good, but I think I have another idea for something you could wear..."
-            "You go to [the_person.possessive_title]'s closet and start to put together an outfit of your own for her."
-            $ renpy.scene("Active")
-            call screen outfit_select_manager(slut_limit = the_person.sluttiness + 10)
-            $ third_outfit = _return
-            $ the_person.draw_person()
-
-            if third_outfit == "No Return":
-                "You try a few different combinations, but you can't come up with anything you think Mom will like."
-                mc.name "Sorry Mom, I thought I had an idea but I guess I was wrong."
-                the_person.char "That's fine [the_person.mc_title]. I think I'm going to go with the first one anyway."
-                $ the_person.change_happiness(5)
-            else:
-                "You lay the outfit out for [the_person.possessive_title]. She looks it over and nods."
-                the_person.char "I'll try it on, but I think I like it!"
-
-                if the_person.sluttiness + the_person.love < 35 or caught: #She really doesn't want you to see anything
-                    $ renpy.scene("Active")
-                    "[the_person.possessive_title] shoos you out of the room while she changes into her new outfit."
-                    the_person.char "Okay, come back!"
-
-                elif the_person.effective_sluttiness(["underwear_nudity","bare_pussy","bare_tits"]) + the_person.love < 50: #She just asks you to turn your back, so you can peek if you want.
-                    the_person.char "I'm just going to get changed one last time, if you could turn around for a second."
-                    $ renpy.scene("Active")
-                    "You turn around to give her some privacy."
-                    menu:
-                        "Try and peek":
-                            # Chance to get spotted. Otherwise you get to watch as she strips clothing off one item at a time until she is naked.
-                            $ the_person.draw_person()
-                            "You shuffle to the side and manage to get a view of [the_person.possessive_title] using a mirror in the room."
-                            $ caught = False
-                            $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                            while strip_choice is not None and not caught:
-                                $ the_person.draw_animated_removal(strip_choice)
-                                "You watch as [the_person.possessive_title] take off her [strip_choice.name]."
-                                if renpy.random.randint(0,100) < 10: #you got caught
-                                    the_person.char "I'll be done in just a second [the_person.mc_title]..."
-                                    "Her eyes glance at the mirror you're using to watch her. You try to look away, but your eyes meet."
-                                    $ the_person.draw_person(emotion = "angry")
-                                    $ the_person.change_happiness(-5)
-                                    $ the_person.change_slut_temp(1+the_person.get_opinion_score("not wearing anything"))
-                                    the_person.char "[the_person.mc_title], are you watching me change!"
-                                    mc.name "No, I... The mirror was just sort of there."
-                                    "She covers herself with her hands and motions for the door."
-                                    the_person.char "Could you wait outside, please?"
-                                    $ renpy.scene("Active")
-                                    "You hurry outside and close the door to [the_person.possessive_title]'s bedroom behind you."
-                                    the_person.char "Okay, you can come back in."
-                                    $ caught = True
-                                else:
-                                    menu:
-                                        "Keep watching":
-                                            $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-
-                                        "Stop peeking":
-                                            "You pull your eyes away from the mirror and do your best not to peek."
-                                            $ renpy.scene("Active")
-                                            $ strip_choice = None
-
-                            if not caught:
-                                "[the_person.possessive_title] finishes stripping down and starts to get dressed in her new outfit. After a few moments she's all put together again."
-                                the_person.char "Okay [the_person.mc_title], you can look."
-
-                        "Wait until she's done":
-                            "You twiddle your thumbs until [the_person.possessive_title] is finished changing."
-                            the_person.char "Okay, all done. You can look."
-
-                else: #She's slutty enough that she doesn't care if you watch or not.
-                    the_person.char "It'll just take a moment for me to slip into this."
-                    "[the_person.possessive_title] starts to strip down in front of you."
-                    $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                    while strip_choice is not None:
-                        $ the_person.draw_animated_removal(strip_choice)
-                        "You watch as [the_person.possessive_title] take off her [strip_choice.name]."
-                        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                    "Once she's stripped naked she grabs another outfit and starts to put it on."
-                    $ del strip_choice
-
-                $ the_person.apply_outfit(third_outfit, update_taboo = True)
-                #$ the_person.outfit = third_outfit changed v0.24.1
-                $ the_person.draw_person()
-                $ the_person.change_happiness(5)
-                $ the_person.change_obedience(5)
-                $ the_person.change_love(1)
-                the_person.char "I think you have great fashion sense [the_person.mc_title]! It's settled, I'll wear this tomorrow!"
-                $ the_person.add_outfit(third_outfit,"full")
-
-    the_person.char "Thank you so much for the help [the_person.mc_title]. I don't know why but I've been feeling much more unsure about the way I dress lately."
-    mc.name "Any time, I'm just glad to help."
-    "You leave [the_person.possessive_title] in her room as she starts to pack her clothes away."
-
-    python:
-        del first_outfit
-        del second_outfit
-        del third_outfit
-        renpy.scene("Active")
-    return
-
-init 1 python:
-    def mom_lingerie_surprise_requirement():
-        if mc_at_home() and time_of_day==4 and not mc.location.has_person(mom): #Make sure we aren't already in the same room because we were sleeping together.
-            if mom.effective_sluttiness("underwear_nudity") > 40 and mom.love > 40:
-                return True
-        return False
-
-    mom_lingerie_surprise_crisis = Action("Mom Lingerie Surprise Crisis", mom_lingerie_surprise_requirement, "mom_lingerie_surprise_label")
-    crisis_list.append([mom_lingerie_surprise_crisis,3])
-
-label mom_lingerie_surprise_label():
-    #In which your Mom comes to your room at night in some sexy lingerie and fools around with you. Triggers at high sluttiness and love.
-    $ the_person = mom
-    "You are woken up in the middle of the night by the sound of your bedroom door closing."
-    "You sit up and turn on the lamp beside your bed."
-    $ the_person.apply_outfit(lingerie_wardrobe.pick_random_outfit(), update_taboo = True)
-    $ the_person.draw_person(position = "stand4")
-    the_person.char "I'm sorry to wake you up [the_person.mc_title], but I wanted to ask you something."
-    "[the_person.possessive_title] is standing by the door, wearing some very revealing lingerie. She walks over to your bed and sits down beside you."
-    $ the_person.draw_person(position = "sitting")
-    mc.name "What did you want to ask?"
-    the_person.char "I know you've been busy with work, and I'm very proud, but sometimes I worry you're not having your needs met."
-    "She places a hand on your arm and slides it up to your chest, caressing you with her soft fingers."
-    the_person.char "Your physical needs, I mean. I know I'm your mother, but I thought I could dress up and you could pretend I was someone else. Someone not related to you."
-    menu:
-        "Ask for her help (tooltip)Ask your mother to help satisfy your physical desires.":
-            mc.name "That would be amazing Mom, I could really use your help."
-            $ the_person.change_slut_temp(2)
-            "[the_person.possessive_title] smiles and bounces slightly on your bed."
-            if the_person.effective_sluttiness() < 50:
-                the_person.char "Excellent! Now you just pretend that I'm... your highschool sweetheart, and that we aren't related. Okay?"
-
-            elif the_person.effective_sluttiness() < 80:
-                the_person.char "Excellent! Don't think of me as your mother, just think of me as a sexy mom from down the street. I'm a real milf, okay?"
-
-            else:
-                the_person.char "Excellent! Now don't think of me as your mom, just think of me as your private, slutty milf. I'll do whatever your cock wants me to do, okay?"
-            "You nod and she slides closer to you on the bed."
-
-            $ the_person.add_situational_obedience("crisis_stuff", 25, "I'm doing it for my family.")
-            call fuck_person(the_person) from _call_fuck_person_14
-            $ the_report = _return
-            if the_report.get("girl orgasms", 0) > 0:
-                "[the_person.possessive_title] needs a few minutes to lie down when you're finished. Bit by bit her breathing slows down."
-                $ the_person.change_love(5)
-                the_person.char "Oh [the_person.mc_title], that was magical. I've never felt so close to you before..."
-
-            else:
-                "When you're finished [the_person.possessive_title] gives you a kiss on your forehead and stands up to leave."
-                $ the_person.change_love(3)
-                $ the_person.draw_person(position = "back_peek")
-                the_person.char "Sweet dreams."
-
-            $ the_person.clear_situational_obedience("crisis_stuff")
-
-        "Not tonight":
-            mc.name "That's very sweet of you Mom, and you look very nice, but I really just need a good nights sleep."
-            "You see a split second of disappointment on [the_person.possessive_title]'s face, then it's gone and she blushes and turns away."
-            the_person.char "Of course, I'm so sorry to have bothered you. I mean, it would be strange if we did anything like that, right?"
-            $ the_person.draw_person(position = "walking_away")
-            "She stands up and leaves your room. You're asleep within minutes."
-
-    $ renpy.scene("Active")
-    return
-
-init 1 python:
-    def mom_selfie_requirement():
-        if not mc_at_home() and not (time_of_day == 0 or time_of_day == 4): #She always sends you text while you're not at home for the middle part of the day
-            if not mom in mc.location.people: #Obviously don't do it if she's right there with you.
-                if mom.love >= 15:
-                    return True
-        return False
-
-    mom_selfie_crisis = Action("Mom Selfie Crisis", mom_selfie_requirement, "mom_selfie_label")
-    crisis_list.append([mom_selfie_crisis,7])
-
-label mom_selfie_label():
-    #TODO: have a way of saving and reviewing selfies in the future.
-    #TODO: Have a proper weekday/weekend schedule for people and use that to determine when Mom is at home, at work, or out on the town.
-    $ the_person = mom
-    $ lowest_stat = mom.sluttiness
-    if the_person.love < lowest_stat:
-        $ lowest_stat = mom.love
-
-    "While you're going about your day you get a text from your mother."
-    if lowest_stat >= 100:
-        #Both love and sluttiness are very high, she sends you super slutty selfies and says she can't wait till you come home, fuck her, and make her your woman.
-        $ ran_num = renpy.random.randint(0,2) #Used to determine which variant we use to avoid spamming the player with the exact same texts.
-        if ran_num == 0:
-            if mc.business.is_weekend():
-                $ the_person.apply_outfit(lingerie_wardrobe.pick_random_outfit(), update_taboo = True)
-                $ the_person.draw_person(position = "missionary", emotion = "happy")
-                "Her first message is a selfie of herself lying down on your bed in lingerie."
-                the_person.char "I can't wait until you come home and make love to me. I wish I could spend every minute of every day worshiping your cock like a good mother should."
-            else:
-                the_person.char "It's so hard not to talk about you at work. The other women are gossiping and I just want to tell them how good it feels when you try and breed me..."
-                the_person.char "My pussy full of your warm cum, knowing that I can take care of you the way only a mother could."
-                the_person.char "I think I'm going to go touch myself in the bathroom. I hope you are having a great day too [the_person.mc_title]!"
-
-        elif ran_num == 1:
-            python:
-                for i in range(3):
-                    the_person.outfit.remove_random_upper(top_layer_first = True)
-                    the_person.outfit.remove_random_lower(top_layer_first = True)
-            the_person.char "Hi [the_person.mc_title], I hope I'm not interrupting your busy work day. This is just a quick reminder..."
-            $ the_person.draw_person(emotion = "happy")
-            $ the_person.update_outfit_taboos()
-            "You get a selfie from [the_person.possessive_title] naked in front of her bedroom mirror."
-            the_person.char "...that your Mom wants to feel you inside her tonight. Don't stay out too late!"
-
-        elif ran_num == 2:
-            #Blowjob pose, she tells you to face fuck her, as is her duty
-            $ the_person.draw_person(position = "blowjob", emotion = "happy", special_modifier = "blowjob")
-            "You get a selfie from [the_person.possessive_title]. She's on her knees, mouth open wide."
-            the_person.char "My mouth is yours to use however you want [the_person.mc_title]."
-            the_person.char "It's my duty to take care of you, so grab and use it whenever you want."
-
-    elif lowest_stat >= 80:
-        #Both are high. Sends you slutty selfies and talks about how she wants to fuck you. Sends them from work, etc.
-        $ ran_num = renpy.random.randint(0,1) #Used to determine which variant we use to avoid spamming the player with the exact same texts.
-        if ran_num == 0:
-            if mc.business.is_weekend():
-                the_person.char "I'm here at home and wishing it was you could help me take these pictures..."
-                python:
-                    for i in range(3):
-                        the_person.outfit.remove_random_upper(top_layer_first = True)
-                        the_person.outfit.remove_random_lower(top_layer_first = True)
-                $ the_person.draw_person(position = "standing_doggy")
-                "[the_person.possessive_title] sends you a selfie her bedroom naked and bent over her bed."
-            else:
-                the_person.char "I'm stuck here at work and all I can think about is you. Wish you were here..."
-                python:
-                    for i in range(3):
-                        the_person.outfit.remove_random_upper(top_layer_first = True)
-                        the_person.outfit.remove_random_lower(top_layer_first = True)
-                $ the_person.draw_person(position = "standing_doggy")
-                "[the_person.possessive_title] sends you a selfie of herself in the office bathroom, naked and bending over the sink."
-            $ the_person.update_outfit_taboos()
-
-        elif ran_num == 1:
-            if mc.business.is_weekend():
-                the_person.char "I know it shouldn't, but thinking about you gets me so wet. You've made me a new woman [the_person.mc_title]."
-            else:
-                the_person.char "I'm at work and stuck at my desk but I can't get you out of my head. I'm so wet, I wonder if anyone would notice if I touched myself..."
-
-    elif lowest_stat >= 60:
-        #Sends you nudes and talks about how she'll help you blow off steam later.
-        $ ran_num = renpy.random.randint(0,3) #Used to determine which variant we use to avoid spamming the player with the exact same texts.
-        if ran_num == 0:
-            if mc.business.is_weekend():
-                the_person.char "I was just about to get in the shower and I thought you might like a peek. Love you [the_person.mc_title]!"
-                python:
-                    for i in range(3):
-                        the_person.outfit.remove_random_upper(top_layer_first = True)
-                        if the_person.outfit.panties_covered(): #If we get down to her panties keep them on, because that's sexier.
-                            the_person.outfit.remove_random_lower(top_layer_first = True)
-                $ the_person.draw_person(emotion = "happy")
-                "[the_person.possessive_title] sends you a picture of herself stripped down in front of her bedroom mirror."
-
-            else:
-                the_person.char "I thought you might be stressed so I snuck away from work to take this for you."
-                python:
-                    for i in range(3):
-                        the_person.outfit.remove_random_upper(top_layer_first = True)
-                        if the_person.outfit.panties_covered():
-                            the_person.outfit.remove_random_lower(top_layer_first = True)
-                $ the_person.draw_person(emotion = "happy")
-                "[the_person.possessive_title] sends you a picture of herself stripped down in the office bathroom."
-                the_person.char "I've got to get back to work. I hope nobody noticed me gone!"
-
-            $ the_person.update_outfit_taboos()
-
-        elif ran_num == 1:
-            the_person.char "I thought you might enjoy this ;)"
-            python:
-                for i in range(3):
-                    the_person.outfit.remove_random_upper(top_layer_first = True)
-                    the_person.outfit.remove_random_lower(top_layer_first = True)
-            $ the_person.draw_person(emotion = "happy")
-            "Mom sends you a picture of herself stripped naked in front of her bathroom mirror."
-            $ the_person.update_outfit_taboos()
-        elif ran_num == 2:
-            the_person.char "I've been trying on underwear all day. Would you like a peek?"
-
-            "[the_person.possessive_title] doesn't wait for a reply and starts sending selfies."
-            python:
-                for i in range(3):
-                    the_person.apply_outfit(the_person.wardrobe.get_random_appropriate_underwear(the_person.sluttiness, guarantee_output = True), update_taboo = True)
-                    #the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear(the_person.sluttiness, guarantee_output = True) changed v0.24.1
-                    the_person.draw_person(emotion = "happy")
-                    renpy.say("","")
-            the_person.char "I hope you think your mommy looks sexy in her underwear ;)"
-
-        elif ran_num == 3:
-            python:
-                while not the_person.outfit.tits_visible():
-                    the_person.outfit.remove_random_upper(top_layer_first = True)
-
-            if mc.business.is_weekend():
-                the_person.char "I'm so glad it's the weekend, I can finally let these girls out..."
-                $ the_person.draw_person(emotion = "happy")
-                "She sends you a selfie from the kitchen with her top off."
-                the_person.char "I hope your day is going well, love you!"
-
-            else:
-                the_person.char "I think I'd be much more popular here at work if I was allowed to dress like this..."
-                $ the_person.draw_person(emotion = "happy")
-                "She sends you a selfie from her office bathroom with her top off."
-                the_person.char "Oh well, at least I know you appreciate it. I need to get back to work, see you at dinner!"
-            $ the_person.update_outfit_taboos()
-
-    elif lowest_stat >= 40:
-        #Sends you teasing pictures (ie. no shirt or something) and talks about how much she loves you.
-        $ ran_num = renpy.random.randint(0,2) #Used to determine which variant we use to avoid spamming the player with the exact same texts.
-        if ran_num == 0:
-            the_person.char "You're such a hard worker [the_person.mc_title]. Here's a little gift from the woman who loves you most in the world!"
-            $ the_person.outfit.remove_random_upper(top_layer_first = True)
-            $ the_person.draw_person(emotion = "happy")
-            if mc.business.is_weekend():
-                "[the_person.possessive_title] sends you a selfie without her shirt on. The background looks like her bedroom."
-            else:
-                "[the_person.possessive_title] sends you a sends you a selfie without her shirt on. It looks like it was taken in the bathroom of her office."
-            $ the_person.update_outfit_taboos()
-
-        elif ran_num == 1:
-            if mc.business.is_weekend():
-                the_person.char "I wish you were here spending time with me. Maybe this will convince you your mom is a cool person to hang out with!"
-                $ the_person.outfit.remove_random_upper(top_layer_first = True)
-                $ the_person.draw_person(emotion = "happy")
-                "Mom sends you a selfie from her bedroom without her shirt on."
-
-            else:
-                the_person.char "I'm busy here at work but I really wish I could be spending time with you instead. Do you think I'm pretty enough to spend time with ;)"
-                $ the_person.outfit.remove_random_upper(top_layer_first = True)
-                $ the_person.draw_person(emotion = "happy")
-                "Mom sends you a selfie without her shirt on. It looks like she's taken in the bathroom of her office."
-            $ the_person.update_outfit_taboos()
-
-        elif ran_num == 2:
-            $ the_clothing = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
-            if the_clothing:
-                $ the_clothing.colour[3] = the_clothing.colour[3]*0.9 #It's translucent.
-                the_person.char "It looks like my [the_clothing.name] didn't like being in the wash, it's gone all see-through."
-                $ the_person.draw_person(emotion = "happy")
-                if the_clothing.underwear:
-                    "You get a selfie from [the_person.possessive_title] wearing a slightly transparent bra."
-                    if the_person.has_taboo("underwear_nudity"):
-                        the_person.char "Oops, I probably shouldn't be sending pictures like this to my son!"
-                        the_person.char "Oh well, it's not like I'm naked. You better not show it to your friends!"
-                        $ the_person.break_taboo("underwear_nudity")
-                else:
-                    "You get a selfie from [the_person.possessive_title] wearing a slightly transparent top."
-                the_person.char "Oh well, I can still wear it when I'm doing chores around the house. Hope your day is going better, love you!"
-            else:
-                the_person.char "I've looked everywhere, but I just can't find my favorite bra!"
-                $ the_person.draw_person(emotion = "default", the_animation = blowjob_bob, animation_effect_strength = 0.8)
-                "[the_person.possessive_title] sends you a short video of herself walking around your home. Her bare tits bounce with each step."
-                the_person.char "You don't happen to know where it is, do you? I'm wandering around looking for it and it's getting chilly!"
-                if the_person.has_taboo("bare_tits"):
-                    the_person.char "Oops! I hope nobody saw you looking at that, I wasn't thinking about my breasts being out."
-                    the_person.char "I don't mind you seeing them though, just don't go sharing that video with your friends!"
-                    $ the_person.break_taboo("bare_tits")
-            $ the_clothing = None
-
-    elif lowest_stat >= 20:
-        #Sends you normal texts but talks about wanting to get away to talk to you instead
-        $ ran_num = renpy.random.randint(0,4) #Used to determine which variant we use to avoid spamming the player with the exact same texts.
-        if ran_num == 0:
-            the_person.char "I hope I'm not interrupting, I just wanted to say hi and check in. I'm stuck here at work but wish I could spend more time with you."
-            the_person.char "Have a great day, see you later tonight. Love, Mom."
-
-        elif ran_num == 1:
-            the_person.char "I hope you are having a great day [the_person.mc_title]! Imagining you out there working so hard makes me prouder than you can imagine!"
-            the_person.char "I'm looking forward to seeing you at home tonight. Love, Mom."
-
-        elif ran_num == 2:
-            the_person.char "I hope you aren't busy, I was thinking about you and just wanted to say hi!"
-            $ the_person.draw_person(emotion = "happy")
-            if mc.business.is_weekend():
-                "[the_person.possessive_title] sends you a selfie she took in the living room of your house."
-            else:
-                "[the_person.possessive_title] sends you a selfie she took from her office at work."
-        elif ran_num == 3:
-            the_person.char "Kids these days are always sending selfies to each other, right? I hope I'm doing this right!"
-            $ the_person.draw_person(emotion = "happy")
-            if mc.business.is_weekend():
-                "[the_person.possessive_title] sends you a selfie she took in the living room of your house."
-            else:
-                "[the_person.possessive_title] sends you a selfie she took from her office at work."
-        elif ran_num == 4:
-            the_person.char "All your hard work has inspired me [the_person.mc_title], I'm going out for a walk to stay in shape!"
-            $ the_person.draw_person(emotion = "happy", the_animation = blowjob_bob, animation_effect_strength = 0.8)
-            "[the_person.possessive_title] sends you a short video she took of herself outside. She's keeping up a brisk walk and seems slightly out of breath."
-            if not the_person.outfit.wearing_bra():
-                if the_person.has_large_tits():
-                    "She doesn't seem to realize it but it's very obvious [the_person.possessive_title] isn't wearing a bra under her top. Her sizeable breasts heave up and down with each step."
-                else:
-                    "She doesn't seem to realize it but it's very obvious [the_person.possessive_title] isn't wearing a bra under her top. Her perky breasts slightly bounce with each step."
-
-    else:
-        #Sends you normal motherly texts.
-        $ ran_num = renpy.random.randint(0,2) #Used to determine which variant we use to avoid spamming the player with the exact same texts.
-        if ran_num == 0:
-            the_person.char "I hope I'm not interrupting your busy day [the_person.mc_title]. I just wanted to let you know that I'm proud of you and you're doing great work."
-            the_person.char "Keep it up! Dinner will be at the normal time."
-
-        elif ran_num == 1:
-            the_person.char "Remember that your mother loves you no matter what! Have a great day!"
-
-        elif ran_num == 2:
-            the_person.char "Hi [the_person.mc_title], I'm just checking in to make sure you're doing okay. I hope you don't mind your "
-
-    "It's so sweet of her to think of you."
-    $ the_person.apply_outfit(the_person.planned_outfit)
-    $renpy.scene("Active")
-    return
-
-init 1 python:
-    def mom_morning_surprise_requirement():
-        if mc_at_home() and time_of_day==0 and mc.business.is_work_day(): #It is the end of the day.
-            if mom.love >= 45:
-                return True
-        return False
-
-    mom_morning_surprise_crisis = Action("Mom Morning Surprise", mom_morning_surprise_requirement, "mom_morning_surprise_label")
-    morning_crisis_list.append([mom_morning_surprise_crisis, 5])
-
-label mom_morning_surprise_label():
-    $ the_person = mom
-    if the_person.effective_sluttiness() < 50:
-        the_person.char "[the_person.mc_title], it's time to wake up."
-        "You're woken up by the gentle voice of your mother. You struggle to open your eyes and find her sitting on the edge of your bed."
-        $ the_person.draw_person(position="sitting")
-        mc.name "Uh... Huh?"
-        the_person.char "You're normally up by now, but I didn't hear an alarm and I was worried you were going to be late."
-        "You roll over and check your phone. It looks like you forgot to set an alarm and you've overslept."
-        mc.name "Thanks Mom, you really saved me here."
-        $ the_person.change_happiness(3)
-        "She smiles and stands up."
-        $ the_person.draw_person()
-        the_person.char "There's some breakfast in the kitchen, make sure to grab some before you go flying out the door."
-        "You sit up on the side of the bed and stretch, letting out a long yawn."
-        if the_person.effective_sluttiness() < 20:
-            the_person.char "Oh... I should... Uh..."
-            "[the_person.possessive_title] blushes and turns around suddenly. It takes you a moment to realise why: your morning wood pitching an impressive tent with your underwear."
-            mc.name "Sorry Mom, I didn't..."
-            the_person.char "No, it's perfectly natural. I'll give you some privacy."
-            $ the_person.change_slut_temp(2)
-            "She takes one last glance at you then hurries from the room."
-            $ renpy.scene("Active")
-            "You get up and ready, hurrying a little to make up for lost time."
-        else:
-            the_person.char "Oh, and you might want to take care of that before you go out [the_person.mc_title]."
-            "She nods towards your crotch and you realise you're pitching an impressive tent."
-            mc.name "Oh, sorry about that."
-            the_person.char "No, it's perfectly natural and nothing to be embarrassed about."
-            $ the_person.change_slut_temp(3)
-            "She stares at it for a short moment before pulling her eyes back up to meet yours."
-            the_person.char "Certainly nothing to be embarrassed, but I think you should take care of it before you leave."
-            "[the_person.possessive_title] turns around and starts rifling through your closet."
-            $ the_person.draw_person(position = "walking_away")
-            the_person.char "I'll find you a nice outfit to wear to save you some time. Go ahead [the_person.mc_title], pretend I'm not even here. It's nothing I haven't seen before."
-            menu:
-                "Masturbate":
-                    "You pull your underwear down, grab your hard cock, and start to stroke it."
-                    mc.name "Thanks Mom, you're really helping me out this morning."
-                    the_person.char "Anything to help you succeed."
-                    $ the_person.draw_person(position = "back_peek")
-                    "She wiggles her butt, then turns her attention back to putting together an outfit for you."
-                    "You keep jerking yourself off, pulling yourself closer and closer to orgasm."
-                    "You're getting close when [the_person.possessive_title] turns around and walks back towards your bed with a handful of clothes."
-                    the_person.char "I think you'll look really cute in this. Are you almost done [the_person.mc_title]?"
-                    menu:
-                        "Order her to get on her knees" if the_person.obedience >= 130:
-                            mc.name "I'm so close. Get on your knees Mom."
-                            the_person.char "If... if that's what you need to finish."
-                            $ the_person.draw_person(position = "blowjob")
-                            menu:
-                                "Order her to open her mouth" if the_person.obedience >= 140:
-                                    mc.name "Open your mouth Mom."
-                                    the_person.char "[the_person.mc_title], I don't think..."
-                                    mc.name "I'm so close Mom, open your mouth!"
-                                    "She hesitates for a split second, then closes her eyes and opens her mouth."
-                                    $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob")
-                                    "Seeing [the_person.possessive_title] presenting herself for you pushes you past the point of no return."
-                                    $ the_person.cum_in_mouth()
-                                    $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob")
-                                    "You slide forward a little, place the tip of your cock on her bottom lip, and start to fire your load into her mouth."
-                                    "[the_person.possessive_title] stays perfectly still while you cum. When you're done you sit back and sigh."
-                                    "[the_person.title] turns away and spits your cum out into her hand. She takes a long while to say anything."
-                                    the_person.char "I don't... That wasn't what we should do [the_person.mc_title]."
-                                    mc.name "You were just being a loving mother and doing what I asked. That was amazing."
-                                    $ the_person.change_obedience(5)
-                                    $ the_person.change_slut_temp(5)
-                                    "I... I don't know. Just don't tell anyone, okay?"
-                                    mc.name "Of course, I promise Mom."
-                                    $ the_person.draw_person()
-                                    "She stands up and heads for the door."
-                                    the_person.char "Well hurry up at least and get dressed, I don't want you to be late after all that!"
-
-                                "Order her to open her mouth\n{color=#ff0000}{size=18}Requires: 140 Obedience{/size}{/color} (disabled)" if the_person.obedience < 140:
-                                    pass
-
-                                "Order her to hold up her tits" if the_person.has_large_tits():
-                                    mc.name "Hold up your tits, I'm going to cum!"
-                                    "[the_person.possessive_title] mumbles something but does as she's told. She cups her large breasts in her hands and presents them in front of you."
-                                    "You grunt and climax, firing your load out and right onto [the_person.possessive_title]'s chest."
-                                    $ the_person.cum_on_tits()
-                                    #TODO: have more clothing aware stuff here
-                                    the_person.char "I... Oh [the_person.mc_title], I don't think I should have let you do that."
-                                    $ the_person.draw_person()
-                                    mc.name "It's okay Mom, you were just being a loving mother and doing what I asked."
-                                    $ the_person.change_obedience(3)
-                                    $ the_person.change_slut_temp(5)
-                                    the_person.char "Maybe you're right... Now hurry up and get dressed before you're late!"
-                                    # TODO: She should seem a little shocked, but otherwise okay with how things turned out
-
-                        "Order her to get on her knees\n{color=#ff0000}{size=18}Requires: 130 Obedience{/size}{/color} (disabled)" if the_person.obedience < 130:
-                            pass
-
-                        "Climax":
-                            "Knowing that [the_person.possessive_title] is just a step away watching you stroke your cock and waiting for you to cum pushes you over the edge."
-                            "You grunt and climax, firing your load out in an arc. [the_person.title] gasps softly and watches it fly, looks away."
-                            the_person.char "Well done. I'll make sure to clean that up while you're out today."
-                            "She leans over and kisses you on the forehead."
-                            the_person.char "Now get dressed or you'll be late for work."
-                            $ renpy.scene("Active")
-                            "[the_person.possessive_title] leaves and you get dressed as quickly as you can manage."
-
-                "Ask her to leave":
-                    mc.name "I think it will take care of itself Mom. Thanks for hte offer but I can pick out my own outfit."
-                    the_person.char "Oh, okay [the_person.mc_title]. Just make sure don't give any of those nice girls you work with a shock when you walk in."
-                    $ the_person.draw_person()
-                    "She turns back to you and gives you a hug and a kiss. Her eyes continue to linger on your crotch."
-                    $ renpy.scene("Active")
-                    "When she leaves you get dressed as quickly as you can, rushing to make up for lost time."
-
-
-    elif the_person.effective_sluttiness("touching_penis") < 50:
-        "You're slowly awoken by a strange, pleasant sensation. When you open your eyes it takes a moment to realise you aren't still dreaming."
-        $ the_person.draw_person(position = "blowjob") #TODO: We need a hand job pose.
-        "[the_person.possessive_title] is sitting on the side of your bed. The covers have been pulled down and she has your morning wood in her hand. She strokes it slowly as she speaks."
-        if the_person.has_taboo("touching_penis"):
-            the_person.char "Good morning, don't be embarrassed. I saw your... morning wood, and wanted to help you take care of it."
-            "She looks away, blushing intensely."
-            the_person.char "If you want me to stop, just tell me. We never need to talk about this again, okay!"
-            the_person.char "Actually, I should just go. This is a mistake. What am I doing?"
-            "[the_person.possessive_title] starts to stand up, but you grab her wrist and pull her back. You guide her hand back to your cock."
-            mc.name "It's okay [the_person.title], I was liking it. This is a really nice surprise."
-            "She nods happily and speeds up her strokes, settling back down on the bed beside you."
-            $ the_person.break_taboo("touching_penis")
-        else:
-            the_person.char "Good morning [the_person.mc_title]. You forgot to set an alarm and overslept. I came in to wake you up and saw this..."
-            "She speeds up her strokes."
-        the_person.char "I thought that this would be a much nicer way to wake up, and I can't let you leave the house in this condition."
-        mc.name "Right, of course. Thanks Mom."
-        "You lie back, relax, and enjoy the feeling of your mothers hand caressing your hard shaft."
-        the_person.char "Anything for you [the_person.mc_title], I just want to make sure you're happy and successful."
-        "After a few minutes you can feel your orgasm starting to build. Mom rubs your pre-cum over your shaft and keeps stroking."
-        menu:
-            "Order her to take your cum in her mouth" if the_person.obedience >= 130:
-                mc.name "I'm almost there Mom, I need to cum in your mouth."
-                $ the_person.change_obedience(5)
-                "She nods and leans over, stroking your cock faster and faster as she places the tip just inside her mouth."
-                "The soft touch of her lips pushes you over the edge. You gasp and climax, shooting your hot load into [the_person.possessive_title]'s waiting mouth."
-                $ the_person.cum_in_mouth()
-                "[the_person.title] pulls back off your cock slowly. She spits your cum out into her hand and straightens up."
-
-            "Order her to take your cum in her mouth\n{color=#ff0000}{size=18}Requires: 130 Obedience{/size}{/color} (disabled)" if the_person.obedience<130:
-                pass
-
-            "Climax":
-                mc.name "I'm almost there Mom, keep going!"
-                "She nods and strokes your dick as fast as she can manage, pushing you over the edge."
-                "You grunt and fire your hot load into up into the air. It falls back down onto your stomach and [the_person.possessive_title]'s hand."
-                "Mom strokes you slowly for a few seconds, then lets go and places her hand on her lap while you take a second to recover."
-
-        the_person.char "Whew, that was a lot. I hope that leaves you feeling relaxed for the rest of the day."
-        "She leans forward and kisses you on the forehead."
-        mc.name "Thanks Mom, you're the best."
-        $ the_person.change_love(2)
-        $ the_person.change_slut_temp(5)
-        $ the_person.change_happiness(5)
-        $ the_person.draw_person(position = "back_peek")
-        "She smiles and gets up. She pauses before she leaves your room."
-        the_person.char "You better get ready now or you're going to be late!"
-
-
-    elif the_person.effective_sluttiness("sucking_cock") < 70:
-        #TODO: image a lying down blowjob pose
-        "You're slowly awoken by a strange, pleasant sensation. When you open your eyes it takes a moment to realise you aren't still dreaming."
-        $ the_person.draw_person(position = "blowjob")
-        "[the_person.possessive_title] is lying face down between your legs, gently sucking off your morning wood."
-        "She notices you waking up and pulls off of your cock to speak."
-        if the_person.has_taboo("sucking_cock"):
-            the_person.char "Don't panic [the_person.mc_title]! I came in because your alarm hadn't gone off and saw this..."
-            "She wiggles your dick with her hand."
-            the_person.char "I couldn't stop myself... I mean, I couldn't imagine you having to rush out of the door with this!"
-            the_person.char "I'll stop if you want me too. You probably think I'm crazy!"
-            mc.name "I don't think your crazy, I think you are incredibly thoughtful. This feels amazing."
-            $ the_person.break_taboo("sucking_cock")
-        else:
-            the_person.char "Good morning [the_person.mc_title]. I noticed your alarm hadn't gone off and came in to wake you up..."
-            "She licks your shaft absentmindedly."
-            the_person.char "And saw this. I thought this would be a much nicer way of waking you up."
-            mc.name "That feels great Mom."
-            $ the_person.change_happiness(5)
-        "She smiles up at you, then lifts her head and slides your hard dick back into her mouth."
-        "You lie back and enjoy the feeling of [the_person.possessive_title] sucking you off."
-        $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob")
-        "For several minutes the room is quiet save for a soft slurping sound each time [the_person.title] slides herself down your shaft."
-        "You rest a hand on the back of her head as you feel your orgasm start to build, encouraging her to go faster and deeper."
-        mc.name "I'm almost there Mom, keep going!"
-        "She mumbles out an unintelligible response and keeps sucking your cock."
-        "You arch your back and grunt as you climax, firing a shot of cum into [the_person.possessive_title]'s mouth."
-        $ the_person.cum_in_mouth()
-        $ the_person.draw_person(position = "blowjob")
-        "She pulls back until the tip of your cock is just inside her lips and holds there, collecting each new spurt of semen until you're completely spent."
-        "When you're done she pulls up and off, keeping her lips tight to avoid spilling any onto you."
-        menu:
-            "Order her to swallow" if the_person.obedience >= 130:
-                mc.name "That was great [the_person.title], now I want you to swallow."
-                "She looks at you and hesitates for a split second, then you see her throat bob as she sucks down your cum."
-                $ the_person.change_obedience(5)
-                "[the_person.possessive_title] takes a second gulp to make sure it's all gone, then opens her mouth and takes a deep breath."
-
-
-            "Order her to swallow\n{color=#ff0000}{size=18}Requires: 130 Obedience{/color}{/size} (disabled)" if the_person.obedience < 130:
-                pass
-
-            "Let her spit it out":
-                $ the_person.draw_person(position = "sitting")
-                "You watch as she slides her legs off the side of your bed, holds out a hand, and spits your cum out into it."
-
-        the_person.char "Whew, I'm glad I was able to help with that [the_person.mc_title]. That was a lot more than I was expecting."
-        mc.name "Thanks [the_person.title], you're the best."
-        $ the_person.change_love(2)
-        $ the_person.change_slut_temp(5)
-        "She smiles and leans over to give you a kiss on the forehead."
-        the_person.char "My pleasure, now you should be getting up or you'll be late for work!"
-        $renpy.scene("Active")
-        "[the_person.possessive_title] gets up and leaves you alone to get dressed and ready for the day. You rush a little to make up for lost time."
-
-    else:
-        # First we need to take her and remove enough clothing that we can get to her vagina, otherwise none of this stuff makes sense.
-        # We do that by getting her lowest level pieces of bottom clothing and removing it, then working our way up until we can use her vagina.
-        # This makes sure skirts are kept on (because this is supposed to be a quicky).
-        $ bottom_list = the_person.outfit.get_lower_ordered()
-        $ removed_something = False
-        $ the_index = 0
-        while not the_person.outfit.vagina_available() and the_index < __builtin__.len(bottom_list):
-            $ the_person.outfit.remove_clothing(bottom_list[the_index])
-            $ removed_something = True
-            $ the_index += 1
-        $ del bottom_list
-        "You're woken up by your bed shifting under you and a sudden weight around your waist."
-        $ the_person.draw_person(position = "cowgirl", emotion = "happy")
-        "[the_person.possessive_title] has pulled down your sheets and underwear and is straddling you. The tip of your morning wood is brushing against her pussy."
-        the_person.char "Good morning [the_person.mc_title]. I didn't hear your alarm go off and when I came to check on you I noticed this..."
-        "She grinds her hips back and forth, rubbing your shaft along the lips of her cunt."
-        the_person.char "Would you like me to take care of this for you?"
-        menu:
-            "Let [the_person.title] fuck you":
-                mc.name "That would be great Mom."
-                $ the_person.change_happiness(5)
-                $ the_person.change_love(2)
-                "You lie back relax as [the_person.possessive_title] lowers herself down onto your hard cock."
-                call fuck_person(the_person, start_position = cowgirl, start_object = bedroom.get_object_with_name("bed"), skip_intro = True, girl_in_charge = True,position_locked=True,self_strip=False) from _call_fuck_person_15
-                $ the_report = _return
-                if the_report.get("girl orgasms", 0) > 0:
-                    $ the_person.change_love(5)
-                    the_person.char "That was amazing [the_person.mc_title], you know how to make me feel like women again!"
-                    "She rolls over and kisses you, then rests her head on your chest."
-                    "After a minute she sighs and starts to get up."
-                    the_person.char "I shouldn't be keeping you from your work, I don't want to make you any more late!"
-                    "She reaches down to help you up. She smiles at you longingly, eyes lingering on your crotch, and leaves you alone in your room."
-                else:
-                    the_person.char "I'm glad I could help [the_person.mc_title]. Now you should hurry up before you're late!"
-                    "[the_person.possessive_title] kisses you on the forehead and stands up to leave."
-                    "You get yourself put together and rush to make up for lost time."
-                $ the_person.review_outfit()
-
-            "Ask her to get off":
-                mc.name "Sorry [the_person.title], but I need to save my energy for later today."
-                $ the_person.change_happiness(-3)
-                $ the_person.change_obedience(5)
-                "She frowns but nods. She swings her leg back over you and stands up."
-                $ the_person.draw_person()
-                the_person.char "Of course [the_person.mc_title], if you need me for anything just let me know. I hope you aren't running too late!"
-                if removed_something:
-                    "[the_person.title] collects some of her discarded from your floor and heads for the door."
-                else:
-                    "[the_person.title] gives you a kiss on the forehead and heads for the door."
-                $ renpy.scene("Active")
-                "You get up and rush to get ready to make up for lost time."
-
-    $ renpy.scene("Active")
-    return
-
-init 1 python:
-    def lily_new_underwear_requirement():
-        if mc_at_home() and time_of_day==4: #It is the end of the day.
-            if lily.effective_sluttiness("underwear_nudity") >= 10 and lily.love >= 0: #She's slutty enough to show you her new underwear.
-                return True
-        return False
-
-    def lily_new_underwear_get_random_underwear(person):
-        valid_underwear_options = []
-        for underwear in default_wardrobe.get_underwear_sets_list():
-            #She picks underwear that is in the top 20 sluttiness of what she considers slutty underwear AND that she would feel comfortable wearing in front of her (hopefully loving) brother.
-            if underwear.get_underwear_slut_score() <= person.sluttiness and underwear.get_underwear_slut_score() >= person.sluttiness-20 and person.judge_outfit(underwear, person.love+30):
-                valid_underwear_options.append(underwear)
-
-        return get_random_from_list(valid_underwear_options)
-
-    lily_new_underwear_crisis = Action("Lily New Underwear Crisis", lily_new_underwear_requirement, "lily_new_underwear_crisis_label")
-    crisis_list.append([lily_new_underwear_crisis, 5])
-
-label lily_new_underwear_crisis_label():
-    # Lily has some new underwear she wants to demo for you.
-    # We base the underwear sluttiness on Lily's sluttiness and use Love+Sluttiness to see if she'll show you as a "full outfit".
-    $ the_person = lily #Just so we can keep
-    $ the_underwear = lily_new_underwear_get_random_underwear(the_person)
-    if the_underwear is None:
-        return #Lily doesn't have any skimpy underwear to show us :(
-
-    $ bedroom.show_background()
-    $ mc.change_location(bedroom) #Make sure we're in our bedroom.
-    if the_person.obedience >= 95:
-        "There's a knock at your door."
-        the_person.char "[the_person.mc_title], can I talk to you for a sec?"
-        mc.name "Uh, sure. Come in."
-        "Your bedroom door opens and [the_person.possessive_title] steps in. She's carrying a shopping bag in one hand."
-    else:
-        "There's a single knock at your bedroom door before it's opened up. [the_person.possessive_title] steps in, carrying a shopping bag in one hand."
-    $ the_person.draw_person(emotion = "happy")
-    if the_underwear.get_underwear_slut_score() < 10:
-        the_person.char "This is a little awkward, but I picked up some new underwear at the mall today but I don't know if I like the way it looks."
-        the_person.char "Would you take a look and let me know what you think?"
-    elif the_underwear.get_underwear_slut_score() < 20:
-        the_person.char "I was at the mall today and picked up some new underwear. I know Mom would say it's too skimpy, but I wanted a guys opinion."
-        the_person.char "Would you let me try it on and tell me what you think?"
-    else:
-        the_person.char "I was at the mall today and picked up some lingerie. I was hoping you'd let me model it for you and tell me what you think."
-
-    menu:
-        "Take a look at [the_person.title]'s new underwear":
-            "You sit up from your bed and give [the_person.possessive_title] your full attention."
-            mc.name "Sure thing, is it in there?"
-            "You nod your head towards the bag she is holding."
-            the_person.char "Yeah, I'll go put it on and be back in a second. Don't move!"
-            $ renpy.scene("Active")
-            "[the_person.title] skips out of your room, closing the door behind her."
-            $ the_person.apply_outfit(the_underwear)
-            "You're left waiting for a few minutes. Finally, your door cracks open and [the_person.title] slips inside."
-            $ the_person.draw_person(emotion="happy")
-            if the_person.update_outfit_taboos():
-                the_person.char "Oh my god, this is so much more embarrassing than I thought it would be."
-                mc.name "Come on [the_person.title], I'm your brother. You can trust me."
-                "She takes a deep breath and nods."
-                the_person.char "Yeah, sure. Just don't stare too much, okay?"
-                the_person.char "So, what do you think?"
-                mc.name "Turn around, I want to see the other side."
-            else:
-                the_person.char "Here we go. What do you think?"
-            $ the_person.draw_person(emotion="happy", position = "back_peek")
-            "She turns around to give you a good look from behind."
-            menu:
-                "She looks beautiful": #Raises love
-                    mc.name "You look beautiful [the_person.title]. You're a heart-stopper."
-                    $ the_person.change_love(2)
-                    the_person.char "Aww, you really think so?"
-
-                "She looks sexy": #Raises sluttiness
-                    mc.name "You look damn sexy in it [the_person.title]. Like you're just waiting to pounce someone."
-                    $ the_person.change_slut_temp(3)
-                    the_person.char "Ooh, I like being sexy. Rawr!"
-
-                "She looks elegant": #Raises obedience
-                    mc.name "It makes you look very elegant, [the_person.title]. Like a proper lady."
-                    $ the_person.change_obedience(2)
-                    the_person.char "It's not too uptight, is it? Do you think Mom would wear something like this?"
-
-                "You don't like it": #Raises nothing.
-                    mc.name "I'm not sure it's a good look on you [the_person.title]."
-                    $ the_person.change_happiness(-2)
-                    the_person.char "No? Darn, it was starting to grow on me..."
-
-            "[the_person.title] stands in front of your mirror and poses."
-            $ the_person.draw_person(emotion = "happy")
-            the_person.char "Do you think I should keep it? I'm on the fence."
-            menu:
-                "Keep it":
-                    $ the_person.wardrobe.add_underwear_set(the_underwear)
-                    mc.name "You should absolutely keep it. It looks fantastic on you."
-                    $ the_person.change_happiness(3)
-                    "[the_person.title] grins and nods."
-                    the_person.char "You're right, of course you're right. Thank you [the_person.mc_title], you're the best!"
-
-
-                "Return it":
-                    mc.name "I think you have other stuff that looks better."
-                    $ the_person.change_obedience(2)
-                    the_person.char "I think you're right, I should save my money and get something better. Thank you [the_person.mc_title], you're the best!"
-
-            $ the_person.change_love(3)
-            "[the_person.possessive_title] walks over to you and gives you a hug."
-            the_person.char "Okay, it's getting cold. I'm going to go put some clothes on!"
-            $ renpy.scene("Active")
-            "[the_person.title] slips out into the hall, leaving you alone in your room."
-            $ the_person.apply_outfit() # changed in v0.24 (passing no outfit uses planned_outfit)
-
-        "Send her away":
-            mc.name "Sorry [the_person.title], but I'm busy right now. You'll have to figure out if you like it by yourself."
-            the_person.char "Right, no problem. Have a good night!"
-            $ renpy.scene("Active")
-            "She leaves and closes your door behind her."
-
-    $ del the_underwear
-    $ renpy.scene("Active")
-    return
-
-init 1 python:
-    def lily_morning_encounter_requirement():
-        if mc_at_home() and time_of_day == 0:
-            return True
-        return False
-
-    lily_morning_encounter_crisis = Action("Lily Morning Encounter", lily_morning_encounter_requirement, "lily_morning_encounter_label")
-    morning_crisis_list.append([lily_morning_encounter_crisis, 5])
-
-label lily_morning_encounter_label():
-    # You run into Lily early in the morning as she's going to get some fresh laundry. At low sluttiness she is embarrassed, at high she is completely naked.
-    $ the_person = lily
-    if the_person.effective_sluttiness() >= 60:
-        $ the_person.apply_outfit(Outfit("Nude"))
-        # $ the_person.outfit = default_wardrobe.get_outfit_with_name("Nude 1") #If she's very slutty she doesn't mind being naked. Changed v0.24.1
-    else:
-        $ the_person.apply_outfit(the_person.wardrobe.get_random_appropriate_underwear(the_person.sluttiness, guarantee_output = True))
-        # $ the_person.outfit = the_person.wardrobe.get_random_appropriate_underwear(the_person.sluttiness, guarantee_output = True) # Otherwise get an underwear set she would wear. changed v0.24.1
-
-    "You wake up in the morning to your alarm. You get dressed and leave your room to get some breakfast."
-    $ the_person.draw_person()
-    if not the_person.outfit.wearing_panties():
-        "The door to [the_person.possessive_title]'s room opens as you're walking past. She steps out, completely naked."
-    else:
-        "The door to [the_person.possessive_title]'s room opens as you're walking past. She steps out, wearing nothing but her underwear."
-
-    if the_person.effective_sluttiness("underwear_nudity") < 10:
-        #She's startled and embarrassed.
-        "[the_person.title] closes her door behind her, then notices you. She gives a startled yell."
-        the_person.char "Ah! [the_person.mc_title], what are you doing here?"
-        "She tries to cover herself with her hands and fumbles with her door handle."
-        mc.name "I'm just going to get some breakfast. What are you doing?"
-        "[the_person.title] gets her door open and hurries back inside. She leans out so all you can see is her head."
-        the_person.char "I was going to get some laundry and thought you were still asleep. Could you, uh, move along?"
-        $ the_person.change_slut_temp(2)
-        "You shrug and continue on your way."
-
-    elif the_person.effective_sluttiness("underwear_nudity") < 40:
-        #She doesn't mind but doesn't think to tease you further
-        "[the_person.title] closes her door behind her, then notices you. She turns and smiles."
-        the_person.char "Morning [the_person.mc_title], I didn't think you'd be up yet."
-        mc.name "Yep, early start today. What are you up to?"
-        if the_person.outfit.wearing_panties():
-            "She starts to walk alongside you and doesn't seem to mind being in her underwear."
-        else:
-            "She starts to walk alongside you and doesn't seem to mind being naked."
-        $ the_person.update_outfit_taboos()
-        the_person.char "I'm just up to get some laundry. I put some in last night."
-        "You let [the_person.title] get a step ahead of you so you can look at her ass."
-        $ the_person.draw_person(position = "walking_away")
-        menu:
-            "Compliment her":
-                #Bonus love and happiness
-                mc.name "Well, I'm glad I ran into you. Seeing you is a pretty good way to start my day."
-                $ the_person.change_love(2)
-                $ the_person.change_happiness(5)
-                the_person.char "You're just saying that because you get to see me naked, you perv."
-                $ the_person.draw_person(position = "back_peek")
-                "She peeks back at you and winks."
-
-            "Slap her ass":
-                #Bonus sluttiness and obedience
-                mc.name "Did you know you look really cute without any clothes on?"
-                "You give her a quick slap on the ass from behind. She yelps and jumps forward a step."
-                the_person.char "Ah! Hey, I'm not dressed like this for you, this is my house too you know."
-                "She reaches back and rubs her butt where you spanked it."
-                the_person.char "And ew. I'm your sister, you shouldn't be gawking at me."
-                mc.name "I'll stop gawking when you stop shaking that ass."
-                $ the_person.draw_person(position = "back_peek")
-                the_person.char "You wish this ass was for you."
-                "She spanks herself lightly and winks at you."
-                $ the_person.change_slut_temp(4)
-                $ the_person.change_obedience(2)
-
-        $ the_person.draw_person(position = "walking_away")
-        "You reach the door to the kitchen and split up. You wait a second and enjoy the view as your [the_person.possessive_title] walks away."
-
-    else: #sluttiness >= 40-55
-        #She likes being watched and teases you a little while you walk together.
-        "[the_person.title] closes her door behind her, then notices you."
-        the_person.char "Morning [the_person.mc_title], I was wondering if you were going to be up now."
-        mc.name "Yep, early start today. What are you up to?"
-        the_person.char "I was just going to get some laundry out of the machine."
-        if the_person.outfit.wearing_panties():
-            "[the_person.possessive_title] thumbs her underwear playfully."
-        else:
-            "[the_person.possessive_title] absentmindedly runs her hands over her hips."
-        $ the_person.update_outfit_taboos()
-        the_person.char "I know you like it when I walk around naked but Mom doesn't. At least when I'm doing laundry I have an excuse."
-        "You join her as she starts to walk down the hall."
-        $ the_person.draw_person(position = "walking_away")
-        menu:
-            "Grope her as you walk.":
-                "You reach behind [the_person.title] and grab her ass while she's walking. She moans softly and leans against you."
-                if the_person.has_taboo("touching_body"):
-                    $ the_person.call_dialogue("touching_body_taboo_break")
-                    $ the_person.break_taboo("touching_body")
-                else:
-                    the_person.char "[the_person.mc_title], what are you doing? We can't doing anything here..."
-                    mc.name "I know, I'm just having a feel. You've got a great ass."
-                    "You spank her butt and she moans again. You work your hand down between her legs from behind and run a finger along her slit."
-                    the_person.char "Fuck, please don't get me too wet. I don't want to have to explain that to Mom if she finds us."
-                    "You flick your finger over [the_person.possessive_title]'s clit, then slide your hand back and kneed her ass some more."
-                $ the_person.change_slut_temp(5)
-                $ the_person.change_love(2)
-                "When you reach the kitchen [the_person.title] reluctantly pulls away from you."
-
-
-            "Put her hand on your cock as you walk.":
-                "You take [the_person.title]'s left hand and push it against your crotch."
-                if the_person.has_taboo("touching_penis"):
-                    the_person.char "Oh my god, what are you doing!"
-                    mc.name "I saw you looking at it, I thought you might be curious. Just give it a feel."
-                    the_person.char "I can't believe you... You just made me touch it like that!"
-                    mc.name "You liked it though, didn't you? Come on, let's keep walking."
-                    "You hold her hand against your crotch as you walk. She looks away awkwardly, but doesn't try and pull away."
-                    mc.name "You can touch it for real, if you want."
-                    the_person.char "You're such a pervert, you know that? Tricking me into this..."
-                    "Her hand slides up to your waist, then down under your underwear. She wraps her hand around your shaft and rubs it gently."
-                    mc.name "Sure thing [the_person.title], I've really tricked you."
-
-                    $ the_person.break_taboo("touching_penis")
-                else:
-                    the_person.char "What are you doing?"
-                    mc.name "Look at what you do to me when you walk around like this. You're driving me crazy [the_person.title]."
-                    "You let go of her hand but it stays planted on your bulge as you walk."
-                    the_person.char "You're such a pervert, you know that? I can't believe you'd even think about me like that..."
-                    "Her hand slides up to your waist, then down under your underwear. She wraps her hand around your shaft and rubs it gently."
-                    mc.name "Don't pretend like you don't like it. You're just as horny as I am."
-                    the_person.char "Hey, I'm just doing this for you, okay?"
-                    mc.name "Sure thing sis. Keep going."
-                $ the_person.change_slut_temp(3)
-                $ the_person.change_obedience(3)
-                "The two of you walk slowly towards the kitchen as [the_person.possessive_title] fondles your dick."
-                "When you reach the door to the kitchen she reluctantly pulls her hand out of your pants."
-
-        mc.name "Maybe we'll follow up on this later."
-        "[the_person.possessive_title]'s face is flush. She nods and heads towards the laundry room. You get to watch her ass shake as she goes."
-
-    $ the_person.apply_outfit(the_person.planned_outfit)
-    #$ the_person.outfit = the_person.planned_outfit.get_copy() #Make sure to reset their outfits for the day. changed v0.24.1
-    $ renpy.scene("Active")
-    return
-
-init 1 python:
-    def family_weekend_breakfast_requirement():
-        if mc_at_home() and time_of_day == 0 and mc.business.is_weekend() and mom.love > 20:
-            return True
-        return False
-
-    family_morning_breakfast_crisis = Action("Family Morning Breakfast", family_weekend_breakfast_requirement, "family_morning_breakfast_label")
-    morning_crisis_list.append([family_morning_breakfast_crisis,15])
-
-label family_morning_breakfast_label():
-    $ the_mom = mom
-    $ the_sister = lily
-    if the_mom is None or the_sister is None:
-        return #If we don't have family members abort because something has gone horribly wrong!
-
-    $ mom_slutty = False
-    $ sis_slutty = False
-    if the_mom.effective_sluttiness() > 40:
-        $ mom_slutty = True
-        $ the_mom.apply_outfit(the_mom.wardrobe.get_random_appropriate_underwear(the_mom.sluttiness, guarantee_output = True))
-    #    $ the_mom.outfit = the_mom.wardrobe.get_random_appropriate_underwear(the_mom.sluttiness, guarantee_output = True) changed v0.24.1
-
-    if the_sister.effective_sluttiness() > 40:
-        $ sis_slutty = True
-        $ the_sister.apply_outfit(the_sister.wardrobe.get_random_appropriate_underwear(the_sister.sluttiness, guarantee_output = True))
-        #$ the_sister.outfit = the_sister.wardrobe.get_random_appropriate_underwear(the_sister.sluttiness, guarantee_output = True) Changed v0.24.1
-    $ bedroom.show_background()
-    "You're woken up in the morning by a knock at your door."
-    mc.name "Uh, come in."
-    "You groan to yourself and sit up in bed."
-    if the_mom.love > the_sister.love:
-        $ the_mom.draw_person()
-        "Your mother cracks your door open and leans in."
-        the_mom.char "I'm making some breakfast for you and your sister. Come on down if you'd like some."
-        mc.name "Thanks Mom, I'll be down in a minute."
-        $ renpy.scene("Active")
-        "She flashes you a smile and closes the door."
-    else:
-        $ the_sister.draw_person()
-        "[the_sister.possessive_title] cracks your door open and leans in. She seems just as tired as you are."
-        the_sister.char "Hey, I think Mom's making a family breakfast for us."
-        mc.name "Thanks for letting me know [the_sister.title], I'll be down in a minute."
-        $ renpy.scene("Active")
-        "She nods and closes your door as she leaves."
-
-    "You get up, get dressed, and head for the kitchen."
-    $ mc.change_location(kitchen)
-    $ kitchen.show_background()
-    $ the_mom.draw_person(position = "walking_away")
-    if mom_slutty:
-        if the_mom.outfit.wearing_panties():
-            "[the_mom.possessive_title] is just in her underwear in front of the stove, humming as she scrambles a pan full of eggs."
-        else:
-            "[the_mom.possessive_title] is in front of the stove naked, humming as she scrambles a pan full of eggs."
-    else:
-        "[the_mom.possessive_title] is at the stove and humming to herself as she scrambles a pan full of eggs."
-
-    $ the_mom.update_outfit_taboos()
-    $ the_mom.draw_person(position = "back_peek")
-    the_mom.char "Good morning [the_mom.mc_title]. I'm almost ready to serve, hopefully your sister will be here soon."
-    the_sister.char "I'm coming!"
-    $ the_sister.draw_person()
-    if sis_slutty:
-        if the_sister.outfit.wearing_panties():
-            "[the_sister.possessive_title] comes into the room just wearing her underwear. She gives a dramatic yawn before sitting down at the kitchen table."
-        else:
-            "[the_sister.possessive_title] comes into the room naked. She gives a dramatic yawn before sitting down at the kitchen table."
-    else:
-        "[the_sister.possessive_title] comes into the room and gives a dramatic yawn before sitting down at the kitchen table."
-
-    $ the_sister.update_outfit_taboos()
-    if mom_slutty and sis_slutty:
-        #You have breakfast with both of them stripped down like it's no big thing.
-        $ the_sister.draw_person(position = "sitting")
-        the_sister.char "Hope I'm not too late."
-        $ the_mom.draw_person(position = "walking_away")
-        "Your mother takes the pan off the stove and begins to slide the contents off onto three plates."
-        the_mom.char "No, just on time."
-        $ the_mom.draw_person()
-        "She turns around and hands one plate to you and one plate to [the_sister.title]."
-        $ the_sister.draw_person(position = "sitting")
-        the_sister.char "Thanks Mom, you're the best!"
-        $ the_mom.draw_person(position="sitting")
-        the_mom.char "No problem, I'm just happy to spend my morning relaxing with my two favorite people!"
-        "You enjoy a relaxing breakfast bonding with your mother and sister. [the_mom.possessive_title] seems particularly happy she gets to spend time with you."
-        "Neither [the_sister.title] or [the_mom.possessive_title] seem to think it's strange to relax in their underwear."
-        $ the_sister.change_love(3)
-        $ the_sister.change_slut_temp(3)
-        $ the_mom.change_love(3)
-        $ the_mom.change_slut_temp(3)
-        $ the_mom.change_happiness(10)
-        "When you're done you help Mom put the dirty dishes away and get on with your day."
-
-
-
-    elif mom_slutty and not sis_slutty:
-        #Lily thinks her mom is embarrassing and weird but Mom pulls rank.
-        the_sister.char "Oh my god Mom, what are you wearing?"
-        $ the_mom.draw_person(position = "back_peek")
-        the_mom.char "What? It's the weekend and it's just the three of us. I didn't think anyone would mind if I was a little more casual."
-        $ the_sister.draw_person(position = "sitting")
-        if the_mom.outfit.vagina_visible():
-            the_sister.char "Mom, I don't think you know what casual means. Could you at least put on some panties or something?"
-
-        elif the_mom.outfit.tits_visible():
-            the_sister.char "Mom, I don't think you know what casual means. I mean, couldn't you at least put a bra?"
-
-        else:
-            the_sister.char "Mom, you're prancing around the kitchen in your underwear. In front of your son and daughter. That's weird."
-            "[the_sister.title] looks at you."
-            the_sister.char "Right [the_sister.mc_title], that's weird?"
-
-        if the_mom.obedience > 115:
-            $ the_mom.draw_person(position = "back_peek")
-            the_mom.char "What do you think [the_mom.mc_title], do you think it's \"weird\" for your mother to want to be comfortable in her own house?"
-            menu:
-                "Side with Mom":
-                    mc.name "I think Mom's right [the_sister.title]. It's nothing we haven't seen before, she's just trying to relax on her days off."
-                    $ the_mom.change_obedience(-5)
-                    $ the_sister.change_obedience(5)
-                    "[the_sister.title] looks at the two of you like you're crazy then sighs dramatically."
-                    the_sister.char "Fine, but this is really weird, okay?"
-                    $ the_mom.draw_person(position = "sitting")
-                    "[the_mom.possessive_title] dishes out three portions and sits down at the table with you. [the_sister.title] eventually gets used to her mothers outfit and joins in on your conversation."
-                    $ the_sister.change_slut_temp(5)
-                    $ the_mom.change_happiness(10)
-
-
-                "Side with [the_sister.title]":
-                    mc.name "I actually think [the_sister.title] is right, this is a little weird. Could you go put something on, for our sakes?"
-                    $ the_sister.change_obedience(-2)
-                    $ the_sister.change_slut_temp(2)
-                    $ the_mom.change_obedience(5)
-                    $ the_mom.change_slut_temp(5)
-                    the_mom.char "Oh you two, you're so silly. Fine, I'll be back in a moment. [the_sister.title], could you watch the eggs?"
-                    $ the_sister.draw_person(position = "walking_away")
-                    "Your mother leaves to get dressed. [the_sister.possessive_title] ends up serving out breakfast for all three of you."
-                    $ the_mom.apply_outfit(the_mom.planned_outfit)
-                    # $ the_mom.outfit = the_mom.planned_outfit.get_copy() changed v0.24.1
-                    the_sister.char "She's been so weird lately. I don't know what's going on with her..."
-                    $ the_mom.draw_person(position = "sitting")
-                    $ the_sister.change_happiness(5)
-                    $ the_mom.change_happiness(5)
-                    "When [the_mom.possessive_title] gets back she sits down at the table and the three of you enjoy your breakfast together."
-
-        else:
-            #She likes what she likes
-            $ the_mom.draw_person(position = "back_peek")
-            the_mom.char "Well luckily I'm your mother and it doesn't matter what you think. I'm going to wear what makes me comfortable."
-            "She takes the pan off the stove and slides the scrambled eggs out equally onto three plates."
-            the_mom.char "Now, would you like some breakfast or not?"
-            "[the_sister.title] sighs dramatically."
-            the_sister.char "Fine, but this is really weird, okay?"
-            $ the_sister.change_slut_temp(5)
-            $ the_mom.change_happiness(10)
-            $ the_mom.draw_person(position = "sitting")
-            "[the_mom.possessive_title] gives everyone a plate and sits down. [the_sister.title] eventually gets used to her mothers outfit and joins in on your conversation."
-            "When you're done you help Mom put the dirty dishes away and get on with your day."
-
-
-    elif sis_slutty and not mom_slutty:
-        #Mom thinks lilly is way too underdressed and sends her back to get dressed.
-        $ the_sister.draw_person(position = "sitting")
-        "Your mother turns around and gasps."
-        $ the_mom.draw_person(emotion = "angry")
-        the_mom.char "[the_sister.title]! What are you wearing?"
-        $ the_sister.draw_person(position = "sitting")
-        the_sister.char "What do you mean? I just got up, I haven't had time to pick out an outfit yet."
-        $ the_mom.draw_person(emotion = "angry")
-        the_mom.char "You shouldn't be running around the house naked. Go put some clothes on young lady."
-        $ the_sister.draw_person(position = "sitting", emotion = "angry")
-        "[the_sister.possessive_title] scoffs and rolls her eyes."
-        the_sister.char "Come on Mom, you're being ridiculous. This is my house too, I should be able to wear whatever I want!"
-        "Your mother and sister lock eyes, engaged in a subtle battle of wills."
-        if the_sister.obedience > the_mom.obedience:
-            $ the_mom.draw_person(position = "walking_away")
-            "Mom sighs loudly and turns back to the stove."
-            the_mom.char "Fine! You're so stubborn [the_sister.title], I don't know how I survive around here!"
-            $ the_sister.change_obedience(-2)
-            $ the_sister.change_happiness(10)
-            $ the_sister.change_slut_temp(3)
-            $ the_mom.change_obedience(10)
-            $ the_sister.draw_person(position = "sitting", emotion = "happy")
-            "[the_sister.possessive_title] looks at you, obviously pleased with herself, and winks."
-
-        else:
-            "[the_sister.title] finally sighs loudly and looks away. She pushes her chair back and stands up in defeat."
-            $ the_sister.draw_person(emotion = "angry")
-            the_sister.char "Fine! I'll go put on some stupid clothes so my stupid mother doesn't keep worrying."
-            $ the_sister.draw_person(position = "walking_away")
-            "[the_sister.title] sulks out of the kitchen."
-            $ the_mom.draw_person()
-            the_mom.char "I don't know how I manage to survive with you two around!"
-            $ the_sister.apply_outfit(the_sister.planned_outfit)
-            #$ the_sister.outfit = the_sister.planned_outfit.get_copy() changed v0.24.1
-            $ the_sister.change_obedience(10)
-            $ the_sister.change_happiness(-5)
-            $ the_mom.change_obedience(-2)
-            $ the_sister.draw_person(position = "sitting")
-            "[the_sister.possessive_title] is back by the time Mom starts to plate breakfast. She sits down and starts to eat without saying a word."
-        "When you're done you help Mom put the dirty dishes away and get on with your day."
-
-
-
-    else:
-        #Neither of them are particularly slutty, so it's just a normal breakfast.
-        $ the_sister.draw_person(position = "sitting")
-        the_sister.char "So what's the occasion Mom?"
-        $ the_mom.draw_person()
-        "[the_mom.possessive_title] takes the pan off the stove and scoops the scrambled eggs out equally onto three waiting plates."
-        the_mom.char "Nothing special, I just thought we could have a nice quiet weekend breakfast together."
-        "She slides one plate in front of you and one plate in front of [the_sister.title], then turns around to get her own before sitting down to join you."
-        $ the_mom.draw_person(position = "sitting")
-        the_mom.char "Go ahead, eat up!"
-        $ the_sister.change_love(3)
-        $ the_mom.change_love(3)
-        $ the_mom.change_happiness(5)
-        "You enjoy a relaxing breakfast bonding with your mother and sister. Your mom seems particularly happy she gets to spend time with you."
-        "When you're done you help Mom put the dirty dishes away and get on with your day."
-
-    python:
-        del the_mom
-        del the_sister
-        renpy.scene("Active")
-    return
-
-init 1 python:
-    def morning_shower_requirement():
-        if mc_at_home() and time_of_day == 0:
-            return True #You're at home for the night, when you take a shower in the morning something might happen.
-        return False
-    morning_shower_crisis = Action("Morning Shower", morning_shower_requirement, "morning_shower_label")
-    morning_crisis_list.append([morning_shower_crisis, 15])
-
-label morning_shower_label(): #TODO: make a similar event for your Aunt's place.
-    # You wake up and go to take a shower, lily or your mom are already in there.
-    "You wake up in the morning uncharacteristically early feeling refreshed and energized. You decide to take an early shower to kickstart the day."
-    $ the_person = get_random_from_list([mom, lily, None])
-    if the_person is None:
-        #You run into nobody, gain some extra energy. TODO: One of the girls comes to join you.
-        "You head to the bathroom and start the shower. You step in and let the water just flow over you, carrying away your worries for the day."
-        "After a few long, relaxing minutes it's time to get out. You start the day feeling energized."
-        $ mc.change_energy(20)
-
-    else:
-        "You head to the bathroom, but hear the shower already running inside when you arrive."
-        $ towel_outfit = Outfit("Towel")
-        $ towel_outfit.add_dress(towel.get_copy()) #TODO: Decide if we want a head towel here, maybe just for mom or just for Lily
-
-        menu:
-            "Skip your shower":
-                "With the bathroom occupied you decide to get some extra sleep instead."
-
-            "Knock on the door":
-                # She says she'll be "out in a minute", or invites you in. Give her a shower outfit.
-                "You knock on the door a couple of times and wait for a response."
-                if the_person.effective_sluttiness(["bare_tits","bare_pussy"]) > 30:
-                    the_person.char "It's open, come on in!"
-                    call girl_shower_enter(the_person) from _call_girl_shower_enter
-                else:
-                    the_person.char "Just a second!"
-                    call girl_shower_leave(the_person) from _call_girl_shower_leave
-
-            "Barge in anyways":
-                # Locked, unless the girl is slutty enough that you wouldn't mind (TODO: add a "make changes to the house" option where you can't lock the door so you can barge in on lily.)
-                if the_person.effective_sluttiness(["bare_tits", "bare_pussy"]) < 10:
-                    "You try and open the door, but find it locked."
-                    the_person.char "One second!"
-                    call girl_shower_leave(the_person) from _call_girl_shower_leave_1
-                elif the_person.effective_sluttiness(["bare_tits", "bare_pussy"]) <= 20:
-                    #She's angry that you've barged in on her (but she doesn't mind enough to have locked the door).
-                    $ the_person.apply_outfit(Outfit("Nude"))
-                    #$ the_person.outfit = Outfit("Nude") #changed v0.24.1
-                    $ the_person.draw_person(emotion = "angry")
-                    "You open the door. [the_person.possessive_title] is standing naked in the shower. She spins around and yells in surprise."
-                    the_person.char "[the_person.mc_title]! I'm already in here, what are you doing?"
-                    mc.name "The door was unlocked, I thought you might have already been finished."
-                    the_person.char "Knock next time, okay? I'll be done in a minute."
-                    "She shoos you out of the room, seeming more upset about being interrupted than being seen naked."
-                    $ renpy.scene("Active")
-                    $ the_person.change_love(-1)
-                    $ the_person.change_slut_temp(2)
-                    call girl_shower_leave(the_person) from _call_girl_shower_leave_2
-                else:
-                    call girl_shower_enter(the_person, suprised = True) from _call_girl_shower_enter_1 #TODO: Decide if we need different dialogue for this (maybe just a "suprised" tag we can pass)
-
-        $ the_person.apply_outfit(the_person.planned_outfit)
-        $ towel_outfit = None
-
-    $ renpy.scene("Active")
-    return
-
-label girl_shower_leave(the_person):
-    "After a short pause the shower stops and you hear movement on the other side of the door."
-    #$ the_person.outfit = towel_outfit changed v0.24.1
-    $ the_person.apply_outfit(towel_outfit)
-    $ the_person.draw_person()
-    "The bathroom door opens and [the_person.possessive_title] steps out from the steamy room in a towel."
-    if the_person is mom:
-        the_person.char "There you go [the_person.mc_title], go right ahead."
-        "She gives you a quick kiss and steps past you."
-    else:
-        the_person.char "There, it's all yours. I might have used up all of the hot water."
-        "She steps past you and heads to her room."
-    return
-
-label girl_shower_enter(the_person, suprised = False):
-    $ the_person.apply_outfit(Outfit("Nude"))
-    #$ the_person.outfit = Outfit("Nude") changed v0.24.1
-    $ the_person.draw_person(position = "back_peek")
-    "You open the door and see [the_person.possessive_title] in the shower."
-    if suprised:
-        "She looks up at you, slightly startled, and turns her body away from you."
-        the_person.char "Oh, [the_person.mc_title]!"
-        mc.name "I'm just here to have a shower."
-    the_person.char "I should be finished soon, if you don't mind waiting."
-    $ the_person.update_outfit_taboos()
-    menu:
-        "Wait and watch her shower":
-            "You nod and head to the sink to brush your teeth. You lean on the sink and watch [the_person.title] while you brush."
-            if the_person.effective_sluttiness() > 40 - (5 * (the_person.get_opinion_score("showing her tits")+the_person.get_opinion_score("showing her ass"))):
-                $ the_person.discover_opinion("showing her tits")
-                $ the_person.discover_opinion("showing her ass")
-                "She notices you watching, but doesn't seem to mind the attention."
-                $ the_person.change_slut_temp(1+(the_person.get_opinion_score("showing her tits")+the_person.get_opinion_score("showing her ass")))
-            else:
-                the_person.char "It's strange to shower with someone else in the room."
-                mc.name "Nothing to worry about, we're all family here, right?"
-                "She shrugs and nods, but you notice she's always trying to shield her body from your view."
-                $ the_person.change_slut_temp(1)
-                $ the_person.change_obedience(1)
-            $ the_person.update_outfit_taboos()
-            "Soon enough she's finished. She steps out and grabs a towel, but leaves the shower running for you."
-
-            $ the_person.apply_outfit(towel_outfit)
-            $ the_person.draw_person()
-            the_person.char "There you go. Enjoy!"
-            $ renpy.scene("Active")
-            "She steps past you and leaves. You get into the shower and enjoy the relaxing water yourself."
-            $ mc.change_energy(20)
-
-        "Join her in the shower" if the_person.obedience >= 120:
-            mc.name "How about I just jump in, I can get your back and we'll both save some time."
-            if the_person.effective_sluttiness() > 40:
-                the_person.char "Sure, if you're okay with that. I will put you to work though."
-                "She gives you a warm smile and invites you in with her."
-            else:
-                the_person.char "I'm not sure..."
-                mc.name "I've got work to get to today, so I'm getting in that shower."
-                "[the_person.possessive_title] nods meekly."
-                the_person.char "Okay."
-
-            "You strip down and get in the shower with [the_person.title]. The space isn't very big, so she puts her back to you."
-            "You're left with her ass inches from your crotch, and when she leans over to pick up the shampoo she grinds up against you."
-            $ mc.change_arousal(5)
-            the_person.char "Oops, sorry about that."
-            "Your cock, already swollen, hardens in response, and now even stood up the tip brushes against [the_person.possessive_title]'s ass."
-            if the_person.effective_sluttiness("touching_body") <= 40:
-                the_person.char "I think I'm just about done, so you can take care of this..."
-                "She wiggles her butt and strokes your tip against her cheeks."
-                $ the_person.change_slut_temp(3 + the_person.get_opinion_score("showing her ass"))
-                "She steps out of the shower and grabs a towel."
-                $ the_person.apply_outfit(towel_outfit)
-                # $ the_person.outfit = Outfit("Towel") changed v0.24.1
-                # $ the_person.outfit.add_dress(towel.get_copy())
-
-            # elif the_person.effective_sluttiness() <= 60: #TODO: Add a "hot dog" position and make it a starting position for this.
-            #     "She wiggles her butt and strokes your tip against her cheeks."
-            #     the_person.char "Do you need some help with this? How about you just... use my butt?"
-            #     $ the_person.draw_person("walking_away")
-            #     "She rubs up against you while you talk, stroking your shaft with her wet, slippery ass."
-            #     menu:
-            #         "Jerk off with her ass.":
-            #
-            #         "Just have a shower.":
-
-
-            else:
-                the_person.char "What is this?"
-                "She wiggles her butt and strokes your tip against her cheeks."
-                the_person.char "Well we need to take care of this, don't we..."
-                "She turns around and faces you. It might be the hot water, but her face is flush."
-                $ the_person.change_slut_temp(2)
-                menu:
-                    "Fuck her":
-                        $ bathroom = Room("bathroom", "Bathroom", [], home_bathroom_background, [], [], [], False, [0,0], visible = False)
-                        $ bathroom.show_background()
-                        $ bathroom.add_object(make_wall())
-                        $ bathroom.add_object(Object("shower door", ["Lean"], sluttiness_modifier = 5, obedience_modifier = 5))
-                        $ bathroom.add_object(make_floor())
-                        $ mc.change_location(bathroom)
-                        call fuck_person(the_person, skip_intro = True) from _call_fuck_person_1
-                        $ the_report = _return
-
-                        $ the_person.apply_outfit(towel_outfit)
-                        # $ the_person.outfit = Outfit("Towel") changed v0.24.1
-                        # $ the_person.outfit.add_dress(towel.get_copy())
-                        $ the_person.draw_person()
-                        "When you're finished [the_person.title] steps out of the shower and grabs a towel. She dries herself off, then wraps herself in it then turns to you."
-                        if the_report.get("girl orgasms",0)>0:
-                            the_person.char "Well that's a good way to start the day. See you later."
-                        elif the_report.get("guy orgasms",0)>0:
-                            the_person.char "Well I hope you enjoyed your start to the day. See you later."
-                        else:
-                            the_person.char "Well maybe we can pick this up some other time. See you later."
-
-                        $ del bathroom
-                        $ renpy.scene("Active")
-                        "She leaves the room and you finish your shower alone, feeling refreshed by the water."
-                        $ mc.change_location(bedroom)
-
-                    "Just have a shower":
-                        mc.name "Maybe some other time, I've got to hurry up though."
-                        "She pouts and nods."
-                        $ the_person.change_obedience(1)
-                        the_person.char "Alright, up to you."
-
-            $ mc.change_energy(20)
-
-
-        "Join her in the shower\n{color=#ff0000}{size=18}Requires: 120 Obedience{/size}{/color} (disabled)" if the_person.obedience < 120:
-            pass
-
-
-
-    return
-
-init 1 python:
-    def cousin_tease_crisis_requirement():
-        if cousin.home.visible and time_of_day > 0 and time_of_day < 4:
-            if cousin.effective_sluttiness() >= 30 and cousin.obedience < 120 and cousin.love < 10 and cousin not in mc.location.people:
-                return True
-        return False
-    cousin_tease_crisis = Action("Cousin text tease", cousin_tease_crisis_requirement, "cousin_tease_crisis_label")
-    crisis_list.append([cousin_tease_crisis, 3])
-
-label cousin_tease_crisis_label():
-    $ the_person = cousin
-    if the_person.effective_sluttiness("underwear_nudity") < 35: #She'll want money
-        "You get a curt text from [the_person.title]."
-        the_person.char "I need some cash. Do you have a hundred bucks?"
-        menu:
-            "Send [the_person.title] some money\n{color=#ff0000}{size=18}Costs: $100{/size}{/color}" if mc.business.funds >= 100:
-                $ mc.business.funds += -100
-                "You pull up your banking app and send [the_person.possessive_title] some money, then text back."
-                mc.name "There you go, sent."
-                the_person.char "Just like that? Well, thanks I guess."
-                mc.name "It's just money, I'd rather you were happy."
-                $ the_person.change_obedience(-4)
-                $ the_person.change_happiness(5)
-                $ the_person.change_love(1)
-                the_person.char "Sure thing, nerd."
-
-
-            "Send [the_person.title] some money\n{color=#ff0000}{size=18}Costs: $100{/size}{/color} (disabled)" if mc.business.funds < 100:
-                pass
-
-            "Ask why she needs it":
-                mc.name "What do you need it for?"
-                the_person.char "Why do you care? Come on, I need some cash quick."
-                the_person.char "Come on you horny perv, I'll give you a picture of my tits if you send me the cash."
-                $ the_person.draw_person()
-                if the_person.outfit.tits_visible():
-                    "She sends you a picture, but her tits are already out and on display."
-                    the_person.char "Fuck, delete that. That wasn't one wasn't for you..."
-                    mc.name "No, I think I've gotten everything I want already."
-                    $ the_person.change_slut_temp(1)
-                    $ the_person.change_obedience(1)
-                    "She types, then deletes several messages, but never sends anything else to you."
-                else:
-                    "She sends you a picture from her phone, obviously trying to tease you a little."
-                    menu:
-                        "Send [the_person.title] some money\n{color=#ff0000}{size=18}Costs: $100{/size}{/color}" if mc.business.funds >= 100:
-                            $ mc.business.funds += -100
-                            "You send her the money from your phone."
-                            mc.name "Alright, there's your cash. Whip those girls out for me."
-                            the_person.char "Ugh, I didn't think you'd actually do it."
-                            $ the_person.outfit.strip_to_tits()
-                            $ the_person.draw_person(position = "back_peek")
-                            "She sends you a picture, with her back turned to the camera."
-                            the_person.char "There."
-                            mc.name "What the fuck is that, I want to see those tits."
-                            the_person.char "I've already got my cash, so whatever nerd."
-                            mc.name "You know I can reverse it within ten minutes, right?"
-                            the_person.char "Fuck. Fine!"
-                            $ the_person.draw_person()
-                            the_person.char "There. Now go jerk off in the bathroom or whatever it is you want to do with that."
-                            $ the_person.change_obedience(-2)
-                            $ the_person.change_slut_temp(3)
-
-                            menu:
-                                "Reverse the payment anyways":
-                                    $ mc.business.funds += 100
-                                    "You don't respond to her, but you do open up your banking app again."
-                                    "You flag the recent transfer as \"accidental\" and in a few minutes the money is back in your account."
-                                    "It doesn't take long before you get a string of angry texts from [the_person.possessive_title]."
-                                    $ the_person.change_love(-5)
-                                    $ the_person.change_obedience(-3)
-                                    the_person.char "What the FUCK!"
-                                    the_person.char "Give me my money! We had a deal!"
-                                    mc.name "Sorry, but I've already got my pics. Later nerd."
-                                    "You have to block her for a few minutes as more angry texts stream in."
-
-                                "Let her keep the money":
-                                    "You think about reversing the charges anyways, but decide it's not the best idea if you want to keep this sort of relationship going."
-                                    $ the_person.break_taboo("bare_tits")
-
-
-                        "Send [the_person.title] some money\n{color=#ff0000}{size=18}Costs: $100{/size}{/color} (disabled)" if mc.business.funds < 100:
-                            pass
-
-                        "Blackmail her for some nudes" if the_person.event_triggers_dict.get("blackmail_level",-1) > 0 and the_person.event_triggers_dict.get("last_blackmailed", -5) + 5 <= day:
-                            $ the_person.event_triggers_dict["last_blackmailed"] = day
-                            if the_person.event_triggers_dict.get("blackmail_level",1) == 1:
-                                mc.name "How about this, you send them over and I don't say anything to your mom about you stealing from my sister."
-
-                            else: #Level 2
-                                mc.name "How about this, you send them over and I don't say anything to your mom about your after hours job."
-
-                            the_person.char "Oh my god, you little rat. You wouldn't."
-                            mc.name "You know I would. Come on, whip those girls out and take some shots for me."
-                            $ the_person.outfit.strip_to_tits()
-                            $ the_person.draw_person()
-                            "There's a pause, then [the_person.title] sends you some shots of herself topless."
-                            the_person.char "There. Satisfied?"
-                            if the_person.event_triggers_dict.get("blackmail_level",1) == 2:
-                                menu:
-                                    "Not yet":
-                                        mc.name "Not yet, I want to see those tits shaking. Send me a video."
-                                        mc.name "Just imagine I slid a twenty down your g-string and you're giving me a private dance. You're good at those, right?"
-                                        "There's another pause, then [the_person.title] sends you a video."
-                                        $ the_person.draw_person(position = "kneeling1", emotion = "angry", the_animation = blowjob_bob, animation_effect_strength = 0.8)
-                                        "She's kneeling on her bed. She sighs dramatically, then starts to bounce her body, jiggling her tits up and down."
-                                        "You watch it through, but feel like she could put some more effort into it."
-                                        mc.name "Come on, that was a little pathetic. Smile for me and really give it your all this time."
-                                        the_person.char "You want another video? You're being ridiculous."
-                                        mc.name "You know the deal. Get to work."
-                                        "There's yet another pause, then another video."
-                                        $ the_person.draw_person(position = "kneeling1", emotion = "happy", the_animation = blowjob_bob, animation_effect_strength = 1.0)
-                                        if the_person.has_large_tits():
-                                            "This time [the_person.title] has a nice, fake smile for you. She bounces herself a little more vigorously and really gets her big tits moving."
-                                        else:
-                                            "This time [the_person.title] has a nice, fake smile for you."
-                                            "She bounces herself a little more vigorously, but there's not much chest for her to shake to shake."
-                                        the_person.char "Are you satisfied now, you little perv?"
-
-                                        mc.name "For now. See you around."
-
-                                    "For now":
-                                        mc.name "For now, but we'll see how I'm feeling next time I see you."
-                                        the_person.char "Ugh. Please don't remind me."
-
-                            $ the_person.update_outfit_taboos()
-                            $ the_person.change_obedience(3)
-                            $ the_person.change_slut_temp(2)
-
-                        "Blackmail her for some nudes\n{color=#ff0000}{size=18}Blackmailed too recently{/size}{/color} (disabled)" if the_person.event_triggers_dict.get("blackmail_level",-1) > 0 and the_person.event_triggers_dict.get("last_blackmailed", -5) + 5 > day:
-                            pass
-
-
-                        "Tell her no":
-                            mc.name "You think I'd want to pay to see your tits? You should be paying me."
-                            $ the_person.change_love(-1)
-                            the_person.char "Whatever, I can make the cash somewhere else."
-                            "You don't receive any more messages from her."
-
-
-
-            "Tell her no":
-                mc.name "For you? Of course not."
-                $ the_person.change_obedience(1)
-                the_person.char "Oh my god, you're the worst. Whatever."
-
-    else:
-        "Out of the blue, [the_person.possessive_title] sends you a text."
-        the_person.char "Are you at work right now?"
-        if mc.is_at_work():
-            mc.name "Yeah, why do you care?"
-        else:
-            mc.name "No. Why do you care?"
-
-        "She sends you a picture."
-        $ the_person.apply_outfit(lingerie_wardrobe.get_random_appropriate_outfit(the_person.effective_sluttiness()/2, the_person.effective_sluttiness()*2, True))
-        $ the_person.draw_person(position = "kneeling1")
-        "She's in her bedroom, kneeling on her bed in nothing but some lingerie."
-        if the_person.update_outfit_taboos():
-            the_person.char "I can't believe I'm showing this to a pervert like you, but I got a new outfit."
-            the_person.char "Do you like it?"
-
-        else:
-            the_person.char "I got a new outfit. Do you like it?"
-        menu:
-            "I love it":
-                mc.name "Absolutely. Your tits look amazing in it."
-                $ the_person.change_love(1)
-                $ the_person.change_obedience(-2)
-                the_person.char "You're such a pervert looking at me like that."
-
-            "No":
-                mc.name "On you, not really."
-                $ the_person.change_love(-1)
-                $ the_person.change_obedience(1)
-                the_person.char "You lying little shit. I know you love seeing me like this. You're such a pervert."
-        the_person.char "I bet you're about to blow your load just looking at me, right?"
-        if the_person.has_large_tits():
-            the_person.char "Do you want me to take this off and show you my big, soft tits?"
-        else:
-            the_person.char "Do you want me to take this off and play with my tits for you?"
-        menu:
-            "Yes":
-                mc.name "Of course I do. Send me some pics."
-                $ the_person.change_obedience(-1)
-                the_person.char "I knew you would. I want you to beg me for them."
-                mc.name "What?"
-                the_person.char "I want you to beg to see my tits. Come on, you want them, right?"
-                menu:
-                    "Beg to see her tits":
-                        "You think about it for a moment, then give in."
-                        mc.name "Fine, I'm begging you to show me your tits."
-                        the_person.char "A little more, please."
-                        if the_person.has_large_tits():
-                            mc.name "All I want in life is to get a look at those huge tits. I need it so badly."
-                        else:
-                            mc.name "All I want in life is to get a look at your tits. I need it so badly."
-                        the_person.char "Close..."
-                        mc.name "I'm so turned on, just thinking about your tits. Please [the_person.title], I'm begging you!"
-                        $ the_person.change_obedience(-2)
-                        $ the_person.change_happiness(5)
-                        "You wait eagerly for her response."
-                        the_person.char "Oh my god, I can't believe you're this easy to screw with."
-                        mc.name "Whatever, just send me some pics."
-                        the_person.char "You really thought I was going to send those? Ha!"
-                        the_person.char "Talk to you later, nerd."
-
-                    "Refuse":
-                        mc.name "Why would I beg just to see those udders? If I wanted to see some attention starved bimbo's tits I can go online."
-                        $ the_person.change_slut_temp(1)
-                        the_person.char "Whatever nerd. You probably already blew your load in your pants."
-                        "You ignore her and she doesn't message you again."
-
-            "No":
-                mc.name "Not right now. I've got other stuff to do."
-                the_person.char "Really? You've got to be kidding me."
-                the_person.char "You don't want to see me spread over this bed, naked and waiting for you?"
-                the_person.char "My poor little pussy just dripping wet, waiting for a big hard cock?"
-                the_person.char "Just beg for it and it's yours. My tight little cunt is all yours."
-                menu:
-                    "Beg to see her naked":
-                        "You think about it for a moment, then give in."
-                        mc.name "Fine, I'm begging you [the_person.title], let me see you naked."
-                        the_person.char "I'm not sure I'm convinced. A little more please."
-                        mc.name "All I want in life right now is to see you stripped out."
-                        the_person.char "Close..."
-                        mc.name "I'm so turned on just thinking about you. Please, I'm begging you!"
-                        $ the_person.change_obedience(-4)
-                        $ the_person.change_happiness(8)
-                        "You wait eagerly for her response."
-                        the_person.char "Oh my god, I'm taking a picture of this chat. I can't believe how desperate you get."
-                        mc.name "What? I don't care, just send me some pics."
-                        the_person.char "You really thought I was going to send anything? Hahahaha!"
-                        the_person.char "Talk to you later, nerd."
-
-
-                    "Refuse":
-                        mc.name "Jesus, you're looking a little desperate there [the_person.title]. I can find attention starved bimbos all over the internet if I wanted one."
-                        $ the_person.change_slut_temp(2)
-                        the_person.char "You pathetic little nerd, I bet you've just already blown your load. You should be paying me for this."
-                        "You ignore her and she doesn't message you again."
-
-
-    $ the_person.apply_outfit() #Return to her planned outfit.
-    $ renpy.scene("Active")
-    return
-
-init 1 python:
-    def so_relationship_improve_requirement():
-        return not get_so_relationship_improve_person() is None
-
-    def so_relationship_worsen_requirement():
-        return not get_so_relationship_worsen_person() is None
-
-    def get_so_relationship_improve_person():
-        potential_people = []
-        for place in list_of_places:
-            for a_person in place.people:
-                if a_person.love > 10 and not a_person.title is None and not a_person.relationship == "Married":
-                    if not any(x in a_person.special_role for x in [mother_role, sister_role, cousin_role, aunt_role, girlfriend_role, affair_role]):
-                        potential_people.append(a_person)
-        return get_random_from_list(potential_people)
-
-    def get_so_relationship_worsen_person():
-        potential_people = []
-        for place in list_of_places:
-            for a_person in place.people:
-                if a_person.love > 10 and not a_person.title is None and not a_person.relationship == "Single":
-                    if not any(x in a_person.special_role for x in [mother_role, sister_role, cousin_role, aunt_role]):
-                        potential_people.append(a_person)
-        return get_random_from_list(potential_people)
-
-    so_relationship_improve_crisis = Action("Friend SO relationship improve", so_relationship_improve_requirement, "so_relationship_improve_label")
-    crisis_list.append([so_relationship_improve_crisis, 3])
-
-    so_relationship_worsen_crisis = Action("Friend SO relationship worsen", so_relationship_worsen_requirement, "so_relationship_worsen_label")
-    crisis_list.append([so_relationship_worsen_crisis, 1])
-
-label so_relationship_improve_label():
-    $ the_person = get_so_relationship_improve_person()
-    if the_person is None:
-        return #Something's changed and there is no longer a valid person
-
-    if the_person.relationship == "Single":
-        $ the_person.change_happiness(10)
-        "You get a notification on your phone."
-        $ guy_name = get_random_male_name()
-        "[the_person.title] has just changed her status on social media. She's now in a relationship with someone named [guy_name]."
-        $ the_person.relationship = "Girlfriend"
-        $ the_person.SO_name = guy_name
-
-    elif the_person.relationship == "Girlfriend":
-        $ the_person.change_happiness(20)
-        if the_person.love > 30: #You're a good friend.
-            "You get a text from [the_person.title]."
-            the_person.char "Hey [the_person.mc_title], I have some exciting news!"
-            the_person.char "My boyfriend proposed, me and [the_person.SO_name] are getting married! I'm so excited, I just had to tell you!"
-            menu:
-                "Congratulate her":
-                    "You text back."
-                    mc.name "Congratulations! I'm sure you're the happiest girl in the world."
-                    $ the_person.change_love(1)
-                    the_person.char "I am! I've got other people to tell now, talk to you later!"
-
-                "Warn her against it":
-                    "You text back."
-                    mc.name "I don't know if that's such a good idea. Do you even know him that well?"
-                    "Her response is near instant."
-                    the_person.char "What? What do you even mean by that?"
-                    mc.name "I mean, what if he isn't who you think he is? Maybe he isn't the one for you."
-                    $ the_person.change_happiness(-10)
-                    the_person.char "I wasn't telling you because I wanted your opinion. If you can't be happy for me, you can at least be quiet."
-                    $ the_person.change_love(-5)
-                    "She seems pissed, so you take her advice and leave her alone."
-        else: #You see it on social media
-            "You get a notification on your phone."
-            "It seems [the_person.title] has gotten engaged to her boyfriend, [the_person.SO_name]. You take a moment to add your own well wishes to her social media pages."
-        $ the_person.relationship = "Fiancée"
-
-    elif the_person.relationship == "Fiancée":
-        #TODO: Add an event where you're invited to their wedding and fuck the bride.
-        "You get a notification on your phone."
-        "It seems [the_person.title]'s just had her wedding to her Fiancé, [the_person.SO_name]. You take a moment to add your congratulations to her wedding photo."
-        $ the_person.relationship = "Married"
-
-    return
-
-
-
-label so_relationship_worsen_label():
-    $ the_person = get_so_relationship_worsen_person()
-    if the_person is None:
-        return #Something's changed and there is no longer a valid person
-
-    $ so_title = SO_relationship_to_title(the_person.relationship)
-    if affair_role in the_person.special_role:
-        "You get a call from [the_person.title]. When you pick up she sounds tired, but happy."
-        the_person.char "Hey [the_person.mc_title], I've got some news. Me and my [so_title], [the_person.SO_name], had a fight. We aren't together any more."
-        the_person.char "We don't have to hide what's going on between us any more."
-        call transform_affair(the_person) from _call_transform_affair
-        mc.name "That's good news! I'm sure you'll want some rest, so we can talk more later. I love you."
-        $ the_person.change_love(5)
-        the_person.char "I love you too. Bye."
-
-    else:
-        $ the_person.change_happiness(-20)
-        "You get a notification on your phone."
-        "It looks like [the_person.title] has left her [so_title] and is single now."
-
-    $ the_person.relationship = "Single"
-    $ the_person.SO_name = None
-    return
-
-init 1 python:
-    def affair_dick_pic_requirement():
-        if time_of_day == 3 or time_of_day == 4:
-            return not get_affair_dick_pick_person() is None
-        return False
-
-    def get_affair_dick_pick_person():
-        possible_people = []
-        for place in list_of_places:
-            for a_person in place.people:
-                if affair_role in a_person.special_role and a_person not in mc.location.people: #Someone is in an affair with you and wants a dic pic
-                    possible_people.append(a_person)
-    
-        return get_random_from_list(possible_people)
-
-    affair_dick_pic_crisis = Action("Affair dic pic", affair_dick_pic_requirement, "affair_dick_pick_label")
-    crisis_list.append([affair_dick_pic_crisis, 5])
-
-label affair_dick_pick_label():
-    $ the_person = get_affair_dick_pick_person()
-    if the_person is None:
-        return
-
-    "You get a text from [the_person.title]."
-    the_person.char "I'm so horny right now. I'm touching myself and thinking about you, [the_person.mc_title]."
-    "She sends you a picture, which you immediately open up."
-    $ the_person.apply_outfit(lingerie_wardrobe.pick_random_outfit(), update_taboo = True)
-    $ the_person.draw_person(position = "missionary")
-    "[the_person.possessive_title] is lying face up in her bed, one hand cradling a breast while the other fingers her wet pussy."
-    menu:
-        "Send her a dick pic back":
-            if mc.location.get_person_count() > 0:
-                "You find a quiet spot and whip out your dick for a quick glamour shot."
-            else:
-                "You whip out your dick for a quick glamour shot."
-            "[the_person.title]'s picture was enough to get you ready, but you give yourself a few strokes to make sure you're at full size."
-            "You take a shot of your rock hard cock and send it off to [the_person.title] in return."
-            "After a short wait you get a response."
-            the_person.char "That's what I want! I wish I could feel that hard thing down my throat right now."
-            the_person.char "God, I'm such a dirty fucking slut for your cock!"
-            $ the_person.change_slut_temp(2)
-            $ the_person.change_obedience(1)
-            mc.name "Good, then be a good slut and cum your brains out for me."
-            "After another short pause she messages you again."
-            the_person.char "I just came so hard. You're so bad for me [the_person.mc_title]. Hope to see you soon."
-
-
-
-        "Tell her you're busy":
-            "As much as you enjoy the picture, you've got important work to do. You text her back."
-            mc.name "I've got work to get done [the_person.title]. Stop bothering me just because you're a bitch in heat."
-            if the_person.get_opinion_score("being submissive") > 0:
-                $ the_person.change_slut_temp(2)
-                $ the_person.change_obedience(2)
-                "There's a long pause, then she texts back."
-                the_person.char "That is what I am. Your horny bitch, desperate for your cock!"
-                the_person.char "Fuck, I just came so hard!"
-
-            else:
-                $ the_person.change_slut_temp(1)
-                $ the_person.change_obedience(2)
-                $ the_person.change_love(-1)
-                "There's a long pause, then she texts you back."
-                the_person.char "Just don't make me wait too long, I need to feel your cock again!"
-    $ the_person.apply_outfit(the_person.planned_outfit)
-    $ renpy.scene("Active")
-    return
-
-init 1 python:
-    def girlfriend_nudes_requirement():
-        if time_of_day == 3 or time_of_day == 4:
-            return not get_girlfriend_nudes_person() is None
-        return False
-
-    def get_girlfriend_nudes_person():
-        possible_people = []
-        for place in list_of_places:
-            for a_person in place.people:
-                if girlfriend_role in a_person.special_role and a_person not in mc.location.people: #Someone is in an affair with you and wants a dic pic
-                    possible_people.append(a_person)
-        return get_random_from_list(possible_people)
-
-    girlfriend_nudes_crisis = Action("Girlfriend nudes", girlfriend_nudes_requirement, "girlfriend_nudes_label")
-    crisis_list.append([girlfriend_nudes_crisis, 5])
-
-label girlfriend_nudes_label():
-    $ the_person = get_girlfriend_nudes_person()
-    if the_person is None:
-        return
-
-    if the_person.effective_sluttiness() < 20:
-        "You get a text from [the_person.possessive_title]."
-        the_person.char "Hey [the_person.mc_title]. I was just thinking about you and wanted to say hi."
-        the_person.char "Hope we can spend some time together soon."
-        mc.name "Me too, we'll talk when I have some time."
-
-    elif the_person.effective_sluttiness() < 40:
-        "You get a text from [the_person.possessive_title], followed shortly after by a video."
-        the_person.char "Hey [the_person.mc_title]. I was playing around a little and hope this brightens your day."
-        $ the_person.draw_person(position = "doggy", the_animation = missionary_bob)
-        "You open up the video and see [the_person.title] on her bed, ass towards the camera. She's working her hips and shaking her ass for you."
-        if the_person.age >= 35:
-            the_person.char "You kids call this twerking, right? I think it's pretty hot."
-            the_person.char "I could use more practice. Come by some time and maybe you can give me some advice."
-        else:
-            the_person.char "I wish I could twerk this ass for you in person. Swing by some time, okay?"
-
-    elif the_person.effective_sluttiness() < 60:
-        $ the_person.apply_outfit(lingerie_wardrobe.pick_random_outfit())
-        "You get a text from [the_person.possessive_title], followed shortly by a video."
-        the_person.char "Here's a little gift for you, hope you like it!"
-        "You open the video."
-        $ the_person.draw_person(position = "stand5", the_animation = blowjob_bob, animation_effect_strength = 0.8)
-        "It's [the_person.title] in her room in front of a mirror. She smiles and waves at you, then bounces her tits up and down."
-        $ tit_strip_list = the_person.outfit.get_tit_strip_list(visible_enough = True)
-        if tit_strip_list: #She has something to strip to show off her tits more
-            "She dances for a moment, then starts to strip down even more."
-            python:
-                for the_item in tit_strip_list:
-                    the_person.draw_animated_removal(the_item, position = "stand5", the_animation = blowjob_bob, animation_effect_strength = 0.8)
-                    if the_person.outfit.tits_visible():
-                        renpy.say("", "She pulls her " + the_item.name + " off and lets her tits fall free.")
-                        renpy.say("", "She at the camera and shakes them for you.")
-                    else:
-                        renpy.say("","")
-            if the_person.has_large_tits():
-                "Tits out, she dances a little more for you, then blows a kiss and waves goodbye. Her breasts dangle directly in front of the camera as she turns it off."
-            else:
-                "Tits out, she dances a little more for you, then blows a kiss and waves goodbye."
-
-        else:
-            "She dances for a moment, then blows you a kiss and waves goodbye."
-        $ the_person.update_outfit_taboos()
-        $ the_person.apply_outfit(the_person.planned_outfit)
-    else:
-        $ the_person.apply_outfit(Outfit("Nude"))
-        "You get a text from [the_person.possessive_title], followed shortly by a video."
-        the_person.char "Thinking of you, wish you were here!"
-        "You open up the video."
-        $ the_person.draw_person(position = "missionary", the_animation = missionary_bob, animation_effect_strength = 0.5)
-        "[the_person.title] is lying naked in bed, one hand already between her legs."
-        "She smiles at the camera and starts to finger herself, slowly at first but quickly picking up speed."
-        "After a moment she reaches out of frame for a bringing a shiny chrome vibrator."
-        "She maintains eye contact with the camera as she licks it, then sucks on it a little bit, before sliding it between her legs."
-        $ the_person.draw_person(position = "missionary", the_animation = missionary_bob, animation_effect_strength = 0.75)
-        "[the_person.possessive_title] arches her back as the vibrator touches her clit."
-        "Before long her thighs are quivering. You watch as [the_person.title] drives herself to orgasm with her vibrator."
-        "Her legs clamp down on her own hand as she cums. After a moment she relaxes, leaving the vibrator running on the bed."
-        "She looks into the camera again and sighs happily, then reaches forward and ends the video."
-        $ the_person.update_outfit_taboos()
-        $ the_person.apply_outfit(the_person.planned_outfit)
-    #TODO: A blowjob/deep-throat training video, or an anal stretching video she sends you to show she's "getting ready."
-
-    $ renpy.scene("Active")
+    $ clear_scene()
+    $ the_group = None
     return

@@ -83,7 +83,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
     $ vagina_available = the_person.outfit.vagina_available()
     $ tits_available = the_person.outfit.tits_available()
 
-        
+
     while not finished:
         if girl_in_charge:
             # The girls decisions set round_choice here.
@@ -91,7 +91,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                 $ pass
             else:
                 $ position_choice = start_position
-            
+
             if position_choice is None and (first_round or not position_locked):
                 call girl_choose_position(the_person, ignore_taboo = ignore_taboo) from _call_girl_choose_position #Get her to pick a position based on what's available #TODO: This function
                 $ position_choice = _return #Can be none, if no option was available for her to take.
@@ -102,7 +102,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                 if object_choice is None:
                     call girl_choose_object(the_person, position_choice,forced_object = start_object) from _call_girl_choose_object
                     $ object_choice = _return
-                        
+
 
             if report_log.get("girl orgasms", 0) > 0 and the_person.love < 10 and the_person.obedience < 110: #She's cum and doesn't care about you finishing.
                 the_person.char "Whew, that felt great. Thanks for the good time [the_person.mc_title]!"
@@ -198,6 +198,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                         call clear_object_effects(the_person) from _call_clear_object_effects
 
                 if position_choice and object_choice:
+                    $ position_choice.redraw_scene(the_person)
                     if first_round:
                         if not skip_intro:
                             $ the_person.draw_person() #Draw her standing until we pick a new position
@@ -235,7 +236,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                 elif girl_in_charge and not position_choice.requires_hard and girl_considers_hard and not position_locked:
                     "[the_person.possessive_title] considers your stiffened cock."
                     $ girl_considers_hard = False
-                    $ position_choice = None                    
+                    $ position_choice = None
                 elif position_choice.guy_energy > mc.energy:
                     if girl_in_charge:
                         "You're too exhausted to let [the_person.possessive_title] keep [position_choice.verbing] you."
@@ -250,14 +251,14 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                 else: #Nothing major has happened that requires us to change positions, we can have girls take over, strip
                     if self_strip:
                         call girl_strip_event(the_person, position_choice, object_choice) from _call_girl_strip_event
-                        $ girl_considers_vagina = the_person.outfit.vagina_available() != vagina_available 
+                        $ girl_considers_vagina = the_person.outfit.vagina_available() != vagina_available
                         $ vagina_available = the_person.outfit.vagina_available()
                         $ girl_considers_tits = the_person.outfit.tits_available() != tits_available
                         $ tits_available = the_person.outfit.tits_available()
                         if girl_in_charge and position_choice != None and not position_locked:
                             if girl_considers_vagina:
                                 "[the_person.possessive_title]'s fingers brush over her pussy."
-                                $ position_choice = None    
+                                $ position_choice = None
                             elif girl_considers_tits:
                                 "[the_person.possessive_title]'s hand caresses her tits."
                                 $ position_choice = None
@@ -284,7 +285,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                 pass
 
         elif round_choice == "Strip":
-            call strip_menu(the_person, position_choice.verbing) from _call_strip_menu
+            call strip_menu(the_person, position_choice.verbing, private) from _call_strip_menu
 
         elif round_choice == "Leave":
             $ finished = True # Unless something stops us the encounter is over and we can end
@@ -325,6 +326,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
     # Teardown the sex modifiers
     $ the_person.clear_situational_slut("love_modifier")
+    $ the_person.clear_situational_slut("happiness_effect")
     $ the_person.clear_situational_slut("cheating")
     $ the_person.clear_situational_slut("taboo_sex")
     $ the_person.clear_situational_slut("public_sex")
@@ -352,6 +354,9 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
             if position_type.record_class and position_type.record_class not in types_seen:
                 the_person.sex_record[position_type.record_class] += 1
                 types_seen.append(position_type.record_class)
+
+
+    $ the_person.outfit.restore_all_clothing() #Pull all of her half-off clothing back into place.
 
     # We return the report_log so that events can use the results of the encounter to figure out what to do.
     return report_log
@@ -398,8 +403,6 @@ label girl_choose_object(the_person, the_position, forced_object = None):
         $ picked_object = forced_object
     else:
         $ picked_object = get_random_from_list(possible_object_list)
-
-    $ del possible_object_list
     $ the_person.add_situational_slut("sex_object", picked_object.sluttiness_modifier, the_position.verbing + " on a " + picked_object.name)
     $ the_person.add_situational_obedience("sex_object",picked_object.obedience_modifier, the_position.verbing + " on a " + picked_object.name)
     return picked_object
@@ -497,6 +500,7 @@ label sex_description(the_person, the_position, the_object, private = True, repo
     if the_position.skill_tag == "Vaginal":
         $ the_person.discover_opinion("bareback sex")
         if mc.condom:
+            $ her_arousal_change += -1 # Condoms don't feel as good (but matter less for her)
             $ her_arousal_change += -2 * the_person.get_opinion_score("bareback sex")
         else:
             $ her_arousal_change += 2 * the_person.get_opinion_score("bareback sex")
@@ -512,10 +516,36 @@ label sex_description(the_person, the_position, the_object, private = True, repo
             $ mc.log_event(the_person.title + ": Bored by position. Arousal gain halved.", "float_text_red")
             $ her_arousal_change = her_arousal_change/2.
 
+
+    $ clothing_count = 0
+    $ interfering_clothing = []
+    if the_position.skill_tag == "Vaginal" or the_position.skill_tag == "Anal":
+        python:
+            for clothing in the_person.outfit.get_lower_ordered():
+                if clothing.anchor_below and clothing.half_off_gives_access and clothing.half_off:
+                    clothing_count += 1 #Each piece of clothing that's only half off lowers the amount of arousal gain for both parties
+                    interfering_clothing.append(clothing)
+
+    elif the_position.requires_large_tits:
+        python:
+            for clothing in the_person.outfit.get_upper_ordered():
+                if clothing.anchor_below and clothing.half_off_gives_access and clothing.half_off:
+                    clothing_count += 1 #Each piece of clothing that's only half off lowers the amount of arousal gain for both parties
+                    interfering_clothing.append(clothing)
+
+    if clothing_count > 0:
+        $ clothing_string = format_list_of_clothing(interfering_clothing)
+        "[the_person.title]'s half off [clothing_string] get in the way, lowering your enjoyment somewhat."
+
+
+    $ her_arousal_change += -clothing_count
     $ the_person.change_arousal(her_arousal_change)
 
     # Now his arousal change
     $ his_arousal_change = the_position.guy_arousal * (1.0 + 0.1 * the_person.sex_skills[the_position.skill_tag])
+    $ his_arousal_change += -clothing_count
+    if the_position.skill_tag == "Vaginal" and mc.condom:
+        $ his_arousal_change += -2 # Condoms don't feel as good.
 
     $ mc.change_arousal(his_arousal_change)
     if mc.recently_orgasmed and mc.arousal >= 10:
@@ -657,7 +687,7 @@ label condom_ask(the_person):
             if the_person.on_birth_control:
                 the_person.char "Don't put on a condom. I'm on the pill and I want to feel you pump your load inside me."
             else:
-                the_person.char "Please don't put on a condom. I want you to feel you as you fuck me and get me pregnant."
+                the_person.char "Please don't put on a condom. I want you to feel you as you fuck me, even if you get me pregnant."
             $ the_person.discover_opinion("creampies")
         else:
             the_person.char "You don't need a condom, I want to feel every single thing you do to me."
@@ -671,26 +701,43 @@ label condom_ask(the_person):
             "Fuck her raw":
                 mc.name "No arguments here."
 
-    if not mc.condom:
+    if mc.condom:
+        "Sex with a condom on doesn't feel as good, for you or for her."
+    else:
         $ the_person.break_taboo("condomless_sex")
 
 
     return True #If we make it to the end of the scene everything is fine and sex can continue. If we returned false we should go back to the position select, as if we asked for something to extreme.
 
-label strip_menu(the_person, the_verbing = "fucking"): #TODO: Add an arousal cost to stripping a girl down, but give an arousal boost if she likes getting naked.
+label strip_menu(the_person, the_verbing = "fucking", is_private = True): #TODO: Add an arousal cost to stripping a girl down, but give an arousal boost if she likes getting naked.
     python:
-        second_tuple_list = []
+        full_off_list = ["Take off"]
         for clothing in the_person.outfit.get_unanchored():
-            if not clothing.is_extension: #Extension clothing is placeholder for multi-slot items like dresses.
-                second_tuple_list.append(["Take off " + clothing.display_name + ".",clothing])
-        second_tuple_list.append(["Go back to " + the_verbing + " her.","Finish"])
+            if not clothing.is_extension:
+                formatted_name = clothing.display_name.capitalize() + "\n-5 {image=gui/extra_images/arousal_token.png}"
+                full_off_list.append([formatted_name, [clothing,"Full"]]) #Keeps track if this was a full or partial strip, so we can reuse all of the strip taboo logic/dialogue
 
-        strip_choice = renpy.display_menu(second_tuple_list,True,"Choice")
-        del second_tuple_list
+        half_off_list = ["Move away"]
+        for clothing in the_person.outfit.get_unanchored():
+            if clothing.can_be_half_off and not clothing.half_off:
+                half_off_list.append([clothing.display_name.capitalize(), [clothing,"Half"]])
 
-    if not strip_choice == "Finish":
+        other_list = ["Other","Finish"]
+
+    call screen main_choice_display([full_off_list, half_off_list, other_list])
+    $ choice_return = _return
+
+    if not choice_return == "Finish":
+        $ strip_choice = choice_return[0] #Gets what the actual potentially stripped item was.
+        $ strip_type = choice_return[1] #Gets if this was a half-off or a full strip
+
         $ test_outfit = the_person.outfit.get_copy()
-        $ test_outfit.remove_clothing(strip_choice)
+
+        if strip_type == "Half":
+            $ test_outfit.half_off_clothing(strip_choice)
+        else:
+            $ test_outfit.remove_clothing(strip_choice)
+
         $ underwear_revealed = False
         $ boobs_revealed = False
         $ ass_revealed = False
@@ -701,8 +748,56 @@ label strip_menu(the_person, the_verbing = "fucking"): #TODO: Add an arousal cos
         if not the_person.outfit.vagina_visible() and test_outfit.vagina_visible():
             $ ass_revealed = True
 
+        $ willing_to_strip = False
+        $ ordered_to_strip = False #TODO: Use this for some dialogue stuff later
 
-        if the_person.judge_outfit(test_outfit, use_taboos = True):
+        $ strip_requirement = 0
+        if ass_revealed: #Doubles for pussy revealed
+            $ strip_requirement = 40
+        elif boobs_revealed:
+            $ strip_requirement = 30
+        elif underwear_revealed:
+            $ strip_requirement = 20
+
+        if ass_revealed and the_person.has_taboo("bare_pussy"):
+            $ strip_requirement += 10
+        if boobs_revealed and the_person.has_taboo("bare_tits"):
+            $ strip_requirement += 10
+        if underwear_revealed and the_person.has_taboo("underwear_nudity"):
+            $ strip_requirement += 10
+
+        if the_person.effective_sluttiness() >= strip_requirement: #Note that taboos are added separately.
+            $ willing_to_strip = True
+
+        # TODO: Check if we really care about this private option.
+        if not is_private: #She also cares about what she will end up wearing in front of other people. #TODO: This hsould have special strip reject dialogue.
+            $ willing_to_strip = willing_to_strip and the_person.judge_outfit(test_outfit, use_taboos = True)
+
+        $ willing_if_ordered = False
+        if not willing_to_strip: #If she won't strip we might have a chance to command her toself.
+            $ ran_num = the_person.obedience - 100
+            if strip_type == "Half":
+                $ ran_num += 10 #She's more likely to listen to you obediently when you strip her quickly.
+
+            if is_private:
+                $ willing_if_ordered = the_person.effective_sluttiness() + ran_num >= strip_requirement
+            else:
+                $ willing_if_ordered = the_person.judge_outfit(test_outfit, temp_sluttiness_boost = ran_num, use_taboos = True)
+
+            if willing_if_ordered:
+                $ the_person.call_dialogue("strip_obedience_accept", the_clothing = strip_choice, strip_type = strip_type)
+                menu:
+                    "Do it anyways.":
+                        "You proceed despite [the_person.possessive_title]'s objections, trusting her to remain obedient and docile."
+                        $ willing_to_strip = True
+                        $ ordered_to_strip = True
+                        $ the_person.discover_opinion("being submissive")
+                        $ the_person.change_happiness(-5 + (5*the_person.get_opinion_score("being submissive")))
+
+                    "Let it be.":
+                        "You leave [the_person.possessive_title]'s [strip_choice.display_name] in place, and she relaxes."
+
+        if willing_to_strip:
             if ass_revealed and the_person.has_taboo("bare_pussy"):
                 $ the_person.call_dialogue("bare_pussy_taboo_break", the_clothing =  strip_choice)
             elif boobs_revealed and the_person.has_taboo("bare_tits"):
@@ -710,9 +805,20 @@ label strip_menu(the_person, the_verbing = "fucking"): #TODO: Add an arousal cos
             elif underwear_revealed and the_person.has_taboo("underwear_nudity"):
                 $ the_person.call_dialogue("underwear_nudity_taboo_break", the_clothing = strip_choice)
 
-            $ the_person.draw_animated_removal(strip_choice)
-            $ renpy.say("", "You pull her " + strip_choice.display_name + " off, dropping it to the ground.")
+            if strip_type == "Half":
+                $ the_person.draw_animated_removal(strip_choice, half_off_instead = True)
+                $ renpy.say("","You pull her " + strip_choice.display_name + " out of the way.")
+            else:
+                $ the_person.draw_animated_removal(strip_choice)
+                if strip_choice.half_off:
+                    $ renpy.say("", "You pull her " + strip_choice.display_name + " off entirely and drop it on the ground.")
+                else:
+                    $ renpy.say("", "You pull her " + strip_choice.display_name + " off, dropping it to the ground.")
+
             $ arousal_change = 0
+            if strip_type == "Half":
+                $ arousal_change += -5
+
             if underwear_revealed or boobs_revealed or ass_revealed:
                 $ arousal_change += the_person.get_opinion_score("not wearing anything") * 2
                 $ the_person.discover_opinion("not wearing anything")
@@ -737,17 +843,30 @@ label strip_menu(the_person, the_verbing = "fucking"): #TODO: Add an arousal cos
                 if the_person.arousal > the_person.max_arousal:
                     "[the_person.possessive_title] moans and shivers, seemingly on the edge of an orgasm."
                 else:
-                    "[the_person.possessive_title] bites her lip and and moans as you strip her down."
+                    if strip_type == "Half":
+                        "[the_person.possessive_title] bites her lip and and moans as you pull at her clothing."
+                    else:
+                        "[the_person.possessive_title] bites her lip and and moans as you strip her down."
             elif arousal_change < 0:
                 $ the_person.change_arousal(arousal_change)
-                "[the_person.possessive_title] seems impatient as you strip her down."
+                if strip_type == "Half":
+                    "[the_person.possessive_title] is impatient as you pull at her clothing."
+                else:
+                    "[the_person.possessive_title] is impatient as you strip her down."
 
         else:
-            $ renpy.say("", "You start to pull off " + the_person.title + "'s " + strip_choice.name + " when she grabs your hand and stops you.")
-            $ the_person.call_dialogue("strip_reject")
-        $ del test_outfit
-        $ del strip_choice
-        $ renpy.call("strip_menu", the_person, the_verbing) #TODO: Girl sometimes interupts you to get you to keep going. Have to strip them down in segments.
+            if not willing_if_ordered: #If she was willing if ordered then the dialogue is called up top.
+                if strip_type == "Half":
+                    $ renpy.say("", "You start to pull " + the_person.title + "'s " + strip_choice.name + " out of the way.")
+                    $ renpy.say("", "She grabs your hand gently.")
+                else:
+                    $ renpy.say("", "You start to pull off " + the_person.title + "'s " + strip_choice.name + " when she grabs your hand and stops you.")
+                $ the_person.call_dialogue("strip_reject", the_clothing = strip_choice , strip_type = strip_type) #TODO: pass the piece of clothing and base some dialogue off of that.
+        $ renpy.call("strip_menu", the_person, the_verbing, is_private) #TODO: Girl sometimes interupts you to get you to keep going. Have to strip them down in segments.
+
+    $ test_outfit = None
+    $ full_off_list = None
+    $ half_off_list = None
     return
 
 label girl_strip_event(the_person, the_position, the_object):
@@ -755,10 +874,12 @@ label girl_strip_event(the_person, the_position, the_object):
     $ strip_chance = the_person.effective_sluttiness() - the_person.outfit.slut_requirement
     $ strip_chance += the_person.get_opinion_score("not wearing anything") * 5
     $ the_clothing = None
+
     if the_person.get_opinion_score("showing her tits") > the_person.get_opinion_score("showing her ass"): # If she has a preference (even a least-bad preference) she'll strip that down first.
         $ the_clothing = the_person.outfit.remove_random_any(exclude_feet = True, exclude_lower = True, do_not_remove = True)
     elif the_person.get_opinion_score("showing her tits") < the_person.get_opinion_score("showing her ass"):
         $ the_clothing = the_person.outfit.remove_random_any(exclude_feet = True, exclude_upper = True, do_not_remove = True)
+
     if the_clothing is None: #Either our previous checks failed to produce anything OR they were equal
         $ the_clothing = the_person.outfit.remove_random_any(exclude_feet = True, do_not_remove = True)
 

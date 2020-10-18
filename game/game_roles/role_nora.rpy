@@ -14,12 +14,14 @@ init -2 python:
         elif mc.business.event_triggers_dict.get("nora_trait_researched",None) is None:
             return False
         elif time_of_day== 0:
-            return "Too early to visit [nora.title]."
+            return "Too early to visit [nora.title]"
         elif time_of_day == 4:
-            return "Too late to visit [nora.title]."
+            return "Too late to visit [nora.title]"
+        elif not nora.get_destination() is university:
+            return "[nora.title] does not work now"
         elif __builtin__.round(mc.business.event_triggers_dict.get("nora_trait_researched").mastery_level, 1) < 2:
             trait_name = mc.business.event_triggers_dict.get("nora_trait_researched").name
-            return "Trait Mastery Level of " + trait_name + " must be 2 or higher."
+            return "Requires: " + trait_name + " Mastery >= 2"
         else:
             return True
 
@@ -38,43 +40,44 @@ init -2 python:
             return False
         elif mc.business.event_triggers_dict.get("nora_trait_researched", None) is None and not mc.business.event_triggers_dict.get("nora_cash_research_trigger", False):
             return False
-        elif mc.business.is_weekend():
-            return "[nora.title] does not work on the weekend."
         elif time_of_day == 0:
-            return "Too early to talk to [nora.title] about business."
+            return "Too early to talk to [nora.title] about business"
         elif time_of_day == 4:
-            return "Too late to talk to [nora.title] about business."
-        else:
-            return True
+            return "Too late to talk to [nora.title] about business"
+        elif not nora.get_destination() is university:
+            return "[nora.title] does not work now"
+        return True
 
     def nora_research_cash_requirement(the_person):
         if mc.business.event_triggers_dict.get("nora_cash_research_trait", None) is None:
             return False
         elif time_of_day == 0:
-            return "Too early to visit [nora.title]."
+            return "Too early to visit [nora.title]"
         elif time_of_day == 4:
-            return "Too late to visit [nora.title]."
+            return "Too late to visit [nora.title]"
+        elif not nora.get_destination() is university:
+            return "[nora.title] does not work now"
         elif __builtin__.round(mc.business.event_triggers_dict.get("nora_cash_research_trait").mastery_level, 1) < 2:
             trait_name = mc.business.event_triggers_dict.get("nora_cash_research_trait").name
-            return "Trait Mastery Level of " + trait_name + " must be 2 or higher."
+            return "Requires: " + trait_name + " Mastery >= 2"
         else:
             return True
 
     def special_research_requirement(the_person):
         if mc.business.event_triggers_dict.get("nora_research_subject", None) is None:
-            return "No new research to turn in."
-        elif mc.business.is_weekend():
-            return "[nora.title] does not work on the weekend."
+            return "No new research to turn in"
         elif time_of_day == 0:
-            return "Too early to visit [nora.title]."
+            return "Too early to visit [nora.title]"
         elif time_of_day == 4:
-            return "Too late to visit [nora.title]."
+            return "Too late to visit [nora.title]"
+        elif not nora.get_destination() is university:
+            return "[nora.title] does not work now"
         else:
             return True
 
     def study_person_requirement(the_person):
         if time_of_day == 4:
-            return "Not enough time."
+            return "Not enough time"
         return True
 
     def add_nora_university_research_actions():
@@ -176,12 +179,17 @@ label nora_intro_label(the_person):
     $ list_of_traits.append(the_trait)
     $ del the_trait
 
+    $ the_person.draw_person()
     "When you get back to the office [the_person.title] has a new file detailing an untested serum trait."
     the_person.char "Without [the_nora.title]'s research notes all we'll be able to do is put this trait into a serum and manufacture it."
     the_person.char "You'll need to test a serum containing this trait on someone to raise it's mastery level."
     the_person.char "We should bring it up to at least mastery level 2 before we go back to [the_nora.title]."
 
     mc.name "Understood. I'll be back once the testing is done."
+    $ clear_scene()
+
+    $ the_nora.set_schedule(university, days=[0, 1, 2, 3, 4], times =[1,2,3])
+    $ the_nora.set_schedule(university, days=[5], times =[1,2])
 
     $ the_nora = None
     $ add_nora_university_research_actions()
@@ -197,7 +205,7 @@ label nora_research_up_label(the_person):
     mc.name "You too. I've got something for you."
     "You hold out the folder containing the details of your testing."
     the_person.char "Good, wait here."
-    $ renpy.scene("Active")
+    $ clear_scene()
     "She slips back into the room and is gone for a couple of minutes."
     $ the_person.draw_person()
     "When she comes back out she has two large binders tucked under her arm."
@@ -223,11 +231,9 @@ label nora_research_up_label(the_person):
         list_of_nora_traits.remove(the_trait)
         del the_trait
 
-        nora.set_schedule([1,2,3], university)
-        renpy.scene ("Active")
+        clear_scene()
 
         add_nora_research_intro_action(the_person)
-
     return
 
 label nora_research_cash_intro(the_person):
@@ -283,7 +289,7 @@ label nora_research_cash_first_time(the_person):
 
 
     $ add_nora_research_cash_action(the_person)
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label nora_research_cash(the_person):
@@ -301,9 +307,10 @@ label nora_research_cash(the_person):
 
     # TODO: The first intro bit returns here
     $ the_trait = mc.business.event_triggers_dict.get("nora_cash_research_trait") #We know won't be None from our initial event check.
+    $ mc.business.event_triggers_dict["nora_cash_research_trait"] = None
+
     $ list_of_traits.remove(the_trait)
     $ list_of_nora_traits.remove(the_trait) #Clear it from Nora's list as well so it cannot be randomly obtained again.
-    $ mc.business.event_triggers_dict["nora_cash_research_trait"] = None
     $ del the_trait
 
     mc.name "I have your research report prepared. The effects of the trait you designed were... {i}interesting{/i}."
@@ -325,7 +332,7 @@ label nora_research_cash(the_person):
         #Unlock the boss trait phase
         the_person.char "I also have some good news. Thanks in part to your assistance I have been given a long term grant to continue my research."
         mc.name "Congratulations [the_person.title], after all your hard work you deserve it."
-        the_person.char "Thank you. I had to pressure on my boss but I was able to... Well, I was able to convince him, let's leave it at that."
+        the_person.char "Thank you. I had to pressure my boss, but I was able to... Well, I was able to convince him, let's leave it at that."
         the_person.char "This money relieves the pressure on me to produce results quickly, and means I will not need you to perform any more field tests."
         the_person.char "But I have an idea we may both benefit from."
         mc.name "Go on, you always have interesting ideas for me."
@@ -338,7 +345,7 @@ label nora_research_cash(the_person):
 
         $ add_study_person_for_nora_actions(the_person)
     $ mc.business.funds += 2000
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label nora_special_research(the_person):
@@ -348,7 +355,7 @@ label nora_special_research(the_person):
     mc.name "I have a research profile for you to take a look at [the_person.title]. Let me know if you can find anything interesting out."
     "You give [the_person.possessive_title] the report you have prepared on [the_subject.title]."
     the_person.char "Excellent. This shouldn't take too long to process, I just need to head to the lab and input the data."
-    $ renpy.scene("Active")
+    $ clear_scene()
     "[the_person.title] leaves for her lab. True to her word, she's back in less than half an hour with her findings in hand."
     $ the_person.draw_person()
     if mother_role in the_subject.special_role and the_subject.core_sluttiness > 75 and the_subject.love > 75 and nora_reward_mother_trait not in list_of_traits:
@@ -388,8 +395,12 @@ label nora_special_research(the_person):
         $ list_of_traits.append(nora_reward_nora_trait)
 
     elif pregnant_role in the_subject.special_role and the_subject.event_triggers_dict.get("preg_transform_day",day) < day and the_subject.core_sluttiness > 75 and nora_reward_hucow_trait not in list_of_traits:
-        the_person.char "First off, congratulations [the_person.mc_title]. You're the father."
-        the_person.char "Second, I have an interesting development and possible path forward."
+        # Change for mod to exclude girls who didn't get pregnant by MC
+        if the_person.event_triggers_dict.get("preg_mc_father", True):
+            the_person.char "First off, congratulations [the_person.mc_title]. You're the father."
+            the_person.char "Second, I have an interesting development and possible path forward."
+        else:
+            the_person.char "I have an interesting development and possible path forward."
         the_person.char "My testing has revealed a number of major differences between the test subject's hormonal balance and what is expected."
         the_person.char "I believe this is the bodies natural response to her noticeably intense desire for sexual satisfaction."
         the_person.char "If most women have a biological clock ticking, this one has a church bell."
@@ -465,6 +476,6 @@ label nora_profile_person(the_person):
 
 
     $ mc.business.event_triggers_dict["nora_research_subject"] = the_person
-    $ renpy.scene("Active")
+    $ clear_scene()
     call advance_time from _call_advance_time_24
     return

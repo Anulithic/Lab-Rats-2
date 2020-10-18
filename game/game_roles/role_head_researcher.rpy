@@ -334,7 +334,7 @@ label advanced_serum_stage_2_label(the_person):
                     the_person.char "Oh well, how important can it be, right? Glad I could help you with your science. And all that fun other stuff."
                     mc.name "And thank you for all that help."
                     "[the_person.possessive_title] gives you a wink and leaves the room. "
-                    $renpy.scene("Active")
+                    $ clear_scene()
                     "You take [the_person.title]'s phone off of it's tripod and make a copy of the footage it took. Maybe your next head researcher can make use of this to figure out how to press forward."
                     $ mc.business.event_triggers_dict["advanced_serum_stage_3"] = True #Flag the next event to be enabled.
                     $ mc.business.event_triggers_dict["research_bimbo"] = the_person
@@ -463,20 +463,24 @@ label futuristic_serum_stage_2_label(the_person):
     $ the_person.draw_person(emotion = "happy")
     the_person.char "Excellent!"
     "[the_person.title] gets her phone out and calls all three girls down to the lab. It doesn't take long for them all to assemble."
-    the_person.char "The testing might take some time sir, I'll get started right now and have all my findings recorded. Come by later and we can review any discoveries."
-    "[the_person.title] turns to the other girls."
-    the_person.char "Well then, we have some special testing to get through today! Who would like to go first?"
     $ go_first = pick_1
     if pick_2.obedience > go_first:
         $ go_first = pick_2
     if pick_3.obedience > go_first:
         $ go_first = pick_3
-    "[go_first.name] raises her hand and [the_person.title] smiles and grabs her clipboard."
+    $ the_group = GroupDisplayManager([the_person, pick_1, pick_2, pick_3], primary_speaker = the_person)
+    $ clear_scene()
+    $ the_group.draw_group()
+    the_person.char "The testing might take some time sir, I'll get started right now and have all my findings recorded. Come by later and we can review any discoveries."
+    "[the_person.title] turns to the other girls."
+    the_person.char "Well then, we have some special testing to get through today! Who would like to go first?"
+    "[go_first.name] raises her hand. [the_person.title] smiles and grabs her clipboard."
     the_person.char "Very good. Come with me, you two can wait here until we're done."
     "[the_person.title] leads [go_first.title] into a side office, and you decide to leave her to her work."
     #TODO: Expand this event for more sexy stuff.
     $ mc.business.research_tier = 3
     $ mc.log_event("Max Research Tier Unlocked", "float_text_grey")
+    $ clear_scene()
 
     python:
         del pick_1
@@ -484,6 +488,7 @@ label futuristic_serum_stage_2_label(the_person):
         del pick_3
         del go_first
         del possible_picks
+        the_group = None
 
     call advance_time from _call_advance_time_9
     return

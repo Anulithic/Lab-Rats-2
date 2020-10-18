@@ -11,9 +11,9 @@ init -2 python:
         elif mc.business.get_employee_workstation(the_person) is None:
             return False
         elif time_of_day >= 4:
-            return "Too late to start taking pictures."
+            return "Too late to shoot pictures"
         elif mc.business.event_triggers_dict.get("Last Ad Shot Day", -7) + 7 > day:
-            return "An ad is already running."
+            return "An ad is already running"
         else:
             return True
 
@@ -68,13 +68,12 @@ label model_photography_list_label(the_person):
                 the_person.char "Sex sells, right, so it should be something skimpy. Did you have something in mind?"
                 "She seems excited to see what you have in mind."
 
-
-            call screen outfit_select_manager(slut_limit = the_person.sluttiness, show_overwear = False, show_underwear = False)
-            if not _return == "No Return":
+            call outfit_master_manager(slut_limit = the_person.sluttiness, show_overwear = False, show_underwear = False) from _call_outfit_master_manager_7
+            if _return:
                 if the_person.judge_outfit(_return):
                     the_person.char "Yeah, I think that would look good. I'll go put that on."
 
-                $ renpy.scene("Active")
+                $ clear_scene()
                 "[the_person.possessive_title] leaves to get changed and is back in a moment."
                 $ the_person.apply_outfit(_return, update_taboo = True)
                 #$ the_person.outfit = _return #A copy is already what is returned, so we don't have to copy it here. changed v0.24.1
@@ -667,7 +666,7 @@ label photo_strip_naked(the_person): #A helper label that strips a girl until he
         $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True)
         $ the_person.draw_animated_removal(the_item)
         "" #Just so they can click through and see each thing removed.
-    $ del the_item
+    $ the_item = None
     return
 
 label ad_expire(the_amount):

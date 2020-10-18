@@ -8,7 +8,7 @@ init -2 python:
         if not mc.business.is_open_for_business():
             return False
         elif day - the_person.event_triggers_dict.get("day_last_employee_interaction",-2) <= 0:
-            return "Already talked about work today."
+            return "Already talked about work today"
         else:
             return True
 
@@ -16,7 +16,7 @@ init -2 python:
         if not mc.business.is_open_for_business():
             return False
         elif day - the_person.event_triggers_dict.get("day_last_employee_interaction",-2) <= 0:
-            return "Already talked about work today."
+            return "Already talked about work today"
         else:
             return True
 
@@ -24,7 +24,7 @@ init -2 python:
         if not mc.business.is_open_for_business():
             return False
         elif day - the_person.event_triggers_dict.get("day_last_employee_interaction",-2) <= 0:
-            return "Already talked about work today."
+            return "Already talked about work today"
         else:
             return True
 
@@ -32,13 +32,15 @@ init -2 python:
         if not mc.business.is_open_for_business():
             return False
         elif day - the_person.event_triggers_dict.get("employed_since",-7) < 7:
-            return "Too recently hired."
+            return "Too recently hired"
         elif day - the_person.event_triggers_dict.get("day_last_performance_review", -7) < 7:
-            return "Just had a recent performance review."
+            return "Just had a recent performance review"
         else:
             return True
 
     def move_employee_requirement(the_person):
+        if not mc.business.is_open_for_business():
+            return False
         return True
 
     def employee_paid_serum_test_requirement(the_person):
@@ -139,7 +141,7 @@ label employee_pay_cash_bonus(the_person):
                 $ the_person.add_situational_slut("situation", 10, "He's given me such a generous bonus, I should repay the favour!")
                 call fuck_person(the_person) from _call_fuck_person_3
                 #Now that you've had sex, we calculate the change to her stats and move on.
-                $ the_person.clear_situational_slut("situation")                
+                $ the_person.clear_situational_slut("situation")
                 $ the_person.review_outfit()
             else:
                 the_person.char "Wow... this is amazing sir. I'll do everything I can for you and the company!"
@@ -252,7 +254,7 @@ label employee_performance_review(the_person):
                         the_person.char "What? I... I can't believe that [the_person.mc_title], why would you ever think I would stay here for less money?"
                         mc.name "Like I said, I'm sorry but it has to be done."
                         the_person.char "Well you know what, I think I'm just going to find somewhere else to work. I quit."
-                        $ renpy.scene("Active")
+                        $ clear_scene()
                         "[the_person.title] stands up and storms out."
                         $ mc.business.remove_employee(the_person)
                         call advance_time from _call_advance_time_12
@@ -310,7 +312,7 @@ label employee_performance_review(the_person):
                     else:
                         $ the_person.draw_person(position = "sitting", emotion = "angry")
                         the_person.char "What? You want me to beg to stay at this shitty job? If you don't want me here I think it's best I just move on. I quit!"
-                        $ renpy.scene("Active")
+                        $ clear_scene()
                         "[the_person.title] stands up and storms out."
                         $ mc.business.remove_employee(the_person)
                         call advance_time from _call_advance_time_13
@@ -358,7 +360,7 @@ label employee_performance_review(the_person):
             the_person.char "Thank you, I'll do my best."
 
     "You stand up and open the door for [the_person.title] at the end of her performance review."
-    $ renpy.scene("Active")
+    $ clear_scene()
     call advance_time from _call_advance_time_14
     return
 
@@ -369,19 +371,17 @@ label move_employee_label(the_person):
             "Yes, move [the_person.title]":
                 pass
             "No, leave [the_person.title]":
-                $renpy.scene("Active")
+                $ clear_scene()
                 return
 
     the_person.char "Where would you like me then?"
+    
+    if not mc.location.has_person(the_person):
+        "VREN" "Something went wrong."
+        return
+
     $ mc.business.remove_employee(the_person)
-    if rd_division.has_person(the_person):
-        $ rd_division.remove_person(the_person)
-    elif p_division.has_person(the_person):
-        $ p_division.remove_person(the_person)
-    elif office.has_person(the_person):
-        $ office.remove_person(the_person)
-    elif m_division.has_person(the_person):
-        $ m_division.remove_person(the_person)
+    $ mc.location.remove_person(the_person)
 
     menu:
         "Research and Development":

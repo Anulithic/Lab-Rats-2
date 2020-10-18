@@ -52,6 +52,135 @@ label lily_greetings(the_person):
                 the_person.char "Hey, need something?"
     return
 
+label lily_sex_responses_foreplay(the_person):
+    if the_person.arousal < 25:
+        if the_person.sluttiness > 50:
+            the_person.char "Are you trying to get me turned on? Because it might be working..."
+        else:
+            the_person.char "[the_person.mc_title], maybe we should stop before we get too excited..."
+            "She moans happily, obviously not interested in taking her own advice."
+
+    elif the_person.arousal < 50:
+        if the_person.sluttiness > 50:
+            the_person.char "Fuck, that feels good... Do it again."
+        else:
+            the_person.char "Oh my god... Where did you learn how to do this? You're so good at it..."
+
+    elif the_person.arousal < 75:
+        if the_person.sluttiness > 50:
+            if the_person.outfit.wearing_panties():
+                the_person.char "Ah... If you get me any wetter I'm going to soak right through my panties [the_person.mc_title]."
+            elif the_person.outfit.vagina_available():
+                the_person.char "Fuck, you're getting me so wet [the_person.mc_title]! I can feel it dripping down my thighs..."
+            else:
+                $ item_name = the_person.outfit.get_lower_top_layer().display_name
+                the_person.char "Fuck, you're getting me so wet I'm going to soak right through my [item_name]..."
+        else:
+            the_person.char "I can't believe my own brother is getting me so wet. It feels so good [the_person.mc_title]."
+
+    else:
+        if the_person.sluttiness > 50:
+            the_person.char "[the_person.mc_title], do you want to make me cum? Keep going!"
+        else:
+            the_person.char "Oh god, I feel strange, I think... I think you're going to make me cum soon!"
+
+    return
+
+label lily_sex_responses_oral(the_person):
+    if the_person.arousal < 25:
+        if the_person.sluttiness > 50:
+            the_person.char "Oh god, you're such a good big brother..."
+            "[the_person.possessive_title] sighs happily."
+        else:
+            the_person.char "Oh god, ah! Ah..."
+            "[the_person.title] tries and fails to stifle her moans."
+
+    elif the_person.arousal < 50:
+        if the_person.sluttiness > 50:
+            the_person.char "Mmm, that feels so good [the_person.mc_title], you're amazing!"
+        else:
+            the_person.char "Where.... Mmmm.... Where did you learn to do this? You're so good at it!"
+
+    elif the_person.arousal < 75:
+        if the_person.sluttiness > 50:
+            the_person.char "How does my pussy taste [the_person.mc_title]? Do you like eating me out?"
+            "You respond by making her moan even louder."
+            the_person.char "Oh fuck..."
+
+        else:
+            the_person.char "My own brother is really licking my pussy! It's fucked up, but you've got me so turned on!"
+    else:
+        if the_person.sluttiness > 50:
+            the_person.char "Fuck, keep licking my clit like that and you're going to make me cum!"
+
+        else:
+            the_person.char "Oh god, I think... I think I'm going to cum soon [the_person.mc_title]!"
+            the_person.char "Ah! Mmmm!"
+    return
+
+label lily_sex_responses_vaginal(the_person):
+    if the_person.arousal < 25:
+        if the_person.sluttiness > 50:
+            the_person.char "Oh god, you're cock feel so good inside me..."
+            "She moans happily to herself."
+        else:
+            the_person.char "You're so big, is it even all in yet? Ah..."
+
+    elif the_person.arousal < 50:
+        if the_person.sluttiness > 50:
+            the_person.char "Fuck... Ah..."
+        else:
+            the_person.char "Oh my god, that feeling..."
+
+    elif the_person.arousal < 75:
+        if the_person.sluttiness > 50:
+            "Mmm, give it to me [the_person.mc_title]! Stretch out my teen pussy so it will only fit your big, hot cock!"
+
+        else:
+            "[the_person.possessive_title] moans enthusiastically."
+            the_person.char "Fuck, right there! Keep fucking me like that!"
+    else:
+        if the_person.sluttiness > 50:
+            the_person.char "I'm getting close, I'm going to cum soon..."
+            "She moans, almost pleadingly."
+            the_person.char "Make me cum! Make your little sister cum on your dick!"
+        else:
+            "[the_person.possessive_title] mumbles softly to herself between happy moans."
+            the_person.char "Oh fuck, I'm going to cum... I'm going to cum on my brothers cock... Oh fuck!"
+
+    return
+
+label lily_sex_responses_anal(the_person):
+    if the_person.arousal < 25:
+        if the_person.sluttiness > 50:
+            the_person.char "Fuck, I can feel you stretching me out..."
+        else:
+            the_person.char "Oh fuck, I don't know if I can do this... It feels like you're tearing me in half!"
+
+    elif the_person.arousal < 50:
+        if the_person.sluttiness > 50:
+            the_person.char "Ah! Ah! I can take it, don't hold back! Ah!"
+        else:
+            "[the_person.title] growls defiantly."
+            the_person.char "Fuuuuuuuck!"
+
+    elif the_person.arousal < 75:
+        if the_person.sluttiness > 50:
+            the_person.char "Your cock is so big, it feels like you're moulding me to it!"
+        else:
+            the_person.char "I think you're starting to stretch me out, I'm starting to..."
+            "She moans loudly."
+            the_person.char "... enjoy this!"
+    else:
+        if the_person.sluttiness > 50:
+            the_person.char "Fuck, I think... I think I'm going to cum soon!"
+            the_person.char "Stuff me full of your big cock [the_person.mc_title]! Make your sister cum like a desperate anal slut!"
+        else:
+            the_person.char "Oh god, I'm... I think I'm going to cum soon!"
+            the_person.char "I can't believe... My brother's cock is in my ass and it's going to make me cum! I feel like such a slut!"
+            "The way she's moaning makes her sound more proud than ashamed."
+    return
+
 label lily_clothing_accept(the_person):
     if the_person.obedience > 140:
         the_person.char "You're right, that looks cute! I'm glad I've got a brother with good fashion sense!"
@@ -79,13 +208,24 @@ label lily_clothing_review(the_person):
             the_person.char "Oh my god, I shouldn't be dressed like this around my own brother. Just... Just look away and give me a moment."
     return
 
-label lily_strip_reject(the_person):
+label lily_strip_reject(the_person, the_clothing, strip_type = "Full"):
     if the_person.obedience > 130:
-        the_person.char "I wish I could let you, but I don't think I should be taking that off in front of my brother."
+        the_person.char "I wish I could let you, but I don't think I should be taking off my [the_clothing.display_name] in front of my brother."
     elif the_person.obedience < 70:
-        the_person.char "Sorry [the_person.mc_title], your little sister likes being a tease. I want to leave that on for a bit."
+        the_person.char "Sorry [the_person.mc_title], your little sister likes being a tease. I'm going to keep my [the_clothing.display_name] on for a little bit longer."
     else:
-        the_person.char "I couldn't take that off in front of you [the_person.mc_title]. You're my brother, I'd die of embarrassment!"
+        the_person.char "I couldn't take off my [the_clothing.display_name] in front of you [the_person.mc_title]. You're my brother, I'd die of embarrassment!"
+    return
+
+label lily_strip_obedience_accept(the_person, the_clothing, strip_type = "Full"):
+    "[the_person.title] speaks up meekly as you start to move her [the_clothing.display_name]."
+    if the_person.obedience > 130:
+        the_person.char "Maybe you shouldn't..."
+    else:
+        if the_clothing.underwear:
+            the_person.char "Wait, do you really want to take off my underwear? [the_person.mc_title], you shouldn't..."
+        else:
+            the_person.char "Wait, I don't know about this..."
     return
 
 label lily_sex_accept(the_person):
@@ -327,33 +467,84 @@ label lily_cum_mouth(the_person):
             the_person.char "I... I can't believe we just did that. We really shouldn't do it again, okay?"
     return
 
-label lily_cum_vagina(the_person):
+label lily_cum_pullout(the_person):
+    # Lead in: "I'm going to cum!"
     if mc.condom:
-        if the_person.sluttiness > 75 or the_person.get_opinion_score("creampies") > 0:
+        if the_person.wants_creampie() and the_person.get_opinion_score("creampies") > 0 and not the_person.has_taboo("condomless_sex"): #TODO: FIgure out we want any more requirements for this to fire.
+            if the_person.event_triggers_dict.get("preg_knows", False):
+                the_person.char "Wait... Do you want to take the condom off and cum inside of me?"
+                the_person.char "I'm already pregnant, and it felt so good before..."
+
+            elif the_person.on_birth_control:
+                the_person.char "Take... Take the condom off, I want you to cum inside of me raw!"
+                the_person.char "I'm on the pill, so it doesn't even matter, and creampies feel so good!"
+                "She moans happily."
+            else:
+                the_person.char "Wait, take the condom off first! I... I want you to cum bareback!"
+                "She pants happily."
+                the_person.char "It's my fault if I get pregnant, okay? You don't need to worry, I know it would be my fault!"
+
+            menu: #TODO: Add a varient of this normally so you can stealth a girl (don't do that in real life, it's super fucked up).
+                "Take off the condom.":
+                    "You don't have much time to spare. You pull out, barely clearing her pussy, and pull the condom off as quickly as you can manage."
+                    $ mc.condom = False
+                "Leave it on.":
+                    "You ignore [the_person.possessive_title]'s cum-drunk offer and keep the condom in place."
+
+        else:
+            the_person.char "Oh my god, do it! Cum [the_person.mc_title]!"
+
+    else:
+        if the_person.wants_creampie():
+            if the_person.event_triggers_dict.get("preg_knows", False): #She's already knocked up, so who cares!
+                the_person.char "Cum wherever you want [the_person.mc_title]!"
+            elif the_person.get_opinion_score("creampies") > 0:
+                "[the_person.possessive_title] moans happily."
+                if the_person.on_birth_control: #She just likes creampies.
+                    the_person.char "Yes! Cum inside me [the_person.mc_title], I want it!"
+                else: #Yeah, she's not on BC and asking for you to creampie her. She's looking to get pregnant.
+                    the_person.char "I... Oh god, I want you to cum inside me [the_person.mc_title]!"
+                    the_person.char "Go ahead and knock your little sister up!"
+            elif the_person.on_birth_control: #She's on the pill, so she's probably fine
+                the_person.char "Cum wherever you want [the_person.mc_title], I'm on the pill!"
+            else: #Too distracted to care about getting pregnant or not. Oh well, what could go wrong?
+                the_person.char "Oh god, I'm going to make my brother cum! Ah!"
+        else:
+            if not the_person.on_birth_control: #You need to pull out, I'm not on the pill!
+                the_person.char "Oh god, pull out! I don't want to get pregnant!"
+
+            elif the_person.get_opinion_score("creampies") < 0:
+                the_person.char "Pull out, I want you to cum all over me [the_person.mc_title]!"
+
+            else:
+                the_person.char "Ah! You... You need to pull out! We can't any risks!"
+    return
+
+label lily_cum_condom(the_person):
+    if mc.condom:
+        if the_person.effective_sluttiness() > 75 or the_person.get_opinion_score("creampies") > 0:
             the_person.char "Fill up that condom [the_person.mc_title], it's so close to being inside me!"
             "The thought seems to be turning her on."
         else:
             the_person.char "Oh fuck, good thing you've got a condom on. I mean, could you imagine if you had put all of that into your own sister?"
+    return
 
-    else: #TODO: No birth control variants.
-        if the_person.on_birth_control:
-            the_person.char "Oh god, I can't believe you just came inside me... What if my birth control doesn't work?"
-            if the_person.relationship != "Single":
-                $ so_title = SO_relationship_to_title(the_person.relationship)
-                "She takes a deep breath and tries to calm herself down."
-                the_person.char "I would have to tell everyone it was my [so_title]'s, but I would still know..."
+label lily_cum_vagina(the_person):
+    if the_person.has_taboo("creampie"):
+        $ the_person.call_dialogue("creampie_taboo_break")
+        $ the_person.break_taboo("creampie")
+        return
 
-            else:
-                "She takes a deep breath and calms herself down."
-                the_person.char "It's probably fine... Right? Yeah, I'm sure it's fine. The pill is like a ninety nine percent effective, right?"
-        elif pregnant_role in the_person.special_role:
-            the_person.char "I know I shouldn't, but I love having my own brother's cum inside me."
-            if the_person.relationship != "Single":
-                $ so_title = SO_relationship_to_title(the_person.relationship)
-                the_person.char "I don't think my [so_title] would like it, if he new I said that."
-            else:
-                the_person.char "And since I'm already pregnant, we don't have to worry about a thing."
-        elif the_person.sluttiness > 75 or the_person.get_opinion_score("creampies") > 0:
+    if the_person.wants_creampie():
+        if the_person.event_triggers_dict.get("preg_knows", False):
+            the_person.char "Oh god, your cum feels so nice and warm inside me..."
+            "She sighs happily."
+            the_person.char "I guess that's one perk of you knocking me up. No more condoms to worry about."
+
+        elif the_person.on_birth_control:
+            the_person.char "Oh god, you really did it... You came inside your own sister."
+
+        elif the_person.effective_sluttiness() > 75 or the_person.get_opinion_score("creampies") > 0:
             if the_person.relationship != "Single":
                 $ so_title = SO_relationship_to_title(the_person.relationship)
                 the_person.char "I know I shouldn't, but I love having my own brother's cum inside me."
@@ -361,6 +552,18 @@ label lily_cum_vagina(the_person):
             else:
                 the_person.char "Pump me full of your hot cum, I don't care that you're my brother, I want you to get me pregnant!"
         else:
+            if the_person.relationship != "Single":
+                $ so_title = SO_relationship_to_title(the_person.relationship)
+                the_person.char "Oh god, you really did it... I'm not on the pill and you still came inside me."
+                the_person.char "I hope my [so_title] never finds out about this..."
+
+            else:
+                the_person.char "Oh god, you really did it... I'm not on the pill and you still came inside me."
+                the_person.char "I can't believe I let you do that."
+
+
+    else: #She's angry
+        if not the_person.on_birth_control:
             if the_person.relationship != "Single":
                 $ so_title = SO_relationship_to_title(the_person.relationship)
                 the_person.char "Fuck, fuck! You can't cum in me, I'm not on the pill!"
@@ -372,6 +575,21 @@ label lily_cum_vagina(the_person):
                 "She groans unhappily."
                 the_person.char "What would I do if my own brother got me pregnant?"
                 the_person.char "I'd die of embarrassment if anyone found out!"
+
+        elif the_person.relationship != "Single":
+            $ so_title = SO_relationship_to_title(the_person.relationship)
+            the_person.char "Oh god, I can't believe you just came inside me... What if my birth control doesn't work?"
+            "She takes a deep breath and tries to calm herself down."
+            the_person.char "I would have to tell everyone it was my [so_title]'s, but I would still know..."
+
+        elif the_person.get_opinion_score("creampies") < 0:
+            the_person.char "Hey, I told you to pull out! Ugh, you've made such a mess inside me now."
+
+        else:
+            the_person.char "Oh god, I can't believe you just came inside me... What if my birth control doesn't work?"
+            "She takes a deep breath and calms herself down."
+            the_person.char "It's probably fine... Right? Yeah, I'm sure it's fine. The pill is like a ninety nine percent effective, right?"
+
     return
 
 label lily_cum_anal(the_person):
@@ -853,9 +1071,43 @@ label lily_bare_pussy_taboo_break(the_person, the_clothing):
 #
 #     return
 #
-# label lily_creampie_taboo_break(the_person):
-#
-#     return
+label lily_creampie_taboo_break(the_person):
+    if the_person.wants_creampie():
+        the_person.char "Oh my god [the_person.mc_title], you just came inside of me!"
+        "She seems shocked, but not entirely unhappy."
+        mc.name "Yeah, isn't that what you wanted?"
+        if the_person.on_birth_control:
+            the_person.char "It does feel really good..."
+            mc.name "It feels good for me too. Don't worry [the_person.title], there's nothing to worry about."
+            the_person.char "Yeah, you're right. It's just such a new feeling, I needed a second to get use to it."
+        else:
+            the_person.char "It does feel really good, but I'm not on my birth control. What if I, you know..."
+            mc.name "Get pregnant?"
+            the_person.char "Yeah, that. Shouldn't we be trying to avoid that? I don't want to have to explain that to [mom.title]."
+            mc.name "The chances you're going to get pregnant after your first cumshot are really low. You really don't need to worry about it."
+            the_person.char "I guess you're right, but we need to be careful, okay? We can't be doing this all the time, even if it feels awesome."
+    else:
+        the_person.char "Oh my god [the_person.mc_title], I told you to pull out!"
+        mc.name "Yeah, sorry about that. I got a little carried away."
+        "[the_person.possessive_title] seems a little shocked."
+        if the_person.on_birth_control:
+            the_person.char "You just... came inside me. I've got my brothers cum inside of my pussy..."
+            mc.name "Yeah, and it felt really good too. Did it feel good for you?"
+            the_person.char "...It did."
+            mc.name "Then what's the problem? You're on the pill, right?"
+            "She nods."
+            the_person.char "Yeah, I am. I guess you're right, it's not such a big deal as long as you don't do it too often."
+
+        else:
+            the_person.char "You just... came inside of me. I've got a pussy full of my brothers cum, and I'm not on birth control."
+            mc.name "Yeah, and it felt really good to put it there. Did it feel good for you too?"
+            the_person.char "...It did, but what if you get me pregnant?"
+            mc.name "The chances of that happening the very first time are so low, we don't need to worry about it."
+            the_person.char "Really?"
+            mc.name "Yeah, they're super low. Don't you trust me [the_person.title]?"
+            "She nods."
+            the_person.char "Of course I do. Okay, I guess it's not a big deal as long as you don't do it again. You need to be careful with me."
+    return
 #
 # label lily_anal_creampie_taboo_break(the_person):
 #

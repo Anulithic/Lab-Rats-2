@@ -33,9 +33,9 @@ init -2 python:
         love_requirement = 20
 
         if time_of_day < 2:
-            return "Too early to go for lunch."
+            return "Too early to go for lunch"
         elif time_of_day > 2:
-            return "Too late to go for lunch."
+            return "Too late to go for lunch"
         elif the_person.love < love_requirement:
             return "Requires: " + str(love_requirement) + " Love"
         else:
@@ -160,6 +160,15 @@ init -2 python:
             return "Requires: 125 Obedience"
         else:
             return True
+
+    def suck_demand_requirement(the_person):
+        if the_person.has_taboo("sucking_cock"):
+            return False #Doesn't appear until you've broken the taboo in the first place
+        elif the_person.obedience < 150:
+            return "Requires: 150 Obedience"
+        else:
+            return True
+
 
     def demand_strip_requirement(the_person):
         if demand_strip_tits_requirement(the_person) == True or demand_strip_underwear_requirement(the_person) == True or demand_strip_naked_requirement(the_person) == True:
@@ -422,7 +431,7 @@ label person_new_mc_title(the_person):
     else: #She doesn't listen to you, so she just picks one and demands that you use it, or becomes unhappy.
         $ new_title = get_random_from_list(get_player_titles(the_person))
         python:
-            while new_title == the_person.title:
+            while new_title == the_person.mc_title:
                 new_title = get_random_from_list(get_player_titles(the_person))
 
         the_person.char "You know, I think [new_title] fits you better than [the_person.mc_title]. I'm going to start using that."
@@ -614,6 +623,8 @@ label flirt_person(the_person): #Tier 1. Raises a character's sluttiness up to a
         mc.name "[the_person.title], your outfit is driving me crazy. What are my chances of getting you out of it?"
         $ the_person.call_dialogue("flirt_response_high")
 
+    $ the_person.review_outfit() #In case we had sex, she sorts out her outfit.
+
     # mc.name "Hey [the_person.title], you're looking particularly good today. I wish I got to see a little bit more of that fabulous body."
     $ mc.listener_system.fire_event("player_flirt", the_person = the_person)
     $ change_amount = mc.charisma + 1 + the_person.get_opinion_score("flirting") #We still cap out at 20, but we get there a little faster or slower depending on if they like flirting
@@ -685,20 +696,20 @@ label lunch_date_label(the_person): #Could technically be included in the planni
     $ renpy.show("restaurant", what = restaraunt_background)
     "A bell on the door jingles as you walk in."
     mc.name "You grab a seat and I'll order for us."
-    $ renpy.scene("Active")
+    $ clear_scene()
     "You order food for yourself and [the_person.possessive_title] and wait until it's ready."
     $ mc.business.funds += -30
     $ the_person.draw_person(position = "sitting")
     "When it's ready you bring it over to [the_person.title] and sit down at the table across from her."
     if renpy.random.randint(0,100) < 40:
         the_person.char "Mmm, it looks delicious. I'm just going to wash my hands, I'll be back in a moment."
-        $ renpy.scene("Active")
+        $ clear_scene()
         "[the_person.possessive_title] stands up heads for the washroom."
         menu:
             "Add some serum to her food" if mc.inventory.get_any_serum_count() > 0:
                 call give_serum(the_person) from _call_give_serum_20
                 if _return:
-                    "Once you're sure nobody else is watching you add a dose of serum to [the_person.title]'s food."
+                    "Once your sure nobody else is watching you add a dose of serum to [the_person.title]'s food."
                     "With that done you lean back and relax, waiting until she returns to start eating your own food."
                 else:
                     "You think about adding a dose of serum to [the_person.title]'s food, but decide against it."
@@ -744,7 +755,8 @@ label lunch_date_label(the_person): #Could technically be included in the planni
         "She steps close and gives you a quick hug, then steps back."
         mc.name "Yeah, we should. I'll see you around."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
+    $ mc.location.show_background() # leave restaurant and move back to original location
     call advance_time() from _call_advance_time_29
     return
 
@@ -834,13 +846,18 @@ label movie_date_plan_label(the_person):
             the_person.char "Oh, a movie sounds fun! I don't have anything going on Tuesday night, would that work for you?"
 
     menu:
-        "Plan a date for Tuesday night":
+        "Plan a date for tonight" if is_tuesday:
+            mc.name "Tonight would be perfect, I'll will see you later."
+            the_person.char "See you!"
+            $ create_movie_date_action(the_person)
+
+        "Plan a date for Tuesday night" if not is_tuesday:
             mc.name "Tuesday would be perfect, I'm already looking forward to it."
             the_person.char "Me too!"
             $ create_movie_date_action(the_person)
 
         "Maybe some other time":
-            mc.name "I'm busy on Friday unfortunately."
+            mc.name "I'm busy on Tuesday unfortunately."
             the_person.char "Well maybe next week then. Let me know, okay?"
             "She gives you a warm smile."
 
@@ -869,6 +886,8 @@ label movie_date_label(the_person):
     #TODO: if she has a boyfriend have him sometime show up. Depending on Love and stuff you can sometimes get them to break up (and instantly be in a relationship), or ruin her love and happiness.
 
     "You get ready and text [the_person.title] confirming the time and place. A little while later you meet her outside the theater."
+    $ mc.change_location(downtown)
+    $ mc.location.show_background()
     $ the_person.draw_person()
     the_person.char "Hey, good to see you!"
     the_person.char "I'm ready to go in, what do you want to see?"
@@ -917,7 +936,7 @@ label movie_date_label(the_person):
     menu:
         "Stop at the concession stand\n{color=#ff0000}{size=18}Costs: $20{/size}{/color}" if mc.business.funds >= 20:
             mc.name "Sure, you run ahead and I'll go get us some snacks."
-            $ renpy.scene("Active")
+            $ clear_scene()
             $ mc.business.funds += -20
             "You give [the_person.possessive_title] her ticket and split up. At the concession stand you get a pair of drinks and some popcorn to share."
             menu:
@@ -1036,32 +1055,49 @@ label movie_date_label(the_person):
         "She leans towards you and gives you a quick kiss."
         the_person.char "Let's head home then."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     $ mc.change_location(bedroom) #Put them back at home after the event, so if they were in the bathroom they aren't any more.
     $ mc.location.show_background()
     return "Advance Time"
 
 
 label dinner_date_plan_label(the_person):
+    if day%7 == 4 and time_of_day < 3:
+        $ is_friday = True #It's already Tuesday and early enough that the date would be right about now.
+    else:
+        $ is_friday = False
+
     if sister_role in the_person.special_role:
         mc.name "[the_person.title], I was wondering if you'd like to go out for a dinner date together. Some brother sister bonding time."
-        the_person.char "That sounds great [the_person.mc_title]. Would Friday be good?"
+        if is_friday:
+            the_person.char "That sounds great [the_person.mc_title]. Would tonight work for you?"
+        else:
+            the_person.char "That sounds great [the_person.mc_title]. Would Friday be good?"
 
     elif mother_role in the_person.special_role:
         mc.name "Mom, I was wondering if I could take you out to dinner, just the two of us. I'd enjoy some mother son bonding time."
-        the_person.char "Aww, that's so sweet. How about Friday, after we're both finished with work."
+        if is_friday:
+            the_person.char "Aww, that's so sweet. How about tonight, after we're both finished with work."
+        else:
+            the_person.char "Aww, that's so sweet. How about Friday, after we're both finished with work."
 
     elif aunt_role in the_person.special_role:
         mc.name "[the_person.title], would you like to go out on a dinner date with me? I think it would be a nice treat for you."
         the_person.char "That sounds like it would be amazing. It's been tough, just me and [cousin.title]. I don't get out much any more."
         "She smiles and gives you a quick hug."
-        the_person.char "How about Friday night?"
+        if is_friday:
+            the_person.char "How about tonight?"
+        else:
+            the_person.char "How about Friday night?"
 
     elif cousin_role in the_person.special_role:
         mc.name "Hey, I want to take you out to dinner."
         the_person.char "Jesus, at least buy me dinner first. Wait a moment..."
         "She laughs at her own joke."
-        the_person.char "Fine, how about Friday?"
+        if is_friday:
+            the_person.char "Fine, how about tonight?"
+        else:
+            the_person.char "Fine, how about Friday?"
 
     elif not the_person.relationship == "Single":
         mc.name "[the_person.title], I'd love to spend some time together, just the two of us. Would you let me take you out for dinner?"
@@ -1069,18 +1105,31 @@ label dinner_date_plan_label(the_person):
         the_person.char "[the_person.mc_title], you know I've got a [SO_title], right? Well..."
         if the_person.get_opinion_score("cheating on men") > 0:
             "She doesn't take very long to make up her mind."
-            the_person.char "He won't know about it, right? What he doesn't know can't hurt him. Are you free Friday?"
+            if is_friday:
+                the_person.char "He's out with friends tonight and what he doesn't know can't hurt him. Shall we go tonight?"
+            else:
+                the_person.char "He won't know about it, right? What he doesn't know can't hurt him. Are you free Friday?"
         else:
             "She thinks about it for a long moment."
-            the_person.char "Just this once, and we have to make sure my [SO_title] never finds out. Are you free Friday?"
+            if is_friday:
+                the_person.char "Just this once, and we have to make sure my [SO_title] never finds out. Shall we go tonight?"
+            else:
+                the_person.char "Just this once, and we have to make sure my [SO_title] never finds out. Are you free Friday?"
 
     else:
         mc.name "[the_person.title], I'd love to get to know you better. Would you let me take you out for dinner?"
-        the_person.char "That sounds delightful [the_person.mc_title]. I'm free Friday night, if you would be available."
-
+        if is_friday:
+            the_person.char "That sounds delightful [the_person.mc_title]. I'm free tonight, if you are available."
+        else:
+            the_person.char "That sounds delightful [the_person.mc_title]. I'm free Friday night, if you would be available."
 
     menu:
-        "Plan a date for Friday night":
+        "Plan a date for tonight" if is_friday:
+            mc.name "It's a date. I'll see you tonight."
+            the_person.char "See you!"
+            $ create_dinner_date_action(the_person)
+
+        "Plan a date for Friday night" if not is_friday:
             mc.name "It's a date. I'm already looking forward to it."
             the_person.char "Me too!"
             $ create_dinner_date_action(the_person)
@@ -1152,7 +1201,7 @@ label dinner_date_label(the_person):
     if renpy.random.randint(0,100) < 40: #Chance to give her some serum.
         "After dinner you decide to order dessert. [the_person.title] asks for a piece of cheese cake, then stands up from the table."
         the_person.char "I'm going to go find the little girls room. I'll be back in a moment."
-        $ renpy.scene("Active")
+        $ clear_scene()
         "She heads off, leaving you alone at the table with her half finished glass of wine."
         menu:
             "Add a dose of serum to her drink" if mc.inventory.get_any_serum_count()>0:
@@ -1232,7 +1281,7 @@ label dinner_date_label(the_person):
             mc.name "It would be my pleasure."
             "[the_person.title]'s taxi arrives and she gives you a kiss goodbye. You watch her drive away, then head home yourself."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return "Advance Time"
 
 label serum_give_label(the_person):
@@ -1293,7 +1342,7 @@ label serum_give_label(the_person):
                     the_person.char "Were you about to put that in my drink? Oh my god [the_person.mc_title]!"
                     mc.name "Me? Never!"
                     "[the_person.title] shakes her head and storms off. You can only hope this doesn't turn into something more serious."
-                    $renpy.scene("Active")
+                    $ clear_scene()
                     return
 
         "Ask her to take it\n{color=#ff0000}{size=18}Success Chance: [ask_serum_chance]%%{/size}{/color}" if not mandatory_unpaid_serum_testing_policy.is_active() or mc.business.get_employee_title(the_person) == "None":
@@ -1437,10 +1486,13 @@ init -2 python:
         touch_demand_action = Action("Let me touch you   {color=#FFFF00}-10{/color} {image=gui/extra_images/energy_token.png}", requirement = demand_touch_requirement, effect = "demand_touch_label", args = the_person, requirement_args = the_person,
             menu_tooltip = "Demand " + the_person.title + " stays still and lets you touch her. Going too far may damage your relationship.", priority = -5)
 
+        suck_demand_action = Action("Suck my cock.", requirement = suck_demand_requirement, effect = "suck_demand_label", args = the_person, requirement_args = the_person,
+            menu_tooltip = "Demand " + the_person.title + " gets onto her knees and worships your cock.", priority = -5)
+
         bc_demand_action = Action("Talk about birth control", requirement = demand_bc_requirement, effect = "bc_demand_label", args = the_person, requirement_args = the_person,
             menu_tooltip = "Discuss " + the_person.title + "'s use of birth control.", priority = -5)
 
-        return ["Command", change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, bc_demand_action, ["Never mind", "Return"]]
+        return ["Command", change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, suck_demand_action, bc_demand_action, ["Never mind", "Return"]]
 
 label command_person(the_person):
     mc.name "[the_person.title], I want you to do something for me."
@@ -1448,6 +1500,17 @@ label command_person(the_person):
 
     if "action_mod_list" in globals():
         call screen enhanced_main_choice_display(build_menu_items([build_command_person_actions_menu(the_person)]))
+    $ bc_demand_action = Action("Talk about birth control.", requirement = demand_bc_requirement, effect = "bc_demand_label", args = the_person, requirement_args = the_person,
+        menu_tooltip = "Discuss "+the_person.title+"'s use of birth control.", priority = -5)
+
+    #TODO: Add more commands
+    #TODO: Add a way to add role specific commands.
+
+    $ player_choice = call_formated_action_choice([change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, bc_demand_action, "Return"])
+    #call screen main_choice_display([["Command her to...", change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, "Return"]])
+    #$ player_choice = _return
+    if player_choice == "Return":
+        pass
     else:
         call screen main_choice_display([build_command_person_actions_menu(the_person)])
 
@@ -1455,104 +1518,104 @@ label command_person(the_person):
         $ _return.call_action()
     return
 
-label seduce_label(the_person):
-    mc.name "[the_person.title], I've been thinking about you all day. I just can't get you out of my head."
-
-    if prostitute_role in the_person.special_role and the_person.love < 20:
-        the_person.char "I've been thinking about you too, but I've got bills to pay and I can't do this for free."
-        return
-    elif prostitute_role in the_person.special_role and the_person.love >= 20:
-        the_person.char "I should really make you pay for this... but you're one of my favorites and I'm curious what you had in mind."
-    else:
-        $ the_person.call_dialogue("seduction_response")
-
-    $ ran_num = renpy.random.randint(0,100)
-    $ chance_service_her = the_person.sluttiness - 20 - (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("taking control") * 4)
-    $ chance_both_good = the_person.sluttiness - 10 + mc.charisma * 4
-    $ chance_service_him = the_person.sluttiness - 20 + (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("being submissive") * 4)
-
-    if chance_service_her > 100:
-        $ chance_service_her = 100
-    elif chance_service_her < 0:
-        $ chance_service_her = 0
-
-    if chance_both_good > 100:
-        $ chance_both_good = 100
-    elif chance_both_good < 0:
-        $ chance_both_good = 0
-
-    if chance_service_him > 100:
-        $ chance_service_him = 100
-    elif chance_service_him < 0:
-        $ chance_service_him = 0
-
-    $ seduced = False #Flip to true if the approach works
-    menu:
-        "I want to make you feel good\n{color=#ff0000}{size=18}Success Chance: [chance_service_her]%%\nModifiers: +10 Sluttiness, -5 Obedience{/size}{/color} (tooltip)Suggest you will focus on her. She will be sluttier for the encounter, but more likely to make demands and take control. More likely to succeed with less obedient girls.": #Bonus to her sluttiness, penalty to obedience
-            "You lean in close whisper what you want to do to her."
-            if ran_num < chance_service_her: #Success
-                $ seduced = True
-                $ the_person.add_situational_slut("seduction_approach",10, "You promised to focus on me.")
-                $ the_person.add_situational_obedience("seduction_approach",-5, "You promised to focus on me.")
-                $ the_person.change_arousal(-5*the_person.get_opinion_score("taking control"))
-                $ the_person.discover_opinion("taking control")
-            else: #Failure
-                pass
-
-        "Let's have a good time\n{color=#ff0000}{size=18}Success Chance: [chance_both_good]%%\nModifiers: None{/size}{/color} (tooltip)Suggest you'll both end up satisfied. Has no extra effect on her sluttiness or obedience, but is not affected by her obedience in return.": #Standard
-            "You lean in close and whisper what you want to do together."
-            if ran_num < chance_both_good:
-                $ seduced = True
-            else:
-                pass
-
-        "I need you to get me off\n{color=#ff0000}{size=18}Success Chance: [chance_service_him]%%\nModifiers: +10 Obedience, -5 Sluttiness{/size}{/color} (tooltip)Demand that she focuses on making you cum. She will be more obedient but less slutty for the encounter. More likely to succeed with highly obedient girls.": #Bonus to obedience, penalty to sluttiness
-            "You lean in close and whisper what you want her to do to you."
-            if ran_num < chance_service_him:
-                $ seduced = True
-                $ the_person.add_situational_slut("seduction_approach",-5, "You want me to serve you.")
-                $ the_person.add_situational_obedience("seduction_approach",10, "You want me to serve you.")
-                $ the_person.change_arousal(5*the_person.get_opinion_score("being submissive"))
-                $ the_person.discover_opinion("being submissive")
-            else:
-                pass
-
-
-
-    if seduced and the_person.sexed_count < 1:
-
-        $ extra_people_count = mc.location.get_person_count() - 1
-        $ in_private = True
-        if extra_people_count > 0: #We have more than one person here
-            $ the_person.call_dialogue("seduction_accept_crowded")
-            menu:
-                "Find somewhere quiet\n{color=#ff0000}{size=18}No interruptions{/size}{/color}":
-                    "You take [the_person.title] by the hand and find a quiet spot where you're unlikely to be interrupted."
-
-                "Stay right here\n{color=#ff0000}{size=18}[extra_people_count] watching{/size}{/color}":
-                    if the_person.sluttiness < 50:
-                        mc.name "I think we'll be fine right here."
-                        the_person.char "I... Okay, if you say so."
-
-                    $ in_private = False
-        else:
-            $ the_person.call_dialogue("seduction_accept_alone")
-
-        call fuck_person(the_person,private = in_private) from _call_fuck_person
-
-        $ the_person.review_outfit()
-
-        #Tidy up our situational modifiers, if any.
-        $ the_person.clear_situational_slut("public_sex")
-        $ the_person.clear_situational_slut("seduction_approach")
-        $ the_person.clear_situational_obedience("seduction_approach")
-    else:
-        $ the_person.call_dialogue("seduction_refuse")
-        $ the_person.clear_situational_slut("seduction_approach")
-        $ the_person.clear_situational_obedience("seduction_approach")
-
-    $ the_person.sexed_count += 1
-    return
+# label seduce_label(the_person): No longer needed since "seduce" was split up to be multiple different approaches
+#     mc.name "[the_person.title], I've been thinking about you all day. I just can't get you out of my head."
+#
+#     if prostitute_role in the_person.special_role and the_person.love < 20:
+#         the_person.char "I've been thinking about you too, but I've got bills to pay and I can't do this for free."
+#         return
+#     elif prostitute_role in the_person.special_role and the_person.love >= 20:
+#         the_person.char "I should really make you pay for this... but you're one of my favourites and I'm curious what you had in mind."
+#     else:
+#         $ the_person.call_dialogue("seduction_response")
+#
+#     $ random_chance = renpy.random.randint(0,100)
+#     $ chance_service_her = the_person.sluttiness - 20 - (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("taking control") * 4)
+#     $ chance_both_good = the_person.sluttiness - 10 + mc.charisma * 4
+#     $ chance_service_him = the_person.sluttiness - 20 + (the_person.obedience - 100) + (mc.charisma * 4) + (the_person.get_opinion_score("being submissive") * 4)
+#
+#     if chance_service_her > 100:
+#         $ chance_service_her = 100
+#     elif chance_service_her < 0:
+#         $ chance_service_her = 0
+#
+#     if chance_both_good > 100:
+#         $ chance_both_good = 100
+#     elif chance_both_good < 0:
+#         $ chance_both_good = 0
+#
+#     if chance_service_him > 100:
+#         $ chance_service_him = 100
+#     elif chance_service_him < 0:
+#         $ chance_service_him = 0
+#
+#     $ seduced = False #Flip to true if the approach works
+#     menu:
+#         "I want to make you feel good.\n{size=22}Success Chance: [chance_service_her]%%\nModifiers: +10 Sluttiness, -5 Obedience{/size} (tooltip)Suggest you will focus on her. She will be sluttier for the encounter, but more likely to make demands and take control. More likely to succeed with less obedient girls.": #Bonus to her sluttiness, penalty to obedience
+#             "You lean in close whisper what you want to do to her."
+#             if random_chance < chance_service_her: #Success
+#                 $ seduced = True
+#                 $ the_person.add_situational_slut("seduction_approach",10, "You promised to focus on me.")
+#                 $ the_person.add_situational_obedience("seduction_approach",-5, "You promised to focus on me.")
+#                 $ the_person.change_arousal(-5*the_person.get_opinion_score("taking control"))
+#                 $ the_person.discover_opinion("taking control")
+#             else: #Failure
+#                 pass
+#
+#         "Let's have a good time.\n{size=22}Success Chance: [chance_both_good]%%\nModifiers: None{/size} (tooltip)Suggest you'll both end up satisfied. Has no extra effect on her sluttiness or obedience, but is not affected by her obedience in return.": #Standard
+#             "You lean in close and whisper what you want to do together."
+#             if random_chance < chance_both_good:
+#                 $ seduced = True
+#             else:
+#                 pass
+#
+#         "I need you to get me off.\n{size=22}Success Chance: [chance_service_him]%%\nModifiers: +10 Obedience, -5 Sluttiness{/size} (tooltip)Demand that she focuses on making you cum. She will be more obedient but less slutty for the encounter. More likely to succeed with highly obedient girls.": #Bonus to obedience, penalty to sluttiness
+#             "You lean in close and whisper what you want her to do to you."
+#             if random_chance < chance_service_him:
+#                 $ seduced = True
+#                 $ the_person.add_situational_slut("seduction_approach",-5, "You want me to serve you.")
+#                 $ the_person.add_situational_obedience("seduction_approach",10, "You want me to serve you.")
+#                 $ the_person.change_arousal(5*the_person.get_opinion_score("being submissive"))
+#                 $ the_person.discover_opinion("being submissive")
+#             else:
+#                 pass
+#
+#
+#
+#     if seduced and the_person.sexed_count < 1:
+#
+#         $ extra_people_count = mc.location.get_person_count() - 1
+#         $ in_private = True
+#         if extra_people_count > 0: #We have more than one person here
+#             $ the_person.call_dialogue("seduction_accept_crowded")
+#             menu:
+#                 "Find somewhere quiet.\n{size=22}No interuptions{/size}":
+#                     "You take [the_person.title] by the hand and find a quiet spot where you're unlikely to be interrupted."
+#
+#                 "Stay right here.\n{size=22}[extra_people_count] watching{/size}":
+#                     if the_person.sluttiness < 50:
+#                         mc.name "I think we'll be fine right here."
+#                         the_person.char "I... Okay, if you say so."
+#
+#                     $ in_private = False
+#         else:
+#             $ the_person.call_dialogue("seduction_accept_alone")
+#
+#         call fuck_person(the_person,private = in_private) from _call_fuck_person
+#
+#         $ the_person.review_outfit()
+#
+#         #Tidy up our situational modifiers, if any.
+#         $ the_person.clear_situational_slut("public_sex")
+#         $ the_person.clear_situational_slut("seduction_approach")
+#         $ the_person.clear_situational_obedience("seduction_approach")
+#     else:
+#         $ the_person.call_dialogue("seduction_refuse")
+#         $ the_person.clear_situational_slut("seduction_approach")
+#         $ the_person.clear_situational_obedience("seduction_approach")
+#
+#     $ the_person.sexed_count += 1
+#     return
 
 label bc_talk_label(the_person):
     # Contains the Love and Sluttiness based approaches to asking someone to stop taking birth control.

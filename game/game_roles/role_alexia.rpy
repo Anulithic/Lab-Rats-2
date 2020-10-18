@@ -15,11 +15,11 @@ init -2 python:
 
     def alexia_intro_phase_two_requirement(the_person): #BUG: Alexia's title appears correctly in the action name but incorrectly in the disabled slug. May be due to some argument list references that are by reference instead of value.
         if mc.business.is_weekend():
-            return "[alexia.title] only works on week days."
+            return "[alexia.title] only works on week days"
         elif time_of_day == 0:
-            return "It's too early to visit [alexia.title]."
+            return "It's too early to visit [alexia.title]"
         elif time_of_day >= 4:
-            return "It's too late to visit [alexia.title]."
+            return "It's too late to visit [alexia.title]"
         else:
             return True
 
@@ -29,7 +29,7 @@ init -2 python:
         elif the_person.love < 10:
             return "Requires: 10 Love"
         elif mc.business.get_employee_count() >= mc.business.max_employee_count:
-            return "At employee limit."
+            return "At employee limit"
         else:
             return True
 
@@ -64,7 +64,7 @@ init -2 python:
         elif mc.business.get_employee_workstation(the_person) is None:
             return False
         elif mc.business.funds < 500:
-            return "Insufficient funds."
+            return "Requires: $500"
         else:
             return True
 
@@ -82,7 +82,7 @@ init -2 python:
         elif mc.business.get_employee_workstation(the_person) is None:
             return False
         elif time_of_day >= 4:
-            return "Too late to start taking pictures."
+            return "Too late to shoot pictures"
         else:
             return True
 
@@ -95,9 +95,7 @@ init -2 python:
         alexia_intro_phase_two_action = Action("Visit " + the_person.title + " at work", alexia_intro_phase_two_requirement, "alexia_intro_phase_two_label", args = the_person, requirement_args = the_person)
         downtown.actions.append(alexia_intro_phase_two_action)
         downtown.move_person(the_person, the_person.home) #Change her schedule again so you don't see her anymore unless you visit her explicitly.
-        alexia.schedule[1] = alexia.home
-        alexia.schedule[2] = alexia.home
-        alexia.schedule[3] = alexia.home
+        alexia.set_schedule(alexia.home, times = [1,2,3])
         return
 
     def remove_item_from_list(search, action_list):
@@ -112,10 +110,7 @@ init -2 python:
 
     def add_alexia_hire_action(the_person):
         remove_item_from_list(lambda x: x.effect == "alexia_intro_phase_two_label", downtown.actions)
-        
-        alexia.schedule[1] = downtown #She spends her time downtown "working".
-        alexia.schedule[2] = downtown
-        alexia.schedule[3] = downtown
+        alexia.set_schedule(downtown, days = [0, 1, 2, 3, 4], times = [1,2,3]) #She spends her time downtown "working".
 
         alexia_hire_action = Action("Hire " + alexia.title + " to work in sales", alexia_hire_requirement, "alexia_hire_label")
         the_person.get_role_reference_by_name("Alexia").actions.append(alexia_hire_action)
@@ -139,10 +134,7 @@ init -2 python:
 
 label alexia_phase_zero_label():
     #Sets Alexia's schedule so she is downtown during time periods 1,2,3.
-    python:
-        alexia.schedule[1] = downtown
-        alexia.schedule[2] = downtown
-        alexia.schedule[3] = downtown
+    $alexia.set_schedule(downtown, times = [1,2,3])
     return
 
 label alexia_intro_phase_one_label(the_person):
@@ -185,7 +177,7 @@ label alexia_intro_phase_one_label(the_person):
     "You wave goodbye to [the_person.possessive_title] as she walks away."
 
     $ add_alexia_phase_two_action(the_person)
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label alexia_intro_phase_two_label(the_person):
@@ -197,7 +189,7 @@ label alexia_intro_phase_two_label(the_person):
     $ the_person.draw_person()
     "You step inside and see [the_person.possessive_title] behind the front counter. She smiles when she sees you and waves you over."
     the_person.char "Hey, I'm glad you were able to make it! I'm just finishing up my shift. Grab a seat and I'll be over in a minute."
-    $ renpy.scene("Active")
+    $ clear_scene()
     "She heads into the back room of the shop. You sit down at a small table for two by a window and wait."
     "A couple of minutes later [the_person.title] comes over with a paper cup in each hand. She puts one on the table and sits down opposite you."
     $ the_person.draw_person(position = "sitting")
@@ -267,7 +259,7 @@ label alexia_intro_phase_two_label(the_person):
             "She glares at you for a moment, but [the_person.SO_name] doesn't seem to notice."
             the_person.SO_name "Well, we'll have to fix that. If you two are friends we should have dinner together, so you can catch up."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     "[the_person.title] gets into the passenger side of her boyfriend's car. She says goodbye from inside and they drive off."
     $ add_alexia_hire_action(the_person)
     call advance_time from _call_advance_time_18

@@ -140,7 +140,10 @@ init -1 python:
         mother_offer_make_dinner = Action("Offer to make dinner {image=gui/heart/Time_Advance.png}", mom_offer_make_dinner_requirement, "mom_offer_make_dinner_label",
             menu_tooltip = "Earn some good will by making dinner for your mother and sister.", priority = 5)
 
-        return [mother_offer_make_dinner]
+        mom_work_promotion_two_prep_action = Action("Prepare for her interview.", mom_work_promotion_two_prep_requirement, "mom_work_promotion_two_prep",
+            menu_tooltip = "Help your mom prepare for her one-on-one interview.", priority = 10)
+
+        return [mother_offer_make_dinner, mom_work_promotion_two_prep_action]
 
     def get_aunt_role_actions():
         #AUNT ACTIONS#
@@ -275,6 +278,7 @@ label pay_strip_scene(the_person):
     #Optional: Some way to ask the person to change into a different outfit.
     #Optional: Way to progress from strip tease to sex and/or masturbation.
 
+    $ pose_list = [["Turn around","walking_away"],["Turn around and look back","back_peek"],["Be flirty","stand2"],["Be casual","stand3"],["Strike a pose","stand4"],["Move your hands out of the way","stand5"],["Hands down, ass up.","standing_doggy"]]
 
     $ picked_pose = the_person.idle_pose #She starts in her idle pose (which is a string)
     $ ran_num = renpy.random.randint(0,3) #Produce 4 different descriptions at each level to help keep this interesting.
@@ -505,5 +509,5 @@ label prostitute_label(the_person):
 
     the_person.char "That was fun, I hope you had a good time [the_person.mc_title]."
     "She gives you a quick peck on the cheek."
-    $ renpy.scene("Active")
+    $ clear_scene()
     return

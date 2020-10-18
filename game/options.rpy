@@ -23,7 +23,7 @@ define gui.show_name = False
 
 ## The version of the game.
 
-define config.version = "v0.30.2"
+define config.version = "v0.33.3"
 
 
 ## Text that is placed on the game's about screen. To insert a blank line

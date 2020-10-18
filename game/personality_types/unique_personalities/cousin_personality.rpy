@@ -160,6 +160,83 @@ label cousin_flirt_response_high(the_person):
 
     return
 
+## Sex dialogue ##
+label cousin_cum_pullout(the_person):
+    if mc.condom:
+        if the_person.wants_creampie() and the_person.get_opinion_score("creampies") > 0 and not the_person.has_taboo("condomless_sex"): #TODO: FIgure out we want any more requirements for this to fire.
+            if the_person.event_triggers_dict.get("preg_knows", False):
+                the_person.char "Fuck, get that condom off then!"
+                the_person.char "I'm already pregnant, so just pump your load inside of me!"
+
+            elif the_person.on_birth_control:
+                the_person.char "I... Fuck it, take that condom off first [the_person.mc_title]! Put that load inside of my pussy!"
+                "She moans aggressively."
+            else:
+                the_person.char "I... Oh fuck, I can't think straight! Take that condom off before you cum [the_person.mc_title]!"
+                the_person.char "Don't waste your load, put it into my fertile little pussy! Try and get me fucking pregnant!"
+
+            menu: #TODO: Add a varient of this normally so you can stealth a girl (don't do that in real life, it's super fucked up).
+                "Take off the condom.":
+                    "You don't have much time to spare. You pull out, barely clearing her pussy, and pull the condom off as quickly as you can manage."
+                    $ mc.condom = False
+                "Leave it on.":
+                    "You ignore [the_person.possessive_title]'s cum-drunk offer and keep the condom in place."
+
+        else:
+            the_person.char "Yeah? My tight, wet, pussy is going to make you cum? Then fucking do it!"
+    else:
+        if the_person.wants_creampie():
+            if the_person.on_birth_control or the_person.event_triggers_dict.get("preg_knows", False):
+                the_person.char "Hurry up! Cum for me [the_person.mc_title]!"
+            else:
+                the_person.char "Yeah? Is my pussy going to make you cum?"
+                "She pants happily."
+                the_person.char "Then hurry up and do it! Give me that creampie!"
+        else:
+            if the_person.on_birth_control:
+                the_person.char "Oh fuck, you better pull out!"
+            else:
+                the_person.char "What are you waiting for? Pull out!"
+    return
+
+label cousin_cum_condom(the_person):
+    if the_person.on_birth_control:
+        the_person.char "Oooh, wow, that's a lot of cum. Don't you wish that it was inside my tight, wet pussy instead of that sad little condom?"
+        "She scoffs."
+        the_person.char "Maybe next time, nerd."
+
+    elif the_person.wants_creampie():
+        the_person.char "Oh, I can actually feel it through the condom."
+        "She sighs happily and wiggles her hips."
+        the_person.char "Fuck, I wish weren't wearing that... I want a hot load splattered inside pussy."
+        the_person.char "I guess it's a good thing you aren't knocking me up though."
+
+    else:
+        the_person.char "Oh fuck, I can actually feel your cum through the condom... It didn't break, did it?" #TODO: Add a way for it to break (on realsitic mode)
+        "She wiggles her hips experimentally, then lets out a relieved sigh."
+        the_person.char "It feels like it's fine. Good thing, I don't really feel like getting knocked up by my cousin."
+    return
+
+label cousin_cum_vagina(the_person):
+    if the_person.wants_creampie():
+        if the_person.on_birth_control or the_person.event_triggers_dict.get("preg_knows", False):
+            the_person.char "Oh fuck..."
+
+        else:
+            the_person.char "Oh fuck, you really did it. You know I'm not on the pill, right?"
+            the_person.char "I bet you're a pervert like that and you wanted to get your own cousin knocked up."
+            the_person.char "Whatever, you're probably shooting blanks anyways."
+
+    else:
+        if the_person.on_birth_control:
+            the_person.char "...And you didn't pull out. Great."
+            the_person.char "I swear I'm going to make you wear a condom if you can't even manage that. Then neither of us will be happy."
+        else:
+            "She groans loudly."
+            the_person.char "Oh my god, you asshole! I said pull out, I'm not on fucking birth control!"
+            the_person.char "Ugh, whatever. You're probably shooting blanks, I bet I don't even need to worry about it."
+    return
+
 ## Taboo break dialogue ##
 label cousin_kissing_taboo_break(the_person):
     the_person.char "Oh my god... Were you going to kiss me?"
@@ -446,9 +523,34 @@ label cousin_bare_pussy_taboo_break(the_person, the_clothing):
 #
 #     return
 #
-# label cousin_creampie_taboo_break(the_person):
-#
-#     return
+label cousin_creampie_taboo_break(the_person):
+    if the_person.wants_creampie():
+        the_person.char "Oh fuck, you actually did it. I thought you were going to chicken out."
+        mc.name "Why would I chicken out? This is the one thing your pussy is good for."
+        if the_person.on_birth_control:
+            the_person.char "Ugh, whatever. Congratulations, you managed to cum in a girls pussy. You aren't a complete failure of the human race."
+
+        else:
+            the_person.char "Because I'm not on the pill, you idiot. I thought you were suppose to be the smart one in the family."
+            the_person.char "Unless this was your plan the whole time..."
+
+    else:
+        if the_person.on_birth_control:
+            the_person.char "...And of course you didn't pull out."
+            mc.name "Yeah, sorry. I got a little carried away."
+            the_person.char "Obviously. Well I'm going to give you a little tip about girls: When they tell you to pull out, fucking do it!"
+
+        else:
+            the_person.char "Hey, what the fuck! I'm... Oh fuck, you're joking, right?"
+            "She groans unhappily."
+            mc.name "What's wrong? Aren't you having a good time?"
+            the_person.char "I'm not on the pill, and you just came inside of me. So no, I'm not having a good time any more."
+            mc.name "Come on, who cares about that? What are the actual odds you're going to get pregnant?"
+            the_person.char "I don't know... Low, I think, but that's not the point."
+            mc.name "Of course it's the point. You're probably not going to get pregnant, but this feels so much better for both of us. Right?"
+            the_person.char "I... I guess. Fine, whatever. Just don't cum in me every single time, alright?"
+
+    return
 #
 # label cousin_anal_creampie_taboo_break(the_person):
 #

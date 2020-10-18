@@ -66,7 +66,7 @@ label scene_piledriver_1(the_girl, the_location, the_object):
                 "You pause and give [the_girl.possessive_title] a chance to get use to having your cock buried inside of her cunt."
                 "She takes a few deep breaths, then nods to you."
                 the_girl.char "Okay, I think I'm ready. Take it slow though."
-                if the_girl.arousal < 50:
+                if the_girl.arousal > 50:
                     "You start to pump your hips. [the_girl.title]'s pussy is tight but wet, giving you just enough lubrication to slide in and out easily."
                     mc.name "There you go, I knew you could manage it."
                     the_girl.char "Oh... I can... I can do this..."
@@ -157,7 +157,7 @@ label scene_piledriver_2(the_girl, the_location, the_object):
     "You settle into a steady rhythm pumping in and out of [the_girl.title]'s pussy. Having her legs bent over lets you get deeper than you normally can."
     #TODO: Minor line depending on her vaginal skill.
     if the_girl.sex_skills["Vaginal"] < 3:
-        the_girl.char "Ah... Take it easy, I'm not... use to doing this."
+        the_girl.char "Ah... Take it easy, I'm not... used to doing this."
     else:
         the_girl.char "I can feel you so deep inside me..."
 
@@ -217,13 +217,14 @@ label outro_piledriver(the_girl, the_location, the_object):
     "[the_girl.title]'s pussy is warm, tight and wet as you pump in and out of it, pulling you closer and closer to climaxing with each thrust."
     "You reach your limit and feel your orgasm approaching quickly."
     mc.name "Fuck me, I'm going to cum!"
+    $ the_girl.call_dialogue("cum_pullout")
     menu:
         "Cum inside of her":
             if the_girl.sluttiness > 120 or mc.condom:
-                the_girl.char "Come on, dump it right inside of me!"
                 if mc.condom:
                     "You had no intention of stopping, but hearing her ask for it makes you cum even harder."
                     "You push yourself as deep as you can manage and pump your load out into her cunt, hopefully contained by your condom."
+                    $ the_girl.call_dialogue("cum_vagina")
                     "You take a moment to catch your breath, then you pull your cock out of [the_girl.title] and sit back down. The condom tip is ballooned out, hanging to one side and filled with your cum."
                     if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.sluttiness > 50:
                         $ the_girl.discover_opinion("drinking cum")
@@ -237,6 +238,7 @@ label outro_piledriver(the_girl, the_location, the_object):
 
                 else:
                     "You had no intention of stopping either way, but hearing her ask for it makes you cum even harder. You gasp and push yourself as deep as you can, draining your balls into [the_girl.title]'s cunt."
+                    $ the_girl.call_dialogue("cum_vagina")
                     $ the_girl.cum_in_vagina()
                     $ piledriver.redraw_scene(the_girl)
                     the_girl.char "Mmmm, it's so nice and warm..."

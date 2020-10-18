@@ -1,7 +1,7 @@
 init -1 python:
     def downtown_search_requirement():
         if time_of_day >= 4:
-            return "Too late to explore."
+            return "Too late to explore"
         else:
             return True
 
@@ -140,7 +140,7 @@ label lady_of_the_night_label():
 
             the_person.char "It's been fun, if you ever see me around maybe we can do this again."
             "She gives you a peck on the cheek, then turns and struts off into the night."
-            $ renpy.scene("Active")
+            $ clear_scene()
 
         "Say no":
             mc.name "Thanks for the offer, but no thanks."
@@ -192,7 +192,7 @@ label meet_person_label():
         "Keep the cash\n{color=#00ff00}{size=18}Income: $200{/size}{/color}":
             $ mc.business.funds += 200
             "You slip the cash out of the womans wallet and watch as she rushes to catch her bus."
-            $ renpy.scene("Active")
+            $ clear_scene()
             "She gets on and the bus pulls away. When you pass a mailbox you slide the wallet inside - at least she'll get it back."
 
 

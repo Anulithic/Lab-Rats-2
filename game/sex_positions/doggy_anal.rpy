@@ -139,7 +139,7 @@ label outro_doggy_anal(the_girl, the_location, the_object):
             if the_girl.get_opinion_score("anal creampies") > 0:
                 # If she's into both...
                 $ the_girl.discover_opinion("anal creampies")
-                the_girl.char "Oh fuck... I'm so full cum. Put it back in me."
+                the_girl.char "Oh fuck... I'm so full of cum. Put it back in me."
                 mc.name "What?"
                 the_girl.char "Your cock, put it back in me... Just a little bit more, please!"
                 "She lowers her shoulders to the [the_object.name] and wiggles ass at you. You slide the tip of your still-hard dick into her asshole."

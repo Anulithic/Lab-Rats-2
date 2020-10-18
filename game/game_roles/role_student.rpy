@@ -27,7 +27,7 @@ init -2 python:
         elif not ((the_person in university.people and the_person.event_triggers_dict.get("tutor_enabled", False)) or (the_person.event_triggers_dict.get("home_tutor_enabled", False) and the_person in the_person.home.people)):
             return False
         elif ((the_person in university.people and the_person.event_triggers_dict.get("tutor_enabled, False")) or (the_person.event_triggers_dict.get("home_tutor_enabled", False) and the_person in the_person.home.people)) and the_person.event_triggers_dict.get("last_tutor", -5) >= day:
-            return "Already studied today."
+            return "Already studied today"
         return True
 
     def student_mom_intro_requirement(the_person):
@@ -37,44 +37,50 @@ init -2 python:
             return False
         return True
 
-
+    def add_student_intro_two_action(person):
+        student_intro_two_action = Action("Student_intro_two", student_intro_two_requirement, "student_intro_two")
+        person.on_room_enter_event_list.append(student_intro_two_action)
+        person.event_triggers_dict["current_marks"] = 25 # Should be a value between 0 and 100%
+        return
 
 label student_intro_one(the_nora, the_student): #the_nora just because we don't want to conflict with the global Nora name.
     "You knock on the door to the lab. After a moment [the_nora.title] answers and steps out into the hallway."
-    $ the_nora.draw_person()
+    $ the_group = GroupDisplayManager([the_nora], primary_speaker = the_nora)
+    $ the_group.draw_group()
     the_nora.char "Hello, I'm glad you were able to make it. Come on, let's..."
     the_student.char "Professor [the_nora.last_name]!"
+    $ the_group.add_person(the_student)
+    $ the_group.draw_person(the_student, make_primary = False)
     "Your conversation is interrupted by a girl hurrying down the hallway towards you. [the_nora.title] sighs."
     the_nora.char "Sorry, this will just take a moment."
-    $ the_student.draw_person()
+    $ the_group.draw_person(the_student)
     the_student.char "Professor, I'm glad I was able to catch you, I..."
-    $ the_nora.draw_person()
+    $ the_group.draw_person(the_nora)
     $ the_student.set_title(the_student.name)
     $ the_student.set_possessive_title(the_student.name)
     the_nora.char "[the_student.title], you know I'm not allowed to have students in my lab."
-    $ the_student.draw_person()
+    $ the_group.draw_person(the_student)
     the_student.char "I know, which is why I was hoping I could talk to you here. There are a few questions I'm really struggling with on..."
-    $ the_nora.draw_person()
+    $ the_group.draw_person(the_nora)
     the_nora.char "Okay, but I'm with a colleague of mine right now. I will be back in a few minutes."
-    $ the_student.draw_person()
+    $ the_group.draw_person(the_student)
     the_student.char "Thank you Professor."
     "She turns to you and smiles."
     the_student.char "Sorry for the interruption."
     mc.name "No problem at all."
+    $ clear_scene()
+
+
     $ the_nora.draw_person()
     $ university.show_background()
     "[the_nora.title] leads you upstairs to make sure none of her co-workers are around."
-    the_nora.char "Sorry about that. The university requires me to teach at least one class in order to recieve grant money."
+    the_nora.char "Sorry about that. The university requires me to teach at least one class in order to receive grant money."
     the_nora.char "Now I've got undergrads hounding me every hour of the day asking for help on this or an extension on that."
     the_nora.char "All they have to do is show up and pay attention, but somehow half of them can't even manage that."
     "She gives an exhausted sigh."
     the_nora.char "But never mind that, we have more important things to discuss."
-
-    python: #Sets up all the variables needed for this story line.
-        student_intro_two_action = Action("Student_intro_two", student_intro_two_requirement, "student_intro_two")
-        the_student.on_room_enter_event_list.append(student_intro_two_action)
-        the_student.special_role.append(student_role)
-        the_student.event_triggers_dict["current_marks"] = 25 # Should be a value between 0 and 100%
+    $ add_student_intro_two_action(the_student)
+    $ the_group = None
     return
 
 
@@ -117,7 +123,7 @@ label student_intro_two(the_person):
             "She gives you a sad wave goodbye and hurries off."
             $ the_person.event_triggers_dict["student_reintro_required"] = True
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label student_reintro(the_person): #Called when you turned down the student in the first interaction but now want to restart this story line.
@@ -197,7 +203,7 @@ label student_study_university(the_person):
         if current_marks > 80:
                 mc.name "Fantastic! A little more work and you'll be the best in your class!"
                 the_person.char "Thanks, you've really helped everything come together!"
-                "Vren" "This section of the game is under construction. In [config.version] you will have the ability to hire [the_person.title] once her marks are high enough."
+                "Vren" "This section of the game is under construction. In v0.30.1 you will have the ability to hire [the_person.title] once her marks are high enough."
         elif current_marks > 50:
             mc.name "That sounds like a pass to me!"
             the_person.char "Yeah! I need to convince Professor [nora.last_name] to shift more weight to my exam, but I might be able to do this!"
@@ -279,7 +285,7 @@ label student_study_university(the_person):
 
 
 
-            "Give her a dose of serum\nRequires: 110 Obedience (disabled)" if the_person.obedience < 110 and mc.inventory.get_any_serum_count() > 0:
+            "Give her a dose of serum\n{color=#ff0000}{size=18}Requires: 110 Obedience{/size}{/color} (disabled)" if the_person.obedience < 110 or mc.inventory.get_any_serum_count() == 0:
                 pass
 
 
@@ -335,7 +341,7 @@ label student_study_university(the_person):
     $ the_person.event_triggers_dict["times_studied_university"] = the_person.event_triggers_dict.get("times_studied_university", 0) + 1
     if the_person.event_triggers_dict.get("current_marks",0) > 100:
         $ the_person.event_triggers_dict["current_marks"] = 100
-    $ renpy.scene("Active")
+    $ clear_scene()
     call advance_time() from _call_advance_time_21
     return
 
@@ -362,7 +368,7 @@ label student_study_home(the_person):
     if current_marks > 80:
             mc.name "Fantastic! A little more work and you'll be the best in your class!"
             the_person.char "Thanks, you've really helped everything come together!"
-            "Vren" "This section of the game is under construction. In [config.version] you will have the ability to hire [the_person.title] once her marks are high enough."
+            "Vren" "This section of the game is under construction. In v0.30.1 you will have the ability to hire [the_person.title] once her marks are high enough."
     elif current_marks > 50:
         mc.name "That sounds like a pass to me!"
         the_person.char "Yeah! I need to convince Professor [nora.last_name] to shift more weight to my exam, but I might be able to do this!"
@@ -435,7 +441,7 @@ label student_study_home(the_person):
                     else:
                         mc.name "On second thought, I think we'll see how you do without serum this session. Let's focus on your studying."
 
-            "Give her a dose of serum\n{color=#ff0000}{size=18}Requires: 110 Obedience{/size}{/color} (disabled)" if the_person.obedience < 110 and mc.inventory.get_any_serum_count() > 0:
+            "Give her a dose of serum\n{color=#ff0000}{size=18}Requires: 110 Obedience{/size}{/color} (disabled)" if the_person.obedience < 110 or mc.inventory.get_any_serum_count() == 0:
                 pass
 
 
@@ -443,29 +449,9 @@ label student_study_home(the_person):
         "Study normally":
             call study_normally(the_person, public = False) from _call_study_normally_1
 
-        "Try something different": #TODO: These should probably all be events so their requirements can be made dynamic and depend on options ect.
+        "Try something different...":
             mc.name "I want to try something different today [the_person.title]. I think it will help your focus."
             the_person.char "Okay, what did you have in mind?"
-
-
-            # python:
-            #     # The "Get her off" chain of events
-            #     private_masturbate_action = Action("Masturbate first.", private_masturbate_requirement, "private_masturbate_label", args = the_person, requirement_args = the_person)
-            #     view_masturbate_action = Action("Masturbate first.", view_masturbate_requirement, "view_masturbate_label", args = the_person, requirement_args = the_person)
-            #     mutual_masturbate_action = Action("Masturbate together first.", finger_masturbate_requirement, "masturbate_together_label", args = the_person, requirement_args = the_person)
-
-
-
-
-                # The "Punisher her" chain
-                #study_punish_hub_action = Action("Punish her for wrong answers.", study_punish_hub_requirements, "study_punish_requirements", args = the_person, requirement_args = the_person)
-                # Strip for each wrong answer
-                # Spank her for each wrong answer
-                # Suck me off for each wrong answer
-                # Fuck her for each wrong asnwer
-                # Cream pie her for each wrong answer
-                # Anal her for each wrong answer
-
             menu:
                 "Masturbate first" if the_person.effective_sluttiness() >= 15:
                     call student_masturbate_label(the_person) from _call_student_masturbate_label
@@ -478,71 +464,6 @@ label student_study_home(the_person):
 
                 "Punish her for wrong answers\n{color=#ff0000}{size=18}Requires: 100 Obedience{/size}{/color} (disabled)" if the_person.obedience < 100:
                     pass
-
-            # menu:
-            #     "Masturbate first.(Under Construction)" if the_person.effective_sluttiness() >= 25:
-            #         "Vren" "This content is under construction. The mechanical effects are in place, but the dialogue is not. It will be ready for v0.30.1!"
-            #         $ the_person.event_triggers_dict["student_masturbate"] = the_person.event_triggers_dict.get("student_masturbate",0) + 1
-            #         $ the_person.change_slut_temp(3,40)
-            #         $ the_person.change_obedience(2)
-            #         if the_person.effective_sluttiness() > 50 or the_person.get_opinion_score("masturbating") > 0:
-            #             $ the_person.discover_opinion("masturbating")
-            #             $ the_person.event_triggers_dict["current_marks"] += 3
-            #             $ mc.log_event(the_person.title + " learns much better after she gets off.", "float_text_grey")
-            #
-            #         else:
-            #             $ the_person.change_love(-2)
-            #             $ the_person.event_triggers_dict["current_marks"] += 1
-            #             $ mc.log_event(the_person.title + " has trouble focusing. She doesn't learn very much.", "float_text_grey")
-            #
-            #
-            #     "Masturbate first.(Under Construction)\nRequires: 25 Sluttiness (disabled)" if the_person.effective_sluttiness() < 25:
-            #         pass
-            #
-            #     "Play strip study.(Under Construction)" if the_person.effective_sluttiness() >= 35:
-            #         "Vren" "This content is under construction. The mechanical effects are in place, but the dialogue is not. It will be ready for v0.30.1!"
-            #         $ the_person.event_triggers_dict["student_strip_study"] = the_person.event_triggers_dict.get("student_strip_study",0) + 1
-            #         $ the_person.change_slut_temp(3,40)
-            #         $ the_person.change_obedience(2)
-            #         if the_person.effective_sluttiness() > 60 or the_person.get_opinion_score("not wearing anything") > 0: #TODO: This should probably be "showing tits" and "showing ass". Fix in v0.30.1
-            #             $ the_person.discover_opinion("not wearing anything")
-            #             $ the_person.event_triggers_dict["current_marks"] += 1
-            #             $ mc.log_event(the_person.title + " has too much fun stripping for you to concentrate on studying.", "float_text_grey")
-            #         else:
-            #             $ the_person.change_love(-1)
-            #             $ the_person.event_triggers_dict["current_marks"] += 3
-            #             $ mc.log_event(the_person.title + " studies harder to avoid stripping, and learns a lot.", "float_text_grey")
-            #
-            #     "Play strip study.(Under Construction)\nRequires: 35 Sluttiness (disabled)" if the_person.effective_sluttiness() < 35:
-            #         pass
-            #
-            #     "Study naked.(Under Construction)" if the_person.effective_sluttiness() >= 50:
-            #         "Vren" "This content is under construction. The mechanical effects are in place, but the dialogue is not. It will be ready for v0.30.1!"
-            #         $ the_person.event_triggers_dict["student_study_naked"] = the_person.event_triggers_dict.get("student_study_naked",0) + 1
-            #         $ the_person.change_slut_temp(3,40)
-            #         $ the_person.change_obedience(2)
-            #         if the_person.effective_sluttiness() > 65 or the_person.get_opinion_score("not wearing anything") > 0: #TODO: This should probably be "showing tits" and "showing ass". Fix in v0.30.1
-            #             $ the_person.discover_opinion("not wearing anything")
-            #             $ the_person.event_triggers_dict["current_marks"] += 1
-            #             $ mc.log_event(the_person.title + " has too much fun being naked to concentrate on studying.", "float_text_grey")
-            #         else:
-            #             $ the_person.change_love(-1)
-            #             $ the_person.event_triggers_dict["current_marks"] += 4
-            #             $ mc.log_event(the_person.title + " studies harder so she can get dressed again. You teach her a lot.", "float_text_grey")
-            #
-            #     "Study naked.(Under Construction)\nRequires: 50 Sluttiness (disabled)" if the_person.effective_sluttiness() < 50:
-            #         pass
-            #
-            #     # "Punish her for wrong answers.": #TODO: Implement these for v0.30.1
-            #     #     "Vren" "This content is under construction. The mechanical effects are in place, but the dialogue is not. It will be ready for v0.30.1!"
-            #     #     $ the_person.event_triggers_dict["student_study_punish"] = the_person.event_triggers_dict.get("student_study_punish",0) + 1
-            #     #
-            #     # "Pay her for correct answers.":
-            #     #     "Vren" "This content is under construction. The mechanical effects are in place, but the dialogue is not. It will be ready for v0.30.1!" # TODO: THis event. Pay her for each answer she gets correct, raising happiness and her grades. If slutty this becomes "lick me"
-            #     #     $ the_person.event_triggers_dict["student_study_reward"] = the_person.event_triggers_dict.get("student_study_reward",0) + 1
-            #
-            #     "Never mind.":
-            #         call study_normally(the_person, public = False) from _call_study_normally_2
 
     if the_person.int > starting_int and took_serum: #If she has either her int or focus boosted by serum she's much happier to take it in the future.
         the_person.char "Wow, I actually found that really easy! I think this serum stuff you gave me actually helped."
@@ -566,17 +487,11 @@ label student_study_home(the_person):
         $ the_person.event_triggers_dict["current_marks"] += total_improvement
         $ mc.log_event(the_person.title + " stayed focused while studying and learned more than usual.", "float_text_grey")
 
-    #Ideas for actions:
-        # Just study
-        # Give her serum (Then select a different option)
-        # Try masturbating before studying.
-        # Strip study (She looses clothing each time she gets a question wrong.)
-        # Punish her for wrong answers
-        # Reward her for right answers
-        # Study nude.
-        # If she's slutty enough she may try and bribe you to have Nora pass her (or at least boost her test mark)
+    # make sure she dresses up, before we go down (and maybe meet the mom)
+    $ the_person.apply_outfit()
 
-    # Random chance that on some events her Mom will walk in on you?
+    if time_of_day == 3 and christina in christina.home.people:
+        call study_check_up(the_person, christina) from _call_study_check_up
 
     # TODO: Help the student study at home. Opens up more options for rewards/punishments
     # TODO: If you make her orgasm, and as her marks improve, she'll "talk to her mom" and improves your pay.
@@ -585,7 +500,7 @@ label student_study_home(the_person):
     $ the_person.event_triggers_dict["times_studied_home"] = the_person.event_triggers_dict.get("times_studied_home", 0) + 1
     if the_person.event_triggers_dict.get("current_marks",0) > 100:
         $ the_person.event_triggers_dict["current_marks"] = 100
-    $ renpy.scene("Active")
+    $ clear_scene()
     call advance_time() from _call_advance_time_22
     return
 
@@ -629,7 +544,7 @@ label study_normally(the_person, public = True):
                     mc.name "Does that feel better?"
                     the_person.char "Yeah, I guess."
                     mc.name "Now let's stretch out your core. Put your hands on the table, set your legs apart, and bend forward."
-                    $ the_person.draw_person(position = "walking_away") #TODO: Replace this with "standing doggy" once the images for that aren't broken.
+                    $ the_person.draw_person(position = "standing_doggy")
                     the_person.char "Uh, like this?"
                     menu:
                         "Hold that pose":
@@ -772,7 +687,7 @@ label student_masturbate_label(the_person):
         mc.name "Okay, I'll just be waiting outside then."
         $ the_person.change_slut_temp(2)
         the_person.char "Thanks! I'll let you know when I'm... finished."
-        $ renpy.scene("Active")
+        $ clear_scene()
         "You stand up and leave [the_person.possessive_title]'s room. You close her door and lean on the frame."
         #TODO: Chance her mom walks by and asks what's going on.
         "You listen at the door, and hear [the_person.title]'s chair creaking as she moves. After a few minutes you hear a faint gasp."
@@ -839,7 +754,7 @@ label student_masturbate_label(the_person):
                 $ the_person.discover_opinion("public sex")
                 $ mc.log_event(the_person.title + " seems much more focused.", "float_text_grey")
 
-            "Masturbate with her" if the_person.effective_sluttiness() >= 30: #TODO: Add a mutual masturbation position? At the very least this deserves a more accurate position
+            "Masturbate with her" if the_person.effective_sluttiness() >= 30: #TODO: Add a mutual masturbation position?
                 mc.name "Let me help out with that."
                 "You unzip your pants and pull out your hard cock. You give it a few gentle strokes as [the_person.possessive_title] watches."
                 the_person.char "What... Do you want to do?"
@@ -896,13 +811,29 @@ label student_masturbate_label(the_person):
             "Masturbate with her\n{color=#ff0000}{size=18}Requires: 50 Sluttiness{/size}{/color} (disabled)" if the_person.effective_sluttiness() < 30:
                 pass
 
-    # TODO: If you enter the sex system add a "Get each other off" option in addition to the masturbate option
     call study_normally(the_person, public = False) from _call_study_normally_2
     return
 
 label student_pick_reward(the_person, punishment):
-    #TODO: FIrst time dialogue variation
-    if (the_person.effective_sluttiness() > 50 or the_person.get_opinion_score("not wearing anything") > 0) and punishment != "student_punish_strip":
+    #TODO: First time dialogue variation
+    if (the_person.effective_sluttiness() >= 80 or the_person.get_opinion_score("giving blowjobs")) and punishment != "student_punish_suck" > 0:
+        the_person.char "If I get a question right I want you to get your cock out and let me suck you off."
+        mc.name "That's all you want?"
+        the_person.char "Is there something wrong with it? I..."
+        mc.name "No, there's nothing wrong! That sounds like a reward where we both win."
+        mc.name "We'll start slowly, and for each question you get right we'll make things more intense."
+        the_person.char "Thank you [the_person.mc_title]."
+        return "student_punish_suck"
+
+    elif (the_person.effective_sluttiness() >= 65 or the_person.get_opinion_score("being submissive") > 0) and punishment != "student_punish_spank":
+        the_person.char "If I get any questions right I want you to bend me over and spank me."
+        mc.name "That... sounds more like a punishment to me."
+        "[the_person.possessive_title] blushes and looks away."
+        the_person.char "I'm sorry, I'm doing this all wrong."
+        mc.name "No, if that's what you want as your reward I'll do it. I was just a little surprised."
+        the_person.char "Thank you [the_person.mc_title]."
+        return "student_punish_spank"
+    elif (the_person.effective_sluttiness() >= 50 or the_person.get_opinion_score("not wearing anything") > 0) and punishment != "student_punish_strip":
         the_person.char "If I get any questions right I want to take something off. That way I can be more relaxed."
         mc.name "Alright, if that's what you want."
         return "student_punish_strip"
@@ -913,29 +844,122 @@ label student_pick_reward(the_person, punishment):
     return "student_punish_pay_her"
 
 label student_pick_punishment(the_person):
-    # TODO: Have some first time dialogue variation here.
+    $ wants_to_fail = False
     menu:
         "Pay me":
-            mc.name "You're going to pay me an extra $50 for every wrong answer."
-            the_person.char "Is that all? My mother will..."
-            mc.name "Oh no, this needs to come from {i}you{/i}, not mommy."
-            the_person.char "Fine. It's not going to matter, I'm going to crush this."
-            return "student_punish_pay_you"
+            if the_person.event_triggers_dict.get("student_pay", 0) == 0:
+                mc.name "You're going to pay me an extra $50 for every wrong answer."
+                the_person.char "Is that all? My mother will..."
+                mc.name "Oh no, this needs to come from {i}you{/i}, not mommy."
+                the_person.char "Fine. It's not going to matter, I'm going to crush this."
+                $ the_person.event_triggers_dict["student_pay"] = 1
+            else:
+                mc.name "You're going to be paying me again. $50 for every wrong answer."
+                the_person.char "Alright, fine."
+                $ the_person.event_triggers_dict["student_pay"] += 1
+
+
+            return "student_punish_pay_you", wants_to_fail
 
         "Strip" if the_person.effective_sluttiness() >= 30:
-            mc.name "For each question you get wrong you're going to take off a piece of clothing for me."
-            the_person.char "Like, anything I want?"
-            mc.name "Something major. I'm not going to let you get away with pulling off a sock."
-            the_person.char "Fine. It's not going to matter, I'm going to crush this."
-            return "student_punish_strip"
+            if the_person.effective_sluttiness() > 65 or the_person.get_opinion_score("not wearing anything") > 0:
+                $ wants_to_fail = True
 
-        "Spank her\nUnder Construction (disabled)":
+            if the_person.event_triggers_dict.get("student_strip", 0) == 0:
+                mc.name "For each question you get wrong you're going to take off a piece of clothing for me."
+                the_person.char "Like, anything I want?"
+                mc.name "Something major. I'm not going to let you get away with pulling off a sock."
+
+                if wants_to_fail:
+                    the_person.char "Well obviously. Don't worry [the_person.mc_title], I'll give you a show."
+                else:
+                    the_person.char "Fine. It's not going to matter, I'm going to crush this."
+                $ the_person.event_triggers_dict["student_strip"] = 1
+
+            else:
+                mc.name "You're going to be stripping for me. For each question you get wrong you'll have to strip something off."
+                if wants_to_fail:
+                    the_person.char "Alright, I'll make sure to put on a good show for you."
+                    mc.name "You know you're suppose to try and get the questions right, right?"
+                    the_person.char "Uh, yeah, obviously. But if I have to strip down I might as well make it interesting."
+                else:
+                    the_person.char "Sure, whatever. I'm going to get all of the question right this time, so it doesn't even matter."
+                $ the_person.event_triggers_dict["student_strip"] += 1
+
+            return "student_punish_strip", wants_to_fail
+
+        "Strip\n{color=#ff0000}{size=18}Requires: 30 Sluttiness{/size}{/color} (disabled)" if the_person.effective_sluttiness() < 30:
             pass
 
-        "Suck me off\nUnder Construction (disabled)":
+        "Spank her" if the_person.effective_sluttiness() >= 30 and the_person.obedience >= 120:
+            if the_person.effective_sluttiness() >= 65 or the_person.get_opinion_score("being submissive") > 0:
+                $ wants_to_fail = True
+
+            if the_person.event_triggers_dict.get("student_spank", 0) == 0:
+                mc.name "We're going to try something new today."
+                mc.name "Each time you get a question wrong you're going to bend over and I'm going to spank you."
+                if wants_to_fail:
+                    the_person.char "Oh, I like it. Punish me for being a naughty schoolgirl and not doing her homework."
+                    "She bites her lip and smiles."
+                    mc.name "You know you aren't suppose to be enjoying this, right?"
+                    the_person.char "But there's no harm in it if I do."
+                else:
+                    the_person.char "Isn't that a little old fashion?"
+                    mc.name "I think an old fashion touch is just what you need."
+                    the_person.char "Fine, as long as you don't hit me too hard. I feel pretty confident, so I don't think it'll even matter."
+                $ the_person.event_triggers_dict["student_spank"] = 1
+
+            else:
+                if wants_to_fail:
+                    the_person.char "So I'm your naughty schoolgirl again? Alright, I'll play your game [the_person.mc_title]."
+                    mc.name "It's not a game, it's a teaching tool."
+                    the_person.char "Then why do I always have so much fun?"
+                else:
+                    the_person.char "Fine, as long as you don't do it too hard. I'm probably going to get them all right, so I guess it doesn't really matter."
+                $ the_person.event_triggers_dict["student_spank"] += 1
+            return "student_punish_spank", wants_to_fail
+
+        "Spank her\n{color=#ff0000}{size=18}Requires: 30 Sluttiness, 120 Obedience{/size}{/color} (disabled)" if the_person.effective_sluttiness() < 30 or the_person.obedience < 120:
             pass
 
-    return "student_punish_pay_you"
+        "Oral punishment" if the_person.effective_sluttiness() >= 40 and the_person.obedience >= 130:
+            if the_person.effective_sluttiness() >= 80 or the_person.get_opinion_score("giving blowjobs") > 0:
+                $ wants_to_fail = True
+
+            if the_person.event_triggers_dict.get("student_suck", 0) == 0:
+                mc.name "I want to try something more extreme today. This should give you all the motivation you need."
+                mc.name "Each time you get a question wrong you're going to spend two minutes sucking me off."
+                if wants_to_fail:
+                    the_person.char "Sucking your cock. I get to... I mean I have to suck your cock if I get something wrong?"
+                    the_person.char "I'll keep that in mind, and I'll have to try my very, very best."
+                else:
+                    the_person.char "You mean I have to give you a blowjob each time?"
+                    mc.name "We'll start gentle, but if that doesn't help you focus I'll need to bump up the intensity."
+                    the_person.char "Oh, wow... I mean, it's not even going to mater. I'm totally prepared, I'm going to crush this."
+                    the_person.char "So sure, bring it on."
+
+                $ the_person.event_triggers_dict["student_suck"] = 1
+
+            else:
+                mc.name "Each time you get a question wrong you're going to have to spend two minutes sucking my cock."
+                if wants_to_fail:
+                    the_person.char "Just two minutes? I'll have to do my best to make sure you cum."
+                    mc.name "You should be trying to get the questions right."
+                    the_person.char "I don't think you're going to be too upset if I get them wrong though."
+                else:
+                    the_person.char "Just two minutes? I think I can handle that!"
+                    the_person.char "Besides, I think I'm pretty well prepared this time. I'm going to ace this test!"
+
+                $ the_person.event_triggers_dict["student_suck"] += 1
+            return "student_punish_suck", wants_to_fail
+
+        "Oral punishment\n{color=#ff0000}{size=18}Requires: 40 Sluttiness, 130 Obedience{/size}{/color} (disabled)" if the_person.effective_sluttiness() < 40 or the_person.obedience < 130:
+            pass
+
+        # "Suck me off\nUnder Construction (disabled)":
+        #     pass
+
+    return "student_punish_pay_you", wants_to_fail
 
 label student_punish_hub_label(the_person):
     #First, you tell her you're going to punish her for each wrong answer.
@@ -955,10 +979,7 @@ label student_punish_hub_label(the_person):
     $ total_failures = 0
     $ wants_to_fail = False
     call student_pick_punishment(the_person) from _call_student_pick_punishment
-    $ punishment_label = _return
-
-    if punishment_label == "student_punish_strip" and (the_person.effective_sluttiness() > 65 or the_person.get_opinion_score("not wearing anything") > 0): #TODO: FIgure out how to generalise this a little more. Role it into the punishment pick?
-        $ wants_to_fail = True # Screws up questions on purpose.
+    $ punishment_label, wants_to_fail = _return
 
     if the_person.obedience <= 110:
         the_person.char "If there's a punishment for each wrong answer, I think there should be a reward for each right one."
@@ -966,7 +987,17 @@ label student_punish_hub_label(the_person):
         call student_pick_reward(the_person, punishment_label) from _call_student_pick_reward
         $ reward_label = _return
     else:
-        pass #TODO: You can pick a victory reward for her, same as a "punishment"
+        the_person.char "If there's a punishment, could I pick a reward for each question I get right? Please?"
+        menu:
+            "Let her pick a reward":
+                mc.name "That seems fair. What would you like?"
+                $ the_person.change_happiness(5)
+                call student_pick_reward(the_person, punishment_label) from _call_student_pick_reward_1
+                $ reward_label = _return
+
+            "No reward":
+                mc.name "Success should be reward enough."
+                the_person.char "Right, of course."
 
 
 
@@ -1020,9 +1051,6 @@ label student_punish_hub_label(the_person):
         $ mc.log_event(the_person.title + " feels encouraged by her success, but there's still more she needs to learn.", "float_text_grey")
 
     $ the_person.event_triggers_dict["current_marks"] += total_successes
-
-    #TODO: Based on how many questions she succeeds or fails her grades change. More failed questions results in learning less.
-
     return
 
 label student_punish_question(the_person, wants_to_fail = False):
@@ -1091,7 +1119,7 @@ label student_punish_pay_her(the_person, was_failure, wants_to_fail, successes =
         pass
     return
 
-label student_punish_pay_you(the_person, was_failure, wants_to_fail, successes = 0, failures = 0):
+label student_punish_pay_you(the_person, was_failure, wants_to_fail, successes = 0, failures = 0): # Your student pays you in cash for her answer.
     mc.name "Alright, hand over the cash."
     "[the_person.possessive_title] pouts and finds her purse. She hands over $50."
     $ mc.business.funds += 50
@@ -1099,7 +1127,7 @@ label student_punish_pay_you(the_person, was_failure, wants_to_fail, successes =
         the_person.char "Whatever, just give me another one."
     else:
         the_person.char "At least that's over..."
-    # Your student pays you in cash for her answer.
+
     return
 
 
@@ -1112,13 +1140,14 @@ label student_punish_strip(the_person, was_failure, wants_to_fail, successes = 0
             $ the_person.draw_animated_removal(the_item)
             "[the_person.possessive_title] nods and stands up. She grabs her the [the_item.display_name] and pulls it off."
 
-
         else:
             the_person.char "Let me just take this off..."
+            $ the_person.draw_animated_removal(the_item)
             "She strips off her [the_item.display_name] and throws it onto her bed before sitting back down."
 
-        #TODO: Have some tits-now-free style checks.
+        #TODO: Have some tits-now-free style checks. Generalize that?
 
+        $ the_item = None
         $ the_person.draw_person(position = "sitting")
         $ the_person.update_outfit_taboos()
 
@@ -1133,13 +1162,267 @@ label student_punish_strip(the_person, was_failure, wants_to_fail, successes = 0
     return
 
 label student_punish_spank(the_person, was_failure, wants_to_fail, successes = 0, failures = 0):
-    # TODO: This section
-    # TODO: bend her over her desk and spank her
+    $ round_count = 0
+    if was_failure:
+        $ round_count = failures
+    else:
+        $ round_count = successes
+
+    if round_count == 1: #If her panties are out or if she's just basically naked. TODO: Add support for pulling up skirts ect. Half off regions
+        if (the_person.outfit.wearing_panties() and not the_person.outfit.panties_covered()) or the_person.outfit.vagina_available():
+            mc.name "At least you came dressed for the occasion. Now bend over the desk."
+        elif was_failure:
+            mc.name "You know what has to happen now. Strip down to your panties and bend over the desk."
+        else:
+            mc.name "I guess you've earned your reward. Strip down to your panties and bend over the desk."
+
+        if not the_person.outfit.vagina_available() and not the_person.outfit.wearing_panties(): #ie. she's going commando.
+            the_person.char "Right, so maybe I didn't think this through, but I'm not wearing any panties..."
+            mc.name "I guess you'll just have to strip all the way down then. Come on, don't keep me waiting."
+
+        if wants_to_fail or the_person.obedience >= 125:
+            the_person.char "Right away [the_person.mc_title]."
+        else:
+            $ the_item = the_person.get_lower_top_layer()
+            if the_item:
+                the_person.char "Do I really need to? Can't you spank me over my [the_item.display_name]."
+                mc.name "That's a little too much padding. Come on, strip."
+                the_person.char "Fine..."
+
+        $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True,do_not_remove = True)
+        $ removed_something = False
+        while the_item is not None and (the_person.outfit.vagina_available() or not the_person.outfit.panties_covered()):
+            $ the_person.draw_animated_removal(the_item)
+            "[the_person.title] strips off her [the_item.display_name] and throws it on her bed."
+            $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
+            $ removed_something = True
+
+        $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True)
+        while the_item is not None and not (the_person.outfit.vagina_available() or not the_person.outfit.panties_covered()):
+            $ the_person.draw_animated_removal(the_item)
+            "[the_person.title] strips off her [the_item.display_name] and throws it on her bed."
+            $ the_item = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True)
+            $ removed_something = True
+
+        $ the_item = None
+
+        $ the_person.update_outfit_taboos()
+
+        $ the_person.draw_person(position = "standing_doggy")
+        "[the_person.possessive_title] bends over and puts her hands on her desk, eyes straight ahead."
+        "You stand up from your chair and move behind her. You place one hand on her hips to hold her in place."
+
+    elif the_person.outfit.wearing_panties() and round_count == 3 and the_person.effective_sluttiness() >= 40 and was_failure: # On the third pass you can pull down her panties too
+        $ the_item = the_person.outfit.get_panties()
+        mc.name "Well, here we go again. Come on, up and over."
+        $ the_person.draw_person(position = "standing_doggy")
+        "[the_person.title] stands up and bends over, planting her hands on the desk."
+        mc.name "Wait, I think we have to make a change."
+        the_person.char "What?"
+        "You slide your thumb under her [the_item.display_name] and pull them tight against her crotch."
+        mc.name "These panties, they need to go. They're making this too comfortable for you."
+
+        if the_person.get_opinion_score("showing her ass") > 0 or the_person.get_opinion_score("being submissive") > 0 or wants_to_fail:
+            $ the_person.discover_opinion("showing her ass")
+            $ the_person.discover_opinion("being submissive")
+            the_person.char "Okay. Can you take them off for me, please?"
+
+        else:
+            if the_item.slut_value >= 4:
+                the_person.char "You're joking, right? Look at them, they're tiny!"
+            else:
+                the_person.char "They're so thin though, I don't think they make a difference."
+            mc.name "This is part of your punishment, you'll just have to suck it up."
+
+        $ the_person.draw_animated_removal(the_item, position = "standing_doggy") #TODO: When we have the ability to pull things half off do that here.
+        "You hook your thumb around the waistband of her [the_item.display_name] and pull them down to her ankles."
+        $ the_person.update_outfit_taboos()
+        $ the_item = None
+    else:
+        if was_failure:
+            mc.name "Well, what are you waiting for?"
+        else:
+            mc.name "Well done. It's time for reward then. Stand up and bend over."
+
+        $ the_person.draw_person(position = "standing_doggy")
+        "[the_person.possessive_title] bends over and puts her hands on her desk, eyes straight ahead."
+        "You stand up from your chair and move behind her. You place one hand on her hips to hold her in place."
+
+
+
+    mc.name "Ready?"
+    if (not was_failure) or wants_to_fail or the_person.get_opinion_score("being submissive") > 0:
+        the_person.char "Yes [the_person.mc_title]."
+    else:
+        the_person.char "Yeah, hurry up and get it over with."
+
+    "You rub her ass with your open palmed hand for a moment, lining up your shot."
+    "Then you bring your hand up and back down, smacking [the_person.title] solidly on the butt."
+
+    if the_person.get_opinion_score("being submissive") >= 0:
+        $ the_person.change_arousal(5)
+        $ the_person.change_slut_temp(1)
+        $ the_person.discover_opinion("being submissive")
+        the_person.char "Ah..."
+
+    elif the_person.obedience >= 125:
+        "She bears the hit stoically, not making a noise."
+
+    else:
+        the_person.char "Ow!"
+
+    "You give her ass a moment to stop jiggling, then pull your arm back and slap it again."
+    "You repeat the process a few more times until you think she has been appropriately disciplined."
+    if round_count == 1: #TODO: Butt description and dialogue.
+        "[the_person.possessive_title] sits back down when you're finished with her."
+
+    elif round_count == 2:
+        "[the_person.possessive_title] stands up and rubs her sore butt when you're finished with her. Both cheeks are starting to turn red." #TODO Add support for skin turning red (and add slapping asses, tits, faces, pussies)
+
+    elif round_count == 3:
+        "[the_person.title]'s ass is red when you're finished spanking her. She has to take a deep breath before she sits back down."
+
+    else: #count == 4
+        "[the_person.possessive_title]'s ass is beet red when you're finished with her. She whimpers softly as she sits down."
+        #TODO: Should there be some sort of bonus if you get here?
+
+    $ the_person.draw_person(position = "sitting")
     return
 
 label student_punish_suck(the_person, was_failure, wants_to_fail, successes = 0, failures = 0):
-    #TODO: THis section
-    # TODO: She has to suck you off for each wrong question (to completion? 3 rounsd to finish?)
+    $ round_count = 0
+    if was_failure:
+        $ round_count = failures
+    else:
+        $ round_count = successes
+
+    if round_count == 1:
+        "You unzip your pants and pull your hard cock out."
+        if was_failure:
+            mc.name "You know the deal. You'll want to be on your knees, then I'll put two minutes on the clock."
+            "[the_person.title] sighs and nods."
+        else:
+            mc.name "Here you go. You've got two minutes, then you'll need to stop and we're moving on to the next question."
+            "[the_person.title] smiles and nods."
+        "She pushes her chair back and gets onto her knees. You push your chair back to give her space, then set a timer on your phone."
+        $ the_person.break_taboo("sucking_cock")
+        $ the_person.draw_person(position = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.4)
+        "[the_person.possessive_title] reaches out and strokes your shaft, then leans forward and licks at the tip gently."
+        "You lean back and enjoy the sensation of her tongue sliding over the bottom of your shaft and the tip of your dick."
+        "Before you know it your phone beeps, signaling the end of the two minutes."
+        $ the_person.draw_person(position = "sitting")
+        if was_failure:
+            "[the_person.title] sits back down right away, eager to move onto the next question."
+            "As you move on you stroke your dick slowly, keeping yourself hard and ready for [the_person.possessive_title]'s next mistake."
+        else:
+            "[the_person.title] gives your cock one last kiss, then sits down in her seat again."
+            "As you move on you stroke your dick slowly, keeping yourself hard and ready for [the_person.possessive_title]'s next reward."
+
+    elif round_count == 2:
+        "You nod down to your cock, the tip still hard and wet."
+        if was_failure:
+            mc.name "Come on, no stalling."
+
+        else:
+            mc.name "Go ahead."
+
+        $ the_person.draw_person(position = "blowjob")
+        "[the_person.possessive_title] gets onto her knees again."
+        mc.name "Let's pick up the intensity, alright?"
+        "She nods and leans forward. You set a timer on your phone as she opens her mouth and slides your tip inside."
+        $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.65)
+        "This time she doesn't stop there. She slides you deeper in her mouth, running her lips along the length of your shaft."
+        "After a moment to adjust she starts to bob her head up and down your length."
+        "You rest a hand on the back of [the_person.possessive_title]'s head and lean back, content to just enjoy your blowjob."
+        "You're interrupted by your phone beeping the end of her two minutes."
+        if was_failure:
+            "[the_person.title] pops off your cock and wipes the last lines of spit from her lips."
+            "Without a word she sits back down on her chair."
+        else:
+            "[the_person.title] gives you a few last enthusiastic strokes with her mouth, then pops off."
+            "She is smiling as she sits back down."
+        $ the_person.draw_person(position = "sitting")
+        "You continue to rub your now dripping wet cock as you move on."
+
+    elif round_count == 3:
+        if was_failure:
+            mc.name "Three mistakes. Not very impressive [the_person.title]. I'm not sure this lesson is sinking in."
+        $ the_person.draw_person(position = "blowjob")
+        "[the_person.title] knows the routine by now. She gets onto her knees in front of you, ready to take your cock in her mouth."
+        mc.name "Take a deep breath, because this time you aren't getting any breaks."
+        "She nods and takes a few breaths, eyes fixed on the hard dick in front of her."
+        "When she's ready she leans in and slides you into her mouth. You place a hand on her head and encourage her to slide all the way down."
+        "You feel the tip of your cock tap the back of her throat. She shuffles uncomfortably, fighting her gag instinct."
+        $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.8)
+        "She starts to move her head up and down, but you use your hand to stop her from coming too far off of your cock."
+        "You enjoy your deep-throat session. As you pass the minute mark [the_person.title] starts to try and pull off."
+        mc.name "Not yet, you've got some more time to go."
+        "She squeezes her eyes shut and struggles on as her eyes start to water from the effort. Her warm throat feels amazing wrapped around your shaft."
+        "[the_person.possessive_title] starts to squirm again, now because she is desperate for a fresh breath of air."
+        "You pull your phone out with one hand and count down the last few seconds of the timer."
+        mc.name "3... 2... 1... And you're done."
+        $ the_person.draw_person(position = "sitting")
+        "You let go of [the_person.title]'s head. She pulls back and gasps loudly, dribbling spit down her chin and onto her chest."
+        if was_failure:
+            "She sits back and pants for a long moment before getting back into her chair."
+        else:
+            "She sits back and pants for a long moment."
+            the_person.char "Thank you [the_person.mc_title]..."
+            "She finally gets up and sits back down in her chair."
+
+        "It's hard to let [the_person.title] go with your raging hard-on, but you stroke yourself off to try and satisfy yourself."
+
+    else:
+        if was_failure:
+            mc.name "Not a single question correct. [the_person.possessive_title], I know you're better than that."
+            the_person.char "I'm sorry [the_person.mc_title]..."
+            mc.name "Well, I don't have much of a choice now. On your knees."
+        else:
+            mc.name "Every question correct. Are you ready for your reward?"
+            "She nods happily."
+            mc.name "Good. On your knees."
+        $ the_person.draw_person(position = "blowjob")
+        "[the_person.title] slides off of her chair and kneels down in front of you."
+        mc.name "Take a deep breath. There isn't going to be a timer this time, I'm just going to fuck your face until I cum."
+        "She nods and opens her mouth, offering it to you."
+        "You place your hands on either side of her head and lean her towards you. She wraps her lips around your cock as you bring it close."
+        $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 1.0)
+        "You don't waste any time. As soon as your cock is in her mouth you slam it down to the base. [the_person.title] gags, throwing her arms out to her side."
+        "You slam [the_person.possessive_title]'s head up and down, forcing her to face-fuck you."
+        "She struggles to keep up, gagging a little bit with each thrust and trailing spit down her chin and onto her chest."
+        "You're already so worked up that it doesn't take long before you feel your climax approaching."
+        menu:
+            "Cum down her throat":
+                mc.name "Fuck, here I cum!"
+                "You wrap one arm around [the_person.title]'s head, holding it in the crook of your elbow."
+                "You use the leverage to force yourself as deep as possible as you cum. She gags and struggles instinctively as you dump your load down her throat."
+                $ the_person.cum_in_mouth()
+                $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.2)
+                "When you are finished you let go and lean back in your chair. [the_person.title] rockets back, gasping for fresh air."
+                "She's a mess after your face fuck. Her eyes are watering, her cheeks are red, and she's still trying to swallow down the last of your cum between pants."
+
+            "Cum on her face":
+                "You thrust yourself down her throat one last time, then pull [the_person.title]s head back with both hands."
+                "Your cock spasms, firing it's first pulse of cum over her eye and forehead. She gasps desperately for her first breath of fresh air"
+                $ the_person.cum_on_face()
+                $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob", the_animation = blowjob_bob, animation_effect_strength = 0.2)
+                "You grunt as you fire your second and third strings of cum onto [the_person.possessive_title]'s face, coating it thoroughly."
+                "When you're finished [the_person.title] is a mess. Cheeks red, eyes watering, and face plastered with a thick load of semen."
+
+        if was_failure:
+            mc.name "I hope that teaches you a lesson [the_person.title]. I expect you to do better next time."
+            "She nods."
+            the_person.char "I'll try..."
+        else:
+            mc.name "I hope that was everything you hoped it would be."
+            "She nods."
+            the_person.char "Thank you [the_person.mc_title]."
+
+        $ the_person.draw_person(position = "sitting")
+        "[the_person.possessive_title] rests on her knees, then pulls herself back into her chair."
+
+    $ the_person.change_slut_temp(1+the_person.get_opinion_score("giving blowjobs")+the_person.get_opinion_score("being submissive"))
+    $ the_person.change_obedience(1+the_person.get_opinion_score("giving blowjobs")+the_person.get_opinion_score("being submissive"))
     return
 
 
@@ -1179,5 +1462,5 @@ label student_mom_intro(the_person):
         the_person.char "You're welcome to come in and wait for [emily.title] to get back."
         "She steps to the side, letting you move into the front room of the luxurious house."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return

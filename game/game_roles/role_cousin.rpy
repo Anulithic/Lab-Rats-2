@@ -31,15 +31,15 @@ init -2 python:
         if the_person.event_triggers_dict.get("blackmail_level", -1) < 1:
             return False
         elif day < the_person.event_triggers_dict.get("last_blackmailed",-5) + 5:
-            return "Blackmailed too recently."
-        elif __builtin__.len(mc.location.people) > 1:
-            return "Must be in private."
+            return "Blackmailed too recently"
+        elif mc.location.get_person_count() > 1:
+            return "Must be in private"
         else:
             return True
 
     def stripclub_show_requirement():
         if time_of_day in [0,1,2]:
-            return "Too early for the performance to start."
+            return "Too early for performances"
         else:
             return True
 
@@ -61,7 +61,7 @@ init -2 python:
         elif the_person.event_triggers_dict.get("found_stripping_clue", False):
             return False
         elif time_of_day == 4:
-            return "Too late to search thoroughly."
+            return "Too late to search room"
         elif the_person in mc.location.people:
             return the_person.title + " is in the room."
         else:
@@ -70,8 +70,9 @@ init -2 python:
     def blackmail_2_confront_requirement(the_person):
         if the_person.event_triggers_dict.get("blackmail_level", -1) != 1:
             return False
-        else:
-            return True
+        elif the_person.get_destination() == strip_club:
+            return "Not in the strip club"
+        return True
 
     def cousin_boobjob_ask_requirement(the_person, start_day):
         if day < start_day:
@@ -93,7 +94,7 @@ init -2 python:
         elif the_person.event_triggers_dict.get("getting boobjob", False):
             return False
         elif aunt in mc.location.people:
-            return "Not while [aunt.title] is around."
+            return "Not while [aunt.title] is around"
         else:
             return True
 
@@ -121,7 +122,7 @@ init -2 python:
         return True
 
     def add_cousin_blackmail_hint_action(the_person):
-        the_person.schedule[2] = hall
+        the_person.set_schedule(hall, times = [2])
         the_person.event_triggers_dict["blackmail_level"] = 1
 
         blackmail_2_event = Action("Blackmail hint", blackmail_hint_requirement, "aunt_cousin_hint_label", args = [aunt, the_person], requirement_args = [the_person, day + renpy.random.randint(2,4)])
@@ -149,30 +150,32 @@ init -2 python:
         blackmail_2_confront_action = Action("Confront her about her stripping", blackmail_2_confront_requirement, "cousin_blackmail_level_2_confront_label",
             menu_tooltip = "Tell her that you know about her job as a stripper and use it as further leverage.")
         cousin_role.actions.append(blackmail_2_confront_action)
-        the_person.event_triggers_dict["seen_cousin_stripping"] = True
+        cousin.event_triggers_dict["seen_cousin_stripping"] = True
         return
 
-    def add_cousin_house_phase_two_action(the_person):
+    def add_cousin_at_house_phase_two_action(the_person):
         #Changes her schedule to be at your house
-        the_person.schedule[2] = hall
-        cousin_house_phase_two_action = Action("Cousin visits house", cousin_house_phase_two_requirement, "cousin_house_phase_two_label")
-        cousin.on_room_enter_event_list.append(cousin_house_phase_two_action) #When you see her next in your house this event triggers and she explains why she's there.
+        if not find_in_list(lambda x: x.effect == "cousin_house_phase_two_label", the_person.on_room_enter_event_list):
+            the_person.set_schedule(hall, days = [0, 1, 2, 3, 4], times = [2])
+            cousin_at_house_phase_two_action = Action("Cousin visits house", cousin_house_phase_two_requirement, "cousin_house_phase_two_label")
+            the_person.on_room_enter_event_list.append(cousin_at_house_phase_two_action) #When you see her next in your house this event triggers and she explains why she's there.
         return
 
-    def add_cousin_house_phase_three_action():
+    def add_cousin_at_house_phase_three_action():
         cousin_at_house_phase_three_action = Action("Cousin changes schedule", cousin_house_phase_three_requirement, "cousin_house_phase_three_label", args = cousin, requirement_args = day+renpy.random.randint(2,5))
         mc.business.mandatory_crises_list.append(cousin_at_house_phase_three_action) #In a couple of days change her schedule so she starts stealing from Lily.
         return
 
     def add_cousin_blackmail_intro_action(the_person):
-        the_person.schedule[2] = lily_bedroom #Set her to be in Lily's room AND for an event to trigger when you walk in on her.
-        cousin_blackmail_intro_action = Action("Cousin caught stealing", cousin_blackmail_intro_requirement, "cousin_blackmail_intro_label")
-        the_person.on_room_enter_event_list.append(cousin_blackmail_intro_action)
+        the_person.set_schedule(lily_bedroom, days = [0, 1, 2, 3, 4], times = [2])
+        if not find_in_list(lambda x: x.effect == "cousin_blackmail_intro_label", the_person.on_room_enter_event_list):
+            cousin_blackmail_intro_action = Action("Cousin caught stealing", cousin_blackmail_intro_requirement, "cousin_blackmail_intro_label")
+            the_person.on_room_enter_event_list.append(cousin_blackmail_intro_action)
         return
 
     def add_cousin_stripping_and_setup_search_room_action(the_aunt, the_cousin):
         stripclub_strippers.append(the_cousin)
-        the_cousin.set_schedule([3,4], strip_club)
+        the_cousin.set_schedule(strip_club, times = [3, 4])
 
         the_cousin.event_triggers_dict["stripping"] = True #Used to flag the blackmail event.
         cousin_room_search_action = Action("Search her room. {image=gui/heart/Time_Advance.png}", cousin_room_search_requirement, "cousin_search_room_label",requirement_args = [the_cousin], args = [the_cousin, the_aunt])
@@ -205,6 +208,8 @@ init -2 python:
 ###COUSIN ACTION LABELS###
 label cousin_intro_phase_one_label():
     #Your cousin bursts into your room at the end of the day frustrated with Lily and how little personal space she has.
+    $ mc.change_location(bedroom)
+    $ mc.location.show_background()
     $ cousin.draw_person(emotion = "angry")
     "Without warning your bedroom door is opened and [cousin.possessive_title] walks in. She closes the door behind her and looks awkwardly at you."
     mc.name "Hey..."
@@ -241,11 +246,11 @@ label cousin_intro_phase_one_label():
             $ cousin.change_love(-2)
             "She stands back up and leaves your room. She slams your door on the way out."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label cousin_house_phase_one_label(the_person):
-    $ add_cousin_house_phase_two_action(the_person)
+    $ add_cousin_at_house_phase_two_action(the_person)
     return
 
 label cousin_house_phase_two_label(the_person):
@@ -257,7 +262,7 @@ label cousin_house_phase_two_label(the_person):
     mc.name "What's up? Why are you over here?"
     the_person.char "Your mom said I could come over whenever I wanted. My mom won't stop bothering me and our crappy apartment is tiny."
     "[the_person.possessive_title] shrugs and turns her full attention back to her TV show."
-    $ add_cousin_house_phase_three_action()
+    $ add_cousin_at_house_phase_three_action()
     return
 
 label cousin_house_phase_three_label(the_person):
@@ -309,7 +314,7 @@ label cousin_blackmail_intro_label(the_person):
             mc.name "Your secret's safe with me."
 
     $ add_cousin_blackmail_hint_action(the_person)
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label cousin_blackmail_label(the_person):
@@ -392,7 +397,7 @@ label cousin_blackmail_list(the_person):
                             $ the_item = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
                             $ the_person.draw_animated_removal(the_item) #Strip down to her underwear.
                             "[the_person.possessive_title] takes off her [the_item.name]."
-                        $ del the_item
+                        $ the_item = None
                     else: #She's not wearing a bra and doesn't want you to see her tits.
                         "[the_person.title] seems nervous and plays with her shirt." #TODO: Check that she is wearing a shirt
                         mc.name "What's wrong?"
@@ -405,7 +410,7 @@ label cousin_blackmail_list(the_person):
                             $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
                             $ the_person.draw_animated_removal(the_item)
                             "[the_person.possessive_title] takes off her [the_item.name]."
-                        $ del the_item                        
+                        $ the_item = None
                     else: #TODO: make sure she's actually wearing a dress or skirt or something
                         the_person.char "So, I'm not wearing any panties right now. That means I can't take this off."
                         mc.name "Come on, that's not what the deal is."
@@ -425,8 +430,7 @@ label cousin_blackmail_list(the_person):
                     the_person.char "Finally..."
                     "[the_person.possessive_title] gets dressed again."
                     $ the_person.update_outfit_taboos()
-                    $ the_person.apply_outfit(the_person.planned_outfit)
-                    #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
+                    $ the_person.apply_outfit()
                     $ the_person.draw_person()
                     $ the_person.change_slut_temp(5)
 
@@ -446,7 +450,7 @@ label cousin_blackmail_list(the_person):
                         else:
                             "[the_person.possessive_title] takes off her [the_item.display_name]."
 
-                    $ del the_item
+                    $ the_item = None
 
 
                     if the_person.outfit.wearing_panties():
@@ -454,7 +458,7 @@ label cousin_blackmail_list(the_person):
                             $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True)
                             $ the_person.draw_animated_removal(the_item)
                             "[the_person.possessive_title] takes off her [the_item.display_name]."
-                        $ del the_item
+                        $ the_item = None
                     else: #TODO: make sure she's actually wearing a dress or skirt or something
                         the_person.char "So, I'm not wearing any panties right now. That means I can't take this off."
                         mc.name "Come on, that's not what the deal is."
@@ -468,8 +472,7 @@ label cousin_blackmail_list(the_person):
                     the_person.char "Well keep dreaming. I'm not that fucking desperate."
                     "Once you've gotten your fill, [the_person.title] gets dressed again."
                     $ the_person.update_outfit_taboos()
-                    $ the_person.apply_outfit(the_person.planned_outfit)
-                    #$ the_person.outfit = the_person.planned_outfit.get_copy() changed v0.24.1
+                    $ the_person.apply_outfit()
                     $ the_person.draw_person()
                     $ the_person.change_slut_temp(5)
 
@@ -501,7 +504,7 @@ label cousin_blackmail_list(the_person):
                         else:
                             "[the_person.possessive_title] takes off her [the_item.name]."
 
-                    $ del the_item
+                    $ the_item = None
                     the_person.char "There, are you satisfied?"
                     $ the_person.draw_person(position = "back_peek")
                     "She spins on the spot, letting you get a look at her ass."
@@ -515,7 +518,7 @@ label cousin_blackmail_list(the_person):
                     mc.name "Fine, that'll do."
                     the_person.char "Fucking finally..."
                     $ the_person.update_outfit_taboos()
-                    $ the_person.apply_outfit(the_person.planned_outfit)
+                    $ the_person.apply_outfit()
                     $ the_person.draw_person()
                     $ the_person.change_slut_temp(5)
 
@@ -739,7 +742,7 @@ label cousin_search_room_label(the_cousin, the_aunt):
                 "She sighs and nods."
                 the_aunt.char "You're right. If [the_cousin.title] asks, I don't know anything about this, okay?"
                 mc.name "I won't tell a soul."
-                $ renpy.scene("Active")
+                $ clear_scene()
                 "[the_aunt.possessive_title] leaves you alone in her daughter's room to continue your search."
 
 
@@ -1140,7 +1143,7 @@ label cousin_serum_boobjob_label(the_person, starting_tits):
         "It's a selfie of her in the bathroom, tits on display for you."
         the_person.char "You've saved me a ton of cash, so I thought you might enjoy that."
         $ the_person.review_outfit(dialogue = False)
-        $ renpy.scene("Active")
+        $ clear_scene()
         return #Note: we're returning without adding the boobjob ask again event, which means we can consider this "done" at this point.
 
     $ add_cousin_talk_boobjob_again_action()
@@ -1160,8 +1163,7 @@ label stripclub_dance():
     if the_person is None:
         $ the_person = get_random_from_list(stripclub_strippers) #If there is nobody around make sure to grab them and bring them here so we don't crash.
 
-    $ the_person.apply_outfit(stripclub_wardrobe.pick_random_outfit())
-    #$ the_person.outfit = stripclub_wardrobe.pick_random_outfit() changed v0.24.1 #TODO: Add more stripper outfits.
+    $ the_person.apply_outfit(stripclub_wardrobe.pick_random_outfit()) #TODO: Add more stripper outfits
     $ performer_title = the_person.title
     $ the_person.draw_person()
     "A new song starts playing over the speakers and a girl steps out onto the stage."
@@ -1229,7 +1231,7 @@ label stripclub_dance():
     $ the_person.draw_person(position = "walking_away")
     "[performer_title] blows a kiss and struts off stage."
 
-    $ renpy.scene("Active")
+    $ clear_scene()
     return
 
 label stripshow_strip(the_person):
