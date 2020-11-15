@@ -269,6 +269,21 @@ label relaxed_strip_obedience_accept(the_person, the_clothing, strip_type = "Ful
         the_person.char "Wait, I don't know about this..."
     return
 
+label relaxed_grope_body_reject(the_person):
+    if the_person.effective_sluttiness("touching_body") < 5: #Fail point for touching shoulder
+        "[the_person.possessive_title] steps back, then laughs awkwardly."
+        the_person "Hey, sorry. We don't need to be that friendly, okay?"
+        mc.name "Oh yeah, of course."
+        "She gives you another awkward smile and stays a little further away."
+    else: #Fail point for touching waist
+        "[the_person.possessive_title] shifts awkwardly, trying to pull away from your hand."
+        the_person "Hey, can you move your hand? It's no big deal, I'm just not super comfortable with it."
+        "You pull your hands back and nod apologetically."
+        mc.name "Of course, sorry."
+        the_person "Don't worry about it, it's no big deal..."
+        "She doesn't say anything more, but she still seems uncomfortable with the situation."
+    return
+
 label relaxed_sex_accept(the_person):
     if the_person.sluttiness > 70:
         if the_person.obedience < 70:
@@ -549,7 +564,7 @@ label relaxed_flirt_response_high(the_person):
                     pass
 
                 "You close the final gap and kiss her. She returns the kiss immediately, leaning her body against yours."
-                call fuck_person(the_person, start_position = kissing, skip_intro = True) from _call_fuck_person_48
+                call fuck_person(the_person, start_position = kissing, private = mc.location.get_person_count() < 2, skip_intro = True) from _call_fuck_person_48
 
             "Just flirt":
                 mc.name "I wish we could, but I'll need to take a rain check."
@@ -589,7 +604,7 @@ label relaxed_flirt_response_girlfriend(the_person):
                 "Make out":
                     "You put your hand on the back of her neck and pull her close again, kissing her slowly and sensually."
                     "She sighs happily and leans her body against you, clearly unworried about anyone else around."
-                    call fuck_person(the_person, start_position = kissing, skip_intro = True) from _call_fuck_person_72
+                    call fuck_person(the_person, start_position = kissing, private = False, skip_intro = True) from _call_fuck_person_72
 
                 "Just flirt":
                     mc.name "So, is there anything else you want to kiss? I've got some suggestions..."
@@ -754,6 +769,7 @@ label relaxed_cum_pullout(the_person):
                     the_person.char "Yes! Cum inside me and knock me up! Breed me like the slut I am!"
             elif the_person.on_birth_control: #She's on the pill, so she's probably fine
                 the_person.char "I'm on the pill, cum wherever you want [the_person.mc_title]!"
+                $ the_person.update_birth_control_knowledge()
             else: #Too distracted to care about getting pregnant or not. Oh well, what could go wrong?
                 the_person.char "Ah! Do it!"
         else:
@@ -876,34 +892,35 @@ label relaxed_sex_strip(the_person):
     return
 
 label relaxed_sex_watch(the_person, the_sex_person, the_position):
+    $ title = the_person.title if the_person.title else "The stranger"
     if the_person.sluttiness < the_position.slut_requirement - 20:
         $ the_person.draw_person(emotion = "angry")
         the_person.char "Holy shit, are you really doing this in front of everyone?"
         $ the_person.change_obedience(-2)
         $ the_person.change_happiness(-1)
-        "[the_person.title] looks away while you and [the_sex_person.name] [the_position.verb]."
+        "[title] looks away while you and [the_sex_person.name] [the_position.verb]."
 
     elif the_person.sluttiness < the_position.slut_requirement - 10:
         $ the_person.draw_person()
         $ the_person.change_happiness(-1)
-        "[the_person.title] tries to avert her gaze while you and [the_sex_person.name] [the_position.verb]."
+        "[title] tries to avert her gaze while you and [the_sex_person.name] [the_position.verb]."
 
     elif the_person.sluttiness < the_position.slut_requirement:
         $ the_person.draw_person()
         the_person.char "Oh my god, you two are just... Wow..."
         $ change_report = the_person.change_slut_temp(1)
-        "[the_person.title] averts her gaze, but keeps glancing over while you and [the_sex_person.name] [the_position.verb]."
+        "[title] averts her gaze, but keeps glancing over while you and [the_sex_person.name] [the_position.verb]."
 
     elif the_person.sluttiness > the_position.slut_requirement and the_person.sluttiness < the_position.slut_cap:
         $ the_person.draw_person()
         the_person.char "Oh my god that's... Wow that looks...Hot."
         $ change_report = the_person.change_slut_temp(2)
-        "[the_person.title] watches you and [the_sex_person.name] [the_position.verb]."
+        "[title] watches you and [the_sex_person.name] [the_position.verb]."
 
     else:
         $ the_person.draw_person(emotion = "happy")
         the_person.char "Come on [the_person.mc_title], you can give her a little more than that. I'm sure she can handle it."
-        "[the_person.title] watches eagerly while you and [the_sex_person.name] [the_position.verb]."
+        "[title] watches eagerly while you and [the_sex_person.name] [the_position.verb]."
 
     return
 
@@ -1199,8 +1216,10 @@ label relaxed_condomless_sex_taboo_break(the_person):
         the_person.char "You want to do me raw? That's so hot."
         if the_person.on_birth_control:
             the_person.char "I'm on the pill, so it should be fine, right? Maybe you should pull out, just in case."
+            $ the_person.update_birth_control_knowledge()
         elif the_person.get_opinion_score("creampies") > 0:
             the_person.char "It's probably smart for you to pull out when you cum though. I'm not on birth control."
+            $ the_person.update_birth_control_knowledge()
             mc.name "Do you feel smart today?"
             "She bites her lip and shakes her head."
             the_person.char "No, not particularly."
@@ -1208,11 +1227,13 @@ label relaxed_condomless_sex_taboo_break(the_person):
             the_person.char "You'll need to pull out though. The last thing in the world I want is to get knocked up."
         else:
             the_person.char "I'm not on the pill though. You'll need to pull out so you don't knock me up, got it?"
+            $ the_person.update_birth_control_knowledge()
 
     elif the_person.love > 60:
         the_person.char "I want to feel close to you too [the_person.mc_title]."
         if the_person.on_birth_control:
             the_person.char "I'm on birth control, so you don't need to worry about getting me pregnant."
+            $ the_person.update_birth_control_knowledge()
         elif the_person.get_opinion_score("creampies") > 0:
             the_person.char "If we're doing this, I don't want you to pull out when you finish either."
             mc.name "Are you on the pill?"
@@ -1229,14 +1250,17 @@ label relaxed_condomless_sex_taboo_break(the_person):
     else:
         if the_person.on_birth_control:
             the_person.char "You don't want to use protection? I'm on birth control, but isn't there still a chance?"
+            $ the_person.update_birth_control_knowledge()
+            "You shrug, and she thinks for a moment before nodding."
             the_person.char "As long as you pull out it should be fine, I think."
         elif the_person.has_taboo("vaginal_sex"):
-            the_person.char "You don't want to use protection? I'm not on birth control, what if you get me pregnant?"
-            the_person.char "I'm not on birth control, you know."
+            the_person.char "You don't want to use protection? I'm not on birth control, you know."
+            $ the_person.update_birth_control_knowledge()
             mc.name "I'll pull out. Don't you want our first time to be special?"
             the_person.char "I do... Fine, just please be careful where you cum."
         else:
             the_person.char "You don't want to use protection? I'm not on birth control, what if you get me pregnant?"
+            $ the_person.update_birth_control_knowledge()
             mc.name "I'll pull out. Don't you want to know how much better it feels without a condom on?"
             the_person.char "I do... Okay, you can go in raw. Please be careful where you cum though."
     return
@@ -1358,6 +1382,7 @@ label relaxed_creampie_taboo_break(the_person):
 
             else:
                 the_person.char "Ah, finally! I've wanted you to put a load inside me for so long! I don't even care I'm not on the pill!."
+                $ the_person.update_birth_control_knowledge()
 
             "She pants happily for a moment."
             the_person.char "Now I just have to wait and see if you got me pregnant... We should go for round two, just to make sure you did."
@@ -1370,6 +1395,7 @@ label relaxed_creampie_taboo_break(the_person):
 
             else:
                 the_person.char "Ah, I really should have told you to pull out... I'm not on the pill..."
+                $ the_person.update_birth_control_knowledge()
                 the_person.char "It's just this once, right? It's probably fine..."
 
     else:

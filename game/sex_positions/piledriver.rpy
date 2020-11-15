@@ -246,11 +246,19 @@ label outro_piledriver(the_girl, the_location, the_object):
                     "You keep her on her back for a few more seconds, enjoying the way the position keeps your semen inside of her."
 
             else:
-                the_girl.char "Wait, make sure to pull out!"
-                "It's a little late for that now. You gasp and push yourself as deep as you can, draining your balls into [the_girl.possessive_title]'s cunt."
+                if not the_girl.on_birth_control or not the_person.event_triggers_dict.get("preg_knows", False):
+                    the_girl.char "Wait, make sure to pull out!"
+                    "It's a little late for that now. You gasp and push yourself as deep as you can, draining your balls into [the_girl.possessive_title]'s cunt."
+                else:
+                    if the_girl.get_opinion_score("creampies") > 0:
+                        the_girl.char  "Yes! Fill me with your cum!"
+                    "You gasp and push yourself as deep as you can, draining your balls into [the_girl.possessive_title]'s cunt."
+
                 $ the_girl.cum_in_vagina()
                 $ piledriver.redraw_scene(the_girl)
-                if not the_girl.on_birth_control:
+                if the_person.event_triggers_dict.get("preg_knows", False):
+                    the_girl.char "Oh fuck... well, I can't get more pregnant."
+                elif not the_girl.on_birth_control:
                     the_girl.char "Oh fuck... what if I get pregnant [the_girl.mc_title]?"
                 "You take a moment to catch your breath, then sit back and pull your cock out of [the_girl.title]."
                 "You keep her on her back for a few more seconds, enjoying the way the position keeps your semen inside of her."

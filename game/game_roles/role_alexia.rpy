@@ -55,7 +55,9 @@ init -2 python:
     def alexia_ad_suggest_reintro_requirement(the_person):
         if public_advertising_license_policy.is_owned():
             return False
-        elif the_person.event_triggers_dict.get("camera_purchased", False):
+        elif not the_person.event_triggers_dict.get("camera_reintro_enabled", False):
+            return False
+        elif the_person.event_triggers_dict.get("camera_purchased", True):
             return False
         elif mc.location != mc.business.m_div:
             return False
@@ -129,6 +131,7 @@ init -2 python:
         camera_arrive_action = Action("Camera Arrive", camera_arrive_requirement, "alexia_ad_camera_label", args = the_person, requirement_args = day + renpy.random.randint(3,7))
         mc.business.mandatory_crises_list.append(camera_arrive_action)
         the_person.event_triggers_dict["camera_purchased"] = True
+        the_person.event_triggers_dict["camera_reintro_enabled"] = False
         return
 
 
@@ -341,6 +344,7 @@ label alexia_ad_suggest_label(the_person):
             pass
 
         "Talk to her later":
+            $ the_person.event_triggers_dict["camera_reintro_enabled"] = True
             mc.name "Okay, I'll come talk to you soon and we can sort out these details. Great work [the_person.title], you're a credit to the team."
 
     the_person.char "Thanks [the_person.mc_title], I'm just happy to have a chance to contribute!"
@@ -411,6 +415,6 @@ label alexia_photography_intro_label(the_person):
     the_person.char "Yeah, I can do that! I don't know why, but I thought it was really exciting to be in front of that camera."
     mc.name "I'll let you get back to work then. See you around [the_person.title]."
     $ mc.business.hire_company_model(the_person)
-    $ purchase_policy(public_advertising_license_policy, ignore_cost = True) # This special storyline "buys" the policy for free.
+    $ public_advertising_license_policy.buy_policy(ignore_cost = True) # This special storyline "buys" the policy for free.
     call advance_time from _call_advance_time_19
     return

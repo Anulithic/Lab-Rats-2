@@ -263,6 +263,22 @@ label bimbo_strip_obedience_accept(the_person, the_clothing, strip_type = "Full"
         the_person.char "Hey, maybe we should, like, slow down."
     return
 
+label bimbo_grope_body_reject(the_person):
+    if the_person.effective_sluttiness("touching_body") < 5: #Fail point for touching shoulder
+        the_person "Oh my god [the_person.title], you can't touch me like this."
+        "She takes a step back and giggles."
+        the_person "I'm flattered, but I don't think it's okay..."
+        "You pull your hand back and laugh along with her, diffusing the tension."
+        mc.name "Of course, forget I did anything."
+    else: #Fail point for touching waist
+        the_person "Hey... I don't think you should be touching me like that..."
+        "She giggles to herself."
+        the_person "It's kind of fun, but I know where this is going."
+        "You give her a last squeeze and pull your hand back."
+        mc.name "Yeah, of course. Maybe I'll be able to convince you."
+        the_person "Hehe, we'll see..."
+    return
+
 label bimbo_sex_accept(the_person):
     if the_person.sluttiness > 70:
         if the_person.obedience < 70:
@@ -501,7 +517,7 @@ label bimbo_flirt_response_high(the_person):
                     "You kiss her, and she rubs her body against you eagerly."
                 else:
                     "You put your arm around [the_person.title]'s waist and pull her close. She leans her body against you eagerly as you kiss her."
-                call fuck_person(the_person, start_position = kissing, skip_intro = True) from _call_fuck_person_56
+                call fuck_person(the_person, start_position = kissing, private = mc.location.get_person_count() < 2, skip_intro = True) from _call_fuck_person_56
 
             "Just flirt":
                 mc.name "I do, but it'll have to be some other time."
@@ -548,7 +564,7 @@ label bimbo_flirt_response_girlfriend(the_person):
                     $ blowjob.current_modifier = "blowjob"
                     $ blowjob.redraw_scene(the_person)
                     "She slips you into her warm, wet mouth and sucks on the tip eagerly."
-                    call fuck_person(the_person, start_position = blowjob, skip_intro = True) from _call_fuck_person_62
+                    call fuck_person(the_person, start_position = blowjob, private = False, skip_intro = True) from _call_fuck_person_62
 
                 "Just flirt":
                     mc.name "Thanks for the offer, but I'm a little busy at the moment."
@@ -700,6 +716,7 @@ label bimbo_cum_pullout(the_person):
                 the_person.char "Oh my god, yes! Cum inside me [the_person.mc_title]! Knock me up!"
         elif the_person.on_birth_control: #She's on the pill, so she's probably fine
             the_person.char "I think I took my pill this morning, so you can cum inside me!"
+            $ the_person.update_birth_control_knowledge()
         else: #Too distracted to care about getting pregnant or not. Oh well, what could go wrong?
             the_person.char "Hehe, yay! I'm going to make you cum [the_person.mc_title]!"
     else:
@@ -737,6 +754,7 @@ label bimbo_cum_vagina(the_person):
             the_person.char "Mmm, wow you came a lot! Wait, does that mean I'm..."
             "She thinks hard for a second, then sighs and giggles."
             the_person.char "It's fine, I remembered to take my pink pill this morning!"
+            $ the_person.update_birth_control_knowledge()
             if the_person.relationship != "Single":
                 $ so_title = SO_relationship_to_title(the_person.relationship)
                 the_person.char "My [so_title] gets angry when I forget, but it's not like he fucks me much anyways."
@@ -830,35 +848,36 @@ label bimbo_sex_strip(the_person):
     return
 
 label bimbo_sex_watch(the_person, the_sex_person, the_position):
+    $ title = the_person.title if the_person.title else "The stranger"
     if the_person.sluttiness < the_position.slut_requirement - 20:
         $ the_person.draw_person(emotion = "angry")
         the_person.char "Is that, like, allowed? I thought that was illegal or something. Ugh."
         $ the_person.change_obedience(-2)
         $ the_person.change_happiness(-1)
-        "[the_person.title] looks away while you and [the_sex_person.name] [the_position.verb]."
+        "[title] looks away while you and [the_sex_person.name] [the_position.verb]."
 
     elif the_person.sluttiness < the_position.slut_requirement - 10:
         $ the_person.draw_person()
         the_person.char "Could you two get a room or something? There are some of us here who are trying to focus and you're being very distracting."
         $ the_person.change_happiness(-1)
-        "[the_person.title] tries to avert her gaze while you and [the_sex_person.name] [the_position.verb]."
+        "[title] tries to avert her gaze while you and [the_sex_person.name] [the_position.verb]."
 
     elif the_person.sluttiness < the_position.slut_requirement:
         $ the_person.draw_person()
         the_person.char "Wow [the_sex_person.name] you're so adventurous, I don't think I could ever do that. But it looks, like, super fun!"
         $ change_report = the_person.change_slut_temp(1)
-        "[the_person.title] averts her gaze, but keeps glancing over while you and [the_sex_person.name] [the_position.verb]."
+        "[title] averts her gaze, but keeps glancing over while you and [the_sex_person.name] [the_position.verb]."
 
     elif the_person.sluttiness > the_position.slut_requirement and the_person.sluttiness < the_position.slut_cap:
         $ the_person.draw_person()
         the_person.char "Oh. My. God. That is so fucking hot... Keep it up girl, you're doing great!"
         $ change_report = the_person.change_slut_temp(2)
-        "[the_person.title] watches you and [the_sex_person.name] [the_position.verb]."
+        "[title] watches you and [the_sex_person.name] [the_position.verb]."
 
     else:
         $ the_person.draw_person(emotion = "happy")
         the_person.char "Mmm, come on [the_person.mc_title], you should do something more to her. I bet she wants it real bad. I know I do..."
-        "[the_person.title] watches eagerly while you and [the_sex_person.name] [the_position.verb]."
+        "[title] watches eagerly while you and [the_sex_person.name] [the_position.verb]."
     return
 
 label bimbo_being_watched(the_person, the_watcher, the_position):
@@ -949,7 +968,7 @@ label bimbo_sex_end_early(the_person):
                 the_person.char "That's all? Aww, I hope you had a good time with me..."
         else:
             if the_person.arousal > 60:
-                "Wait, you're stopping? Aren't crazy horny right now too?"
+                "Wait, you're stopping? Aren't you crazy horny right now too?"
             else:
                 the_person.char "Don't you want to play with me any more? Oh well, your loss."
 

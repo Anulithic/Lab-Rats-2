@@ -56,7 +56,7 @@ label study_check_up(the_student, the_mom):
         $ the_group.draw_person(the_student)
         $ the_student.change_obedience(1)
         $ the_student.change_love(1)
-        the_student.char "Thanks Mom, It was really [the_student.title], he's a very engaging teacher."
+        the_student.char "Thanks Mom, It was really [the_student.mc_title], he's a very engaging teacher."
 
 
     else:
@@ -369,6 +369,5 @@ label student_mom_appologise_label(the_person): #TODO Provide a way to not activ
     "You slap her ass hard, making her jump a little bit."
     mc.name "I'll be seeing you soon."
     "She nods meekly, cheeks flush."
-    if not affair_role in the_person.special_role:
-        $ the_person.special_role.append(affair_role)
+    $ the_person.add_role(affair_role)
     return

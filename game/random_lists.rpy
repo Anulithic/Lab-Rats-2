@@ -121,7 +121,6 @@ init -2:
         list_of_names.append("Raislyn")
         list_of_names.append("Gina")
         list_of_names.append("Chrystal")
-        list_of_names.append("Jenny")
         list_of_names.append("Selene")
         list_of_names.append("Piper")
         list_of_names.append("Nicole")
@@ -133,9 +132,10 @@ init -2:
         list_of_names.append("Lystra")
         list_of_names.append("Katreena")
         list_of_names.append("Hannah")
-        list_of_names.append("Mara")
         list_of_names.append("Trinity")
         list_of_names.append("Stephine")
+        list_of_names.append("Sydney")
+        list_of_names.append("Amai")
 
         def get_random_name():
             return get_random_from_list(list_of_names)
@@ -155,7 +155,6 @@ init -2:
         list_of_last_names.append("Kurokami")
         list_of_last_names.append("Bergstrom")
         list_of_last_names.append("Fernandez")
-        list_of_last_names.append("Bergstrom")
         list_of_last_names.append("Sasamiya")
         list_of_last_names.append("Onihime")
         list_of_last_names.append("Lancie")
@@ -237,6 +236,10 @@ init -2:
         list_of_last_names.append("Cotten")
         list_of_last_names.append("Ookami")
         list_of_last_names.append("Du Roche")
+        list_of_last_names.append("Collins")
+        list_of_last_names.append("Sladek")
+        list_of_last_names.append("Liu")
+        list_of_last_names.append("Carbonara")
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)
@@ -733,7 +736,7 @@ init -2:
             if student_role in the_person.special_role:
                 list_of_player_titles.append("Teacher")
 
-            return list(set(list_of_player_titles)) 
+            return list(set(list_of_player_titles))
 
         def get_random_player_title(the_person):
             return get_random_from_list(get_player_titles(the_person))
@@ -776,7 +779,7 @@ init -2:
             alexia_intro_phase_one_action = Action("Alexia Intro Phase One", alexia_intro_phase_one_requirement, "alexia_intro_phase_one_label")
             alexia.on_room_enter_event_list.append(alexia_intro_phase_one_action)
             return
-        
+
         def add_lily_introduction_actions():
             sister_intro_crisis = Action("sister_intro_crisis", sister_intro_crisis_requirements, "sister_intro_crisis_label", args=lily, requirement_args = [lily, renpy.random.randint(7,14)]) #Def is in roles.rpy
             sister_strip_intro_crisis = Action("sister_strip_intro_crisis", sister_strip_intro_requirement, "sister_strip_intro_label", args=lily, requirement_args = lily)
@@ -905,7 +908,7 @@ init 1 python:
             title = "Nora", possessive_title = "Your old boss", mc_title = mc.name, relationship = "Single", kids = 0, base_outfit = nora_base)
 
         nora.generate_home()
-        nora.special_role.append(nora_role)
+        nora.add_role(nora_role)
         nora.set_schedule(nora.home, times = [0,1,2,3,4])
         nora.home.add_person(nora)
 
@@ -919,7 +922,7 @@ init 1 python:
 
         add_alexia_introduction_actions()
 
-        alexia.special_role.append(alexia_role)
+        alexia.add_role(alexia_role)
         alexia.set_schedule(alexia.home, times = [0,1,2,3,4])#Hide them in their bedroom off the map until they're ready.
         alexia.home.add_person(alexia)
 
@@ -934,7 +937,7 @@ init 1 python:
         emily.set_schedule(university, days = [0, 1, 2, 3, 4, 5], times = [1,2])
         emily.set_schedule(emily.home, times = [3])
         emily.home.add_person(emily)
-        emily.special_role.append(student_role)
+        emily.add_role(student_role)
 
         ### CHRISTINA (EMILY'S MOM) ###
         global christina
@@ -958,7 +961,7 @@ init 1 python:
 
         add_lily_introduction_actions()
 
-        lily.special_role.append(sister_role)
+        lily.add_role(sister_role)
         lily.set_schedule(lily.home, times = [3])
         lily.set_schedule(university, days = [0, 1, 2, 3, 4, 5], times = [1,2])
         lily.home.add_person(lily)
@@ -975,7 +978,7 @@ init 1 python:
         add_mom_weekly_pay_action()
         add_mom_introduction_actions()
 
-        mom.special_role.append(mother_role)
+        mom.add_role(mother_role)
         mom.set_schedule(kitchen, times = [3])
 
         mom.home.add_person(mom)
@@ -989,7 +992,7 @@ init 1 python:
 
         add_aunt_introduction_actions()
 
-        aunt.special_role.append(aunt_role)
+        aunt.add_role(aunt_role)
         aunt.set_schedule(aunt_bedroom, times = [0,1,2,3,4]) #Hide them in their bedroom off the map until they're ready.
         aunt.home.add_person(aunt)
 
@@ -1001,7 +1004,7 @@ init 1 python:
             stat_array = [0,4,2], skill_array = [0,0,2,1,0], sex_array = [3,0,0,0], start_sluttiness = 8, start_obedience = -30, start_happiness = 70, start_love = -20, \
             title = "Gabrielle", possessive_title = "Your cousin", mc_title = mc.name, relationship = "Single", kids = 0)
 
-        cousin.special_role.append(cousin_role)
+        cousin.add_role(cousin_role)
         cousin.set_schedule(cousin_bedroom, times = [0,1,2,3,4]) #Hide them in their bedroom off the map until they're ready
         cousin.home.add_person(cousin)
 

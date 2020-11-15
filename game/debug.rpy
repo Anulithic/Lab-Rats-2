@@ -59,6 +59,21 @@ init -15 python:
                     else:
                         log_message("Warning: Personality \"" + personality.personality_type_prefix + "\" is using it's default entry for dialogue type \"" + ending + "\"")
 
+    class VrenZipImage(renpy.display.im.ImageBase):
+        def __init__(self, position, filename, mtime=0, **properties):
+            super(VrenZipImage, self).__init__(position, filename, mtime, **properties)
+            self.position = position
+            self.filename = filename
+
+        def load(self):
+            try:
+                global mobile_zip_dict
+                data = mobile_zip_dict[self.position].read(self.filename)
+                sio = io.BytesIO(data)
+                return renpy.display.pgrender.load_image(sio, self.filename)
+            except:
+                return renpy.display.pgrender.surface((2, 2), True)
+
 label person_select_debug:
     "Calling screen now!"
     call screen employee_overview(person_select = True)
@@ -174,3 +189,8 @@ screen display_all_hair():
                     text hair.name
                     $ hair_displayable = hair.generate_item_displayable("standard_body", "AA", "stand2")
                     add hair_displayable
+
+label test_malformed_say(the_person):
+    the_person "Hello world!"
+    the_person "This is a test!"
+    return

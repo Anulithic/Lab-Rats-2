@@ -15,7 +15,7 @@ init 1300:
         def alexia_player_titles(the_person):
             valid_titles = [mc.name]
             if the_person.love > 10:
-                valid_titles.append("Teachers pet")
+                valid_titles.append("Teacher's pet")
             return valid_titles
 
         alexia_personality = Personality("alexia", default_prefix = "relaxed",

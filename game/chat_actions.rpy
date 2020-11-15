@@ -1645,6 +1645,8 @@ label bc_talk_label(the_person):
                 the_person.char "If you cum in me you might get me knocked up. It's kind of hot to think about that..."
             else:
                 the_person.char "Oh, well... I'm not taking any right now."
+        $ the_person.update_birth_control_knowledge()
+
         menu:
             "Start taking birth control" if not the_person.on_birth_control:
                 mc.name "You should start taking some, I don't want you getting pregnant."
@@ -1713,6 +1715,8 @@ label bc_talk_label(the_person):
         else:
             the_person.char "Oh, I guess that's probably an important thing for you to know about."
             the_person.char "I'm not taking any birth control right now."
+
+        $ the_person.update_birth_control_knowledge()
         menu:
             "Start taking birth control" if not the_person.on_birth_control:
                 mc.name "You should probably start taking it, before something happens and you get pregnant."
@@ -1724,7 +1728,7 @@ label bc_talk_label(the_person):
                         "She shrugs and shakes her head."
                         $ the_person.discover_opinion("creampies")
                         $ the_person.discover_opinion("bareback sex")
-                        the_person.char "I don't care about that. I love the feeling of a warm, risky creampie to ever give it up."
+                        the_person.char "I don't care about that. I love the feeling of a warm, risky creampie too much to ever give it up."
                     else:
                         the_person.char "Sorry, I've tried it before and it just messes with my hormones too badly."
                         the_person.char "We'll just be careful and use a condom, or you can pull out. Okay?"
@@ -1761,6 +1765,7 @@ label bc_talk_label(the_person):
             else:
                 the_person.char "I'm not taking any birth control right now."
 
+            $ the_person.update_birth_control_knowledge()
             "It's clear from her tone that [the_person.possessive_title] wouldn't be swayed by you telling her what to do."
 
         elif the_person.effective_sluttiness() > 20:
@@ -1770,6 +1775,7 @@ label bc_talk_label(the_person):
             else:
                 the_person.char "I'm not taking birth control right now."
 
+            $ the_person.update_birth_control_knowledge()
             "It's clear from her tone that [the_person.possessive_title] wouldn't be swayed by you telling her what to do."
 
         else:
@@ -1784,6 +1790,7 @@ label bc_demand_label(the_person):
         the_person.char "I'm taking birth control right now."
     else:
         the_person.char "I'm... not taking any right now."
+    $ the_person.update_birth_control_knowledge()
 
     menu:
         "Start taking birth control" if not the_person.on_birth_control and the_person.obedience >= 130:
@@ -1808,12 +1815,12 @@ label bc_demand_label(the_person):
                 the_person.char "[the_person.mc_title], I can't do that. If you got me pregnant I... I don't know what I would do!"
                 mc.name "I didn't say I was going to get you pregnant. I just told you to stop taking your birth control."
                 mc.name "I'm sure you can avoid getting knocked up if you really put your mind to it. Now, do we have a problem?"
-                "[the_person.title] start to say something, then thinks better of it. She shakes her head."
+                "[the_person.title] starts to say something, then thinks better of it. She shakes her head."
                 the_person.char "No, there's no problem. I won't take any birth control in the morning."
 
             else:
                 "[the_person.possessive_title] shuffles nervously before working up the nerve to speak back."
-                the_person.char "I... I don't know if that's a good idea. I don't now if I want to get pregnant."
+                the_person.char "I... I don't know if that's a good idea. I don't know if I want to get pregnant."
                 mc.name "I didn't ask if you wanted to get pregnant. I told you to stop taking your birth control. Is there a problem with that?"
                 "She blushes and looks away under your glare."
                 the_person.char "No. I'll stop right away. Sorry."
@@ -1840,8 +1847,10 @@ init 5 python:
 
 label bc_start_event(the_person):
     $ the_person.on_birth_control = True
+    $ the_person.update_birth_control_knowledge()
     return
 
 label bc_stop_event(the_person):
     $ the_person.on_birth_control = False
+    $ the_person.update_birth_control_knowledge()
     return

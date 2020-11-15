@@ -32,6 +32,9 @@ init -1 python:
         return True
 
     def become_pregnant(person): # Called when a girl is knocked up. Establishes all of the necessary bits of info.
+        if not person or pregnant_role in person.special_role:
+            return
+
         person.event_triggers_dict["preg_accident"] = person.on_birth_control # If a girl is on birth control the pregnancy is an accident.
         person.event_triggers_dict["preg_start_date"] = day
         person.event_triggers_dict["preg_tits_date"] = day + 14 + renpy.random.randint(0,5)
@@ -40,7 +43,7 @@ init -1 python:
         person.event_triggers_dict["pre_preg_tits"] = person.tits
 
         preg_announce_action = Action("Pregnancy Announcement", pregnant_announce_requirement, "pregnant_announce", requirement_args = day + renpy.random.randint(12,18))
-        person.on_room_enter_event_list.append(preg_announce_action)
+        person.on_room_enter_event_list.append(Limited_Time_Action(preg_announce_action, 12))
 
         preg_tits_action = Action("Pregnancy Tits Grow", pregnant_tits_requirement, "pregnant_tits_start", args = person, requirement_args = person)
         mc.business.mandatory_morning_crises_list.append(preg_tits_action)
@@ -48,7 +51,7 @@ init -1 python:
         preg_transform_action = Action("Pregnancy Transform", pregnant_transform_requirement, "pregnant_transform", args = person, requirement_args = person)
         mc.business.mandatory_morning_crises_list.append(preg_transform_action) #This event adds an announcement event the next time you enter the same room as the girl.
 
-        person.special_role.append(pregnant_role)
+        the_person.add_role(pregnant_role)
         return
 
     def preg_transform_announce_requirement(person):
@@ -74,9 +77,6 @@ init -1 python:
 
 
 label pregnant_announce(the_person):
-     #It's been a long time since this event was added. She's surprised to see you.
-    #if the_person.event_triggers_dict.get("preg_accident", False):
-        #It was an accident.
     $ the_person.draw_person()
     $ the_person.event_triggers_dict["preg_knows"] = True #Set here and in the larger tits, represents the person knowing they're pregnant so they don't ask for condoms ect.
     $ was_accident = the_person.event_triggers_dict.get("preg_accident", False)
@@ -177,7 +177,7 @@ label pregnant_announce(the_person):
 
             "Start having an affair" if ask_girlfriend_requirement(the_person):
                 mc.name "Just tell him it's his, and we can start seeing each other more so I can help you in this difficult time."
-                $ the_person.special_role.append(affair_role)
+                $ the_person.add_role(affair_role)
 
             "Tell him it's his":
                 mc.name "Just tell him it's his. I'm sure he'll be ecstatic to hear the good news."
@@ -199,7 +199,7 @@ label pregnant_announce(the_person):
                 "She blinks away a few tears and nods."
                 $ the_person.change_happiness(10)
                 the_person.char "I'm sorry, I guess the hormones are already getting to me. I'd like that."
-                $ the_person.special_role.append(girlfriend_role)
+                $ the_person.add_role(girlfriend_role)
                 "You hug [the_person.possessive_title], and she hugs you back."
                 the_person.char "That's all for now, I'll keep you informed as things progress."
 
@@ -216,7 +216,7 @@ init 2 python:
         person.personal_region_modifiers["breasts"] = person.personal_region_modifiers["breasts"] + 0.1 #As her tits get larger they also become softer, unlike large fake tits. (Although even huge fake tits get softer)
 
         pregnant_tits_announce_action = Action("Announce Pregnant Tits", pregnant_tits_announcement_requirement, "pregnant_tits_announce", args = day)
-        person.on_talk_event_list.append(pregnant_tits_announce_action)
+        person.on_talk_event_list.append(Limited_Time_Action(pregnant_tits_announce_action, 7))
         return
 
 label pregnant_tits_start(the_person):
@@ -264,7 +264,7 @@ init 2 python:
         person.lactation_sources += 1
 
         preg_transform_announce_action = Action("Pregnancy Transform Announcement", preg_transform_announce_requirement, "pregnant_transform_announce", args = day)
-        person.on_room_enter_event_list.append(preg_transform_announce_action)
+        person.on_room_enter_event_list.append(Limited_Time_Action(preg_transform_announce_action, 14))
 
         preg_finish_announce_action = Action("Pregnancy Finish Announcement", preg_finish_announcement_requirement, "pregnant_finish_announce", args = person, requirement_args = person)
         mc.business.mandatory_crises_list.append(preg_finish_announce_action)
@@ -366,8 +366,7 @@ init 2 python:
         tit_shrink_two = Action("Tits Shrink Two", tit_shrink_requirement, "tits_shrink", args = [person, False, add_tits_shrink_two_announcement], requirement_args = [person, tit_shrink_two_day])
         mc.business.mandatory_morning_crises_list.append(tit_shrink_two)
 
-        if pregnant_role in person.special_role:
-            person.special_role.remove(pregnant_role)
+        the_person.remove_role(pregnant_role)
         return True
 
     def add_tits_shrink_one_announcement(person):
@@ -386,13 +385,37 @@ label pregnant_finish(the_person):
         return
 
     "You get a call from [the_person.possessive_title] early in the morning. You answer it."
-    the_person.char "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl! I'll be coming back to work today." #Obviously they're all girls for extra fun in 18 years.
-    #TODO: Let you pick a name (or at low obedience she's already picked one)
-    mc.name "That's amazing, but are you sure you don't need more rest?"
+    if the_person in [aunt, mom]:
+        the_person.char "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl!"
+        mc.name "That's amazing, where is she now?"
+        the_person.char "I'll be leaving her with my mother, your grand-mother for now, so we can continue seeing each other."
+        the_person.char "I just wanted to let you know. I'll talk to you soon."
+        "You say goodbye and [the_person.title] hangs up."
+        return
+
+    elif the_person in [lily, cousin]:
+        the_person.char "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl!"
+        mc.name "That's amazing, where is she now?"
+        the_person.char "I'll be leaving her with our grandma for now, so we can continue seeing each other."
+        the_person.char "I just wanted to let you know. I'll talk to you soon."
+        "You say goodbye and [the_person.title] hangs up."
+        return
+
+    if employee_role in the_person.special_role:
+        if day%7 == 5 or day%7 == 6:    # event triggers at start of day (so on sat or sun, next workday is monday)
+            the_person.char "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl! I'll be coming back to work monday." #Obviously they're all girls for extra fun in 18 years.
+        else:
+            the_person.char "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl! I'll be coming back to work today." #Obviously they're all girls for extra fun in 18 years.
+        #TODO: Let you pick a name (or at low obedience she's already picked one)
+        mc.name "That's amazing, but are you sure you don't need more rest?"
+    else:
+        the_person.char "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl!"
+        mc.name "That's amazing, how are you doing?"
+
+
     if affair_role in the_person.special_role:
         $ so_title = SO_relationship_to_title(the_person.relationship)
         the_person.char "I'll be fine, I'll be leaving our girl with her \"father\" so I can come back and see you again."
-
     else:
         the_person.char "I'll be fine. I'm leaving her with my mother for a little while so I can get back to a normal life."
 
@@ -400,10 +423,9 @@ label pregnant_finish(the_person):
     "You say goodbye and [the_person.title] hangs up."
     return
 
-
 label tits_shrink(the_person, reduce_lactation, announcement_function):
     python:
-        if person.lactation_sources > 0:
+        if the_person.lactation_sources > 0:
             the_person.lactation_sources -= 1
         the_person.tits = get_smaller_tits(the_person.tits)
         the_person.personal_region_modifiers["breasts"] = the_person.personal_region_modifiers["breasts"] - 0.1

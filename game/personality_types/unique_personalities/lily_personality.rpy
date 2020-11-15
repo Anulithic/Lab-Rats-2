@@ -228,6 +228,27 @@ label lily_strip_obedience_accept(the_person, the_clothing, strip_type = "Full")
             the_person.char "Wait, I don't know about this..."
     return
 
+label lily_grope_body_reject(the_person):
+    if the_person.effective_sluttiness("touching_body") < 5: #Fail point for touching shoulder
+        the_person "Hey, what are you doing?"
+        mc.name "I was just... going to give you a brotherly hug?"
+        if the_person.love > 20:
+            the_person "Aww, that's sweet."
+            "She gives you a quick hug, then steps back and smiles."
+            $ the_person.change_love(1) #Just cancels out the -1 Love you'd get otherwise.
+
+        else:
+            the_person "We're a little old for that, aren't we?"
+            "She looks away awkwardly until you move your hand away."
+            mc.name "Yeah, I guess you're right. Never mind."
+    else: #Fail point for touching waist
+        the_person "Could... You maybe move your hand [the_person.mc_title]?"
+        mc.name "What? Why, is there something wrong?"
+        the_person "It just feels weird, you know? I don't know, I can't really explain it."
+        "She squirms uncomfortably until you move your hand back."
+        mc.name "Sorry, don't worry about it [the_person.title]."
+    return
+
 label lily_sex_accept(the_person):
     if the_person.sluttiness > 70:
         if the_person.obedience < 100:
@@ -478,6 +499,7 @@ label lily_cum_pullout(the_person):
             elif the_person.on_birth_control:
                 the_person.char "Take... Take the condom off, I want you to cum inside of me raw!"
                 the_person.char "I'm on the pill, so it doesn't even matter, and creampies feel so good!"
+                $ the_person.update_birth_control_knowledge()
                 "She moans happily."
             else:
                 the_person.char "Wait, take the condom off first! I... I want you to cum bareback!"
@@ -507,6 +529,7 @@ label lily_cum_pullout(the_person):
                     the_person.char "Go ahead and knock your little sister up!"
             elif the_person.on_birth_control: #She's on the pill, so she's probably fine
                 the_person.char "Cum wherever you want [the_person.mc_title], I'm on the pill!"
+                $ the_person.update_birth_control_knowledge()
             else: #Too distracted to care about getting pregnant or not. Oh well, what could go wrong?
                 the_person.char "Oh god, I'm going to make my brother cum! Ah!"
         else:
@@ -555,10 +578,12 @@ label lily_cum_vagina(the_person):
             if the_person.relationship != "Single":
                 $ so_title = SO_relationship_to_title(the_person.relationship)
                 the_person.char "Oh god, you really did it... I'm not on the pill and you still came inside me."
+                $ the_person.update_birth_control_knowledge()
                 the_person.char "I hope my [so_title] never finds out about this..."
 
             else:
                 the_person.char "Oh god, you really did it... I'm not on the pill and you still came inside me."
+                $ the_person.update_birth_control_knowledge()
                 the_person.char "I can't believe I let you do that."
 
 
@@ -567,11 +592,13 @@ label lily_cum_vagina(the_person):
             if the_person.relationship != "Single":
                 $ so_title = SO_relationship_to_title(the_person.relationship)
                 the_person.char "Fuck, fuck! You can't cum in me, I'm not on the pill!"
+                $ the_person.update_birth_control_knowledge()
                 the_person.char "What if you got me pregnant? What would [mom.title] say?"
                 "She groans unhappily."
                 the_person.char "What would my [so_title] say? I don't know if I could lie to him."
             else:
                 the_person.char "Oh god no, you can't cum inside me, I'm not on the pill!"
+                $ the_person.update_birth_control_knowledge()
                 "She groans unhappily."
                 the_person.char "What would I do if my own brother got me pregnant?"
                 the_person.char "I'd die of embarrassment if anyone found out!"
@@ -579,6 +606,7 @@ label lily_cum_vagina(the_person):
         elif the_person.relationship != "Single":
             $ so_title = SO_relationship_to_title(the_person.relationship)
             the_person.char "Oh god, I can't believe you just came inside me... What if my birth control doesn't work?"
+            $ the_person.update_birth_control_knowledge()
             "She takes a deep breath and tries to calm herself down."
             the_person.char "I would have to tell everyone it was my [so_title]'s, but I would still know..."
 
@@ -587,6 +615,7 @@ label lily_cum_vagina(the_person):
 
         else:
             the_person.char "Oh god, I can't believe you just came inside me... What if my birth control doesn't work?"
+            $ the_person.update_birth_control_knowledge()
             "She takes a deep breath and calms herself down."
             the_person.char "It's probably fine... Right? Yeah, I'm sure it's fine. The pill is like a ninety nine percent effective, right?"
 
@@ -631,36 +660,37 @@ label lily_talk_busy(the_person):
     return
 
 label lily_sex_watch(the_person, the_sex_person, the_position):
+    $ title = the_person.title if the_person.title else "The stranger"
     if the_person.sluttiness < the_position.slut_requirement - 20:
         $ the_person.draw_person(emotion = "angry")
         the_person.char "Oh my god, [the_person.mc_title]! How can you do that in front of your sister?"
         $ the_person.change_obedience(-2)
         $ the_person.change_happiness(-1)
-        "[the_person.title] looks away while you and [the_sex_person.name] [the_position.verb]."
+        "[title] looks away while you and [the_sex_person.name] [the_position.verb]."
 
     elif the_person.sluttiness < the_position.slut_requirement - 10:
         $ the_person.draw_person()
         $ the_person.change_happiness(-1)
         the_person.char "I... oh my god I can't believe you're my brother..."
-        "[the_person.title] tries to avert her gaze while you and [the_sex_person.name] [the_position.verb]."
+        "[title] tries to avert her gaze while you and [the_sex_person.name] [the_position.verb]."
 
     elif the_person.sluttiness < the_position.slut_requirement:
         $ the_person.draw_person()
         the_person.char "Oh my god, you two are just... Wow..."
         $ change_report = the_person.change_slut_temp(1)
-        "[the_person.possessive_title] averts her gaze, but she keeps stealing glances while you and [the_sex_person.name] [the_position.verb]."
+        "[possessive_title] averts her gaze, but she keeps stealing glances while you and [the_sex_person.name] [the_position.verb]."
 
     elif the_person.sluttiness > the_position.slut_requirement and the_person.sluttiness < the_position.slut_cap:
         $ the_person.draw_person()
         the_person.char "Oh my god, [the_person.mc_title], where did you learn to do that? I shouldn't be watching this, but..."
         $ change_report = the_person.change_slut_temp(2)
-        "[the_person.title] watches you and [the_sex_person.name] [the_position.verb]."
+        "[title] watches you and [the_sex_person.name] [the_position.verb]."
 
     else:
         $ the_person.draw_person(emotion = "happy")
         the_person.char "Give it to her [the_person.mc_title], don't hold back just because I'm here."
         the_person.char "You're not nervous because your sister is watching, are you?"
-        "[the_person.title] watches eagerly while you and [the_sex_person.name] [the_position.verb]."
+        "[title] watches eagerly while you and [the_sex_person.name] [the_position.verb]."
 
     return
 
@@ -1009,6 +1039,7 @@ label lily_condomless_sex_taboo_break(the_person):
         the_person.char "I am, but what if it didn't work?"
     else:
         "She shakes her head meekly."
+    $ the_person.update_birth_control_knowledge()
     if the_person.has_taboo("vaginal_sex"):
         mc.name "We won't need to tell [mom.title] anything. I'm not going to get you pregnant the very first time we have sex."
         "[the_person.possessive_title] still seems uncertain."
@@ -1097,6 +1128,7 @@ label lily_creampie_taboo_break(the_person):
             mc.name "Then what's the problem? You're on the pill, right?"
             "She nods."
             the_person.char "Yeah, I am. I guess you're right, it's not such a big deal as long as you don't do it too often."
+            $ the_person.update_birth_control_knowledge()
 
         else:
             the_person.char "You just... came inside of me. I've got a pussy full of my brothers cum, and I'm not on birth control."

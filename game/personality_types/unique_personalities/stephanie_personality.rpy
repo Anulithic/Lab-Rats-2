@@ -16,7 +16,7 @@ init 1300:
         def stephanie_player_titles(the_person):
             valid_titles = [mc.name]
             if the_person.love > 20:
-                valid_titles.append("Teachers pet")
+                valid_titles.append("Teacher's pet")
             return valid_titles
 
         stephanie_personality = Personality("stephanie", default_prefix = "wild",

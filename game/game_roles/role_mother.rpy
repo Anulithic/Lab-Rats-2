@@ -361,6 +361,7 @@ label mom_high_sluttiness_weekly_pay(the_person):
                     the_person.char "It's been a while since I needed it, so I don't bother."
                 else:
                     the_person.char "I know I should, but... I just haven't bothered talking to my doctor."
+                $ the_person.update_birth_control_knowledge()
                 the_person.char "Is there something else you would like?"
                 call mom_high_sluttiness_weekly_pay(the_person) from _call_mom_high_sluttiness_weekly_pay_1
 
@@ -373,7 +374,7 @@ label mom_high_sluttiness_weekly_pay(the_person):
             mc.name "Sorry Mom, but I'm tight on cash right now as well. Maybe next week, okay?"
             "[the_person.possessive_title] nods and turns back to her bills."
             the_person.char "I understand [the_person.mc_title]. Now don't let me keep you, I'm sure you were up to something important."
-            
+
         #TODO: pay her to fuck you.
         #TODO: pay her to change her wardrobe
         #TODO: pay her to do somehting with Lily.
@@ -579,11 +580,8 @@ label mom_work_promotion_outfit_create(the_person):
         mc.name "Let's see how you look in this."
         the_person.char "Okay, just give me one moment..."
         "[the_person.title] starts to strip down."
-        $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-        while strip_choice is not None:
-            $ the_person.draw_animated_removal(strip_choice)
-            "You watch as [the_person.possessive_title] take off her [strip_choice.display_name]."
-            $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+
+        $ generalised_strip_description(the_person, the_person.outfit.get_full_strip_list())
 
         if the_person.update_outfit_taboos():
             "As she gets naked she tries to cover herself up with her hands, turning her body away from you."
@@ -773,11 +771,7 @@ label mom_work_promotion_two_prep(the_person):
     $ the_person.draw_person(position = "walking_away")
     "[the_person.possessive_title] stands up and turns towards her wardrobe as she starts stripping down."
 
-    $ next_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-    while next_item:
-        $ the_person.draw_animated_removal(next_item)
-        "..."
-        $ next_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
+    $ generalised_strip_description(the_person, the_person.outfit.get_full_strip_list()) #TODO: Add support and have her in the "walking_away" position while she strips
 
     $ interview_uniform = the_person.event_triggers_dict.get("mom_work_promotion_outfit", None)
     "Once she's naked she starts to dig around in her wardrobe."
@@ -856,8 +850,8 @@ label mom_work_promotion_two_prep(the_person):
             "She gets off the bed and onto her knees, reaching slowly for the pen."
             menu:
                 "Slap her ass":
-                    "You sit forward and slap your hand across [the_person.possessive_title]'s butt. She gasps and stands up."
-                    $ the_person.draw_person()
+                    "You sit forward and slap your hand across [the_person.possessive_title]'s butt. She gasps and turns around on the floor."
+                    $ the_person.draw_person(position = "kneeling1")
                     the_person.char "[the_person.mc_title], try and take this seriously."
                     mc.name "I am being serious. If something like this happens you need to be ready."
                     the_person.char "You mean my boss might..."

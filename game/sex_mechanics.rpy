@@ -60,14 +60,14 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
         else: #If you aren't in a relationship with them only half their Love applies.
             $ the_person.add_situational_slut("love_modifier", __builtin__.int(the_person.love/2), "I really like you, let's see where this goes!")
 
+    $ happiness_effect = __builtin__.round((the_person.happiness - 100)/5.0)
     if the_person.happiness <= 95:
-        $ happiness_effect = __builtin__.round((100 - the_person.happiness)/5.0)
+
         if the_person.happiness <= 75:
             $ the_person.add_situational_slut("happiness_modifier", happiness_effect, "I'm so unhappy, I just don't want to do anything!")
         else:
             $ the_person.add_situational_slut("happiness_modifier", happiness_effect, "I'm just not in the mood right now.")
     elif the_person.happiness >= 105:
-        $ happiness_effect = __builtin__.round((the_person.happiness - 100)/5.0)
         if the_person.happiness >= 125:
             $ the_person.add_situational_slut("happiness_modifier", happiness_effect, "I'm so happy, I'm up for anything!")
         else:
@@ -191,7 +191,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                     $ object_choice = _return
 
                 if position_choice and object_choice:
-                    call check_position_willingness(the_person, position_choice, ignore_taboo = ignore_taboo, skip_dialog = True) from _call_check_position_willingness
+                    call check_position_willingness(the_person, position_choice, ignore_taboo = ignore_taboo) from _call_check_position_willingness
                     if not _return: #If she wasn't willing for whatever reason (too slutty a position, not willing to wear a condom) we clear our settings and try again.
                         $ position_choice = None
                         $ object_choice = None
@@ -271,7 +271,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
 
         elif isinstance(round_choice, Position): #The only non-strings on the list are positions we are changing to
-            call check_position_willingness(the_person, round_choice, ignore_taboo = ignore_taboo) from _call_check_position_willingness_1
+            call check_position_willingness(the_person, round_choice, ignore_taboo = ignore_taboo, skip_dialog = True) from _call_check_position_willingness_1
             if _return:
                 $ round_choice.redraw_scene(the_person)
                 if the_person.has_taboo(round_choice.associated_taboo) and not ignore_taboo:
@@ -657,6 +657,7 @@ label condom_ask(the_person):
         # They suggest you put on a condom.
         if the_person.on_birth_control:
             the_person.char "Do you think you should put on a condom? I'm on birth control, but it might be a good idea to be sure."
+            $ the_person.update_birth_control_knowledge()
         elif the_person.get_opinion_score("creampies") > 0:
             $ the_person.discover_opinion("creampies")
             the_person.char "I think you should put on a condom. If you do you won't have to pull out when you cum."
@@ -718,8 +719,8 @@ label strip_menu(the_person, the_verbing = "fucking", is_private = True): #TODO:
                 full_off_list.append([formatted_name, [clothing,"Full"]]) #Keeps track if this was a full or partial strip, so we can reuse all of the strip taboo logic/dialogue
 
         half_off_list = ["Move away"]
-        for clothing in the_person.outfit.get_unanchored():
-            if clothing.can_be_half_off and not clothing.half_off:
+        for clothing in the_person.outfit.get_unanchored(half_off_instead = True):
+            if not clothing.half_off:
                 half_off_list.append([clothing.display_name.capitalize(), [clothing,"Half"]])
 
         other_list = ["Other","Finish"]
@@ -816,8 +817,8 @@ label strip_menu(the_person, the_verbing = "fucking", is_private = True): #TODO:
                     $ renpy.say("", "You pull her " + strip_choice.display_name + " off, dropping it to the ground.")
 
             $ arousal_change = 0
-            if strip_type == "Half":
-                $ arousal_change += -5
+            if strip_type == "Full":
+                $ arousal_change -= 5
 
             if underwear_revealed or boobs_revealed or ass_revealed:
                 $ arousal_change += the_person.get_opinion_score("not wearing anything") * 2
@@ -903,7 +904,7 @@ label affair_check(the_person, report_log): #Report log is handed over so we can
         "Have an affair with [the_person.title]":
             mc.name "I want that too, anything that will let me be close to you."
             $ the_person.draw_person(emotion = "happy")
-            $ the_person.special_role.append(affair_role)
+            $ the_person.add_role(affair_role)
             $ the_person.change_slut_temp(2)
             "She smiles and hugs you."
 
