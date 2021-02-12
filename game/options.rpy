@@ -204,3 +204,5 @@ init python:
 init -1:
     python hide:
         config.developer=True
+        config.keymap['rollback'].remove('mousedown_4')
+        config.keymap['rollforward'].remove('mousedown_5')
