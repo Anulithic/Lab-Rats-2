@@ -2,8 +2,8 @@
     python:
         against_wall = Position(name = "Against the Wall", slut_requirement = 60, slut_cap = 80, requires_hard = True, requires_large_tits = False,
             position_tag = "against_wall", requires_location = "Lean", requires_clothing = "Vagina", skill_tag = "Vaginal",
-            girl_arousal = 20, girl_energy = 12,
-            guy_arousal = 18, guy_energy = 12,
+            girl_arousal = 20, girl_energy = 16,
+            guy_arousal = 18, guy_energy = 16,
             connections = [],
             intro = "intro_against_wall",
             scenes = ["scene_against_wall_1","scene_against_wall_2","scene_against_wall_3"],

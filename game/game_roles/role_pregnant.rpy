@@ -35,6 +35,7 @@ init -1 python:
         if not person or pregnant_role in person.special_role:
             return
 
+        person.event_triggers_dict["immaculate_conception"] = person.has_taboo("vaginal_sex")
         person.event_triggers_dict["preg_accident"] = person.on_birth_control # If a girl is on birth control the pregnancy is an accident.
         person.event_triggers_dict["preg_start_date"] = day
         person.event_triggers_dict["preg_tits_date"] = day + 14 + renpy.random.randint(0,5)
@@ -42,8 +43,9 @@ init -1 python:
         person.event_triggers_dict["preg_finish_announce_day"] = day + 90 + renpy.random.randint(0,10)
         person.event_triggers_dict["pre_preg_tits"] = person.tits
 
-        preg_announce_action = Action("Pregnancy Announcement", pregnant_announce_requirement, "pregnant_announce", requirement_args = day + renpy.random.randint(12,18))
-        person.on_room_enter_event_list.append(Limited_Time_Action(preg_announce_action, 12))
+        random = renpy.random.randint(12,18)
+        preg_announce_action = Action("Pregnancy Announcement", pregnant_announce_requirement, "pregnant_announce", requirement_args = day + random)
+        person.on_room_enter_event_list.append(Limited_Time_Action(preg_announce_action, (random * 5) + 12))
 
         preg_tits_action = Action("Pregnancy Tits Grow", pregnant_tits_requirement, "pregnant_tits_start", args = person, requirement_args = person)
         mc.business.mandatory_morning_crises_list.append(preg_tits_action)
@@ -51,7 +53,7 @@ init -1 python:
         preg_transform_action = Action("Pregnancy Transform", pregnant_transform_requirement, "pregnant_transform", args = person, requirement_args = person)
         mc.business.mandatory_morning_crises_list.append(preg_transform_action) #This event adds an announcement event the next time you enter the same room as the girl.
 
-        the_person.add_role(pregnant_role)
+        person.add_role(pregnant_role)
         return
 
     def preg_transform_announce_requirement(person):
@@ -75,104 +77,125 @@ init -1 python:
     def tit_shrink_announcement_requirement(person):
         return True
 
-
 label pregnant_announce(the_person):
     $ the_person.draw_person()
     $ the_person.event_triggers_dict["preg_knows"] = True #Set here and in the larger tits, represents the person knowing they're pregnant so they don't ask for condoms ect.
-    $ was_accident = the_person.event_triggers_dict.get("preg_accident", False)
     "[the_person.title] walks over to you as soon as she sees you."
     if mc.location.get_person_count() > 1:
-        the_person.char "Could I talk to you for a second [the_person.mc_title]? It's important."
+        the_person "Could I talk to you for a second [the_person.mc_title]? It's important."
         "You nod and find a quiet spot to speak to [the_person.title]."
 
     if day - the_person.event_triggers_dict.get("preg_start_date", 0) > 30:
         return # If you don't ever check in with her for 30 days you probably don't care and we don't need to show this event.
 
-    if was_accident:
-        the_person.char "So I have some news. This might be a little surprising."
+    if the_person.event_triggers_dict.get("immaculate_conception", False):
+        the_person "So, I have some news. This is really surprising, even to me..."
+        mc.name "What's up? Is everything alright?"
+    elif the_person.event_triggers_dict.get("preg_accident", False):
+        the_person "So I have some news. This might be a little surprising."
         mc.name "What's up? Is everything okay?"
     else:
-        the_person.char "I have some big news."
+        the_person "I have some big news."
         mc.name "Okay, what's up?"
 
     if girlfriend_role in the_person.special_role:
-        if was_accident:
-            the_person.char "Well, you know that we haven't exactly been careful with condoms lately, since I'm on birth control..."
-            the_person.char "I'm not sure exactly when it happened, but it looks like you... managed to get me pregnant anyways."
+        if the_person.event_triggers_dict.get("immaculate_conception", False):
+            the_person "I know this might sound crazy but... I'm pregnant!"
+            the_person "I don't know when it happened, or how, since we haven't even had sex, but I definitely am."
+            the_person "Maybe some of your cum dripped between my legs? Or it was on my hands when I touched myself? It doesn't really matter."
+        elif the_person.event_triggers_dict.get("preg_accident", False):
+            the_person "Well, you know that we haven't exactly been careful with condoms lately, since I'm on birth control..."
+            the_person "I'm not sure exactly when it happened, but it looks like you... managed to get me pregnant anyways."
         else:
-            the_person.char "Obviously you know we haven't been using any protection lately when we've been having sex and..."
-            the_person.char "Well, you finally fucked a baby into me!"
+            the_person "Obviously you know we haven't been using any protection lately when we've been having sex and..."
+            the_person "Well, you finally fucked a baby into me!"
         "She takes your hands and smiles."
-        the_person.char "Isn't that exciting?! I wanted to tell you as soon as I found out, but I thought you should hear it in person!"
+        the_person "Isn't that exciting?! I wanted to tell you as soon as I found out, but I thought you should hear it in person!"
         mc.name "That's fantastic news!"
         "You hug [the_person.title], and she squeezes you back. After a long moment she breaks the hug."
-        the_person.char "That's all for now, I don't need you to do anything. I'm just so happy to be able to share this with you!"
+        the_person "That's all for now, I don't need you to do anything. I'm just so happy to be able to share this with you!"
 
-    elif affair_role in the_person.special_role:
+    elif affair_role in the_person.special_role: #Note: Requires her to be in a relationship, so there's no "immaculate conception" chance. She'll just think it's his.
         $ so_title = SO_relationship_to_title(the_person.relationship)
-        if was_accident:
-            the_person.char "Well... We haven't been using condoms since I'm taking birth control, but..."
-            the_person.char "It looks like you managed to knock me up anyways."
+        if the_person.event_triggers_dict.get("immaculate_conception", False):
+            the_person "So I know this is going to sound crazy, but I'm pregnant."
+            the_person "I don't think it's [so_title]'s, the dates just don't line up."
+            the_person "Maybe I got some of your cum on my hand and touched myself, or maybe it dripped down between my legs."
+            the_person "Either way, I'm knocked up and I think it's yours."
+        elif the_person.event_triggers_dict.get("preg_accident", False):
+            the_person "Well... We haven't been using condoms since I'm taking birth control, but..."
+            the_person "It looks like you managed to knock me up anyways."
         else:
-            the_person.char "I'm not on any sort of birth control, and we haven't been using condoms..."
-            the_person.char "It looks like one of those creampies stuck and you knocked me up."
+            the_person "I'm not on any sort of birth control, and we haven't been using condoms..."
+            the_person "It looks like one of those creampies stuck and you knocked me up."
         "She bites her lip and shrugs."
-        the_person.char "What do you want me to tell my [so_title]? I could tell him it's his, but I don't know if he'll believe it."
-        the_person.char "It's been a long time since I let him have sex with me."
-        menu:
+        the_person "What do you want me to tell my [so_title]? I could tell him it's his, but I don't know if he'll believe it."
+        the_person "It's been a long time since I let him have sex with me."
+        menu: #TODO: We should add disabled slugs. Might need to make these into actions in that case.
             "Leave your [so_title]" if the_person.love + 10 > leave_SO_love_calculation(the_person):
                 mc.name "I think it's time you left him so we can be together. There's no point in hiding this any longer."
                 "[the_person.title] seems nervous, but after thinking about it for a moment she nods."
-                the_person.char "You're right. This has gone on long enough. I'll... I'll tell him later today."
+                the_person "You're right. This has gone on long enough. I'll... I'll tell him later today."
                 call transform_affair(the_person) from _call_transform_affair_4
 
             "Tell him it's his":
                 mc.name "Just tell him it's his. If he doesn't believe it we can deal with that later."
                 "[the_person.title] nods nervously."
-                the_person.char "Okay, that's what I'll do."
+                the_person "Okay, that's what I'll do."
+                #TODO: Have an event based on this, more likely to spawn the higher her Love (as a inverse substitute for her Love for him)
 
             "Let him fuck you" if the_person.effective_sluttiness() >= 50 or the_person.obedience >= 140 or the_person.get_opinion_score("creampies") > 0:
                 #She won't fuck her SO unless she's slutty or obedient enough to do it despite her love for you (or if she just loves getting creampied)
                 mc.name "I want you to let him fuck you, just once. Then in a week you can tell him it's his."
-                the_person.char "Okay, I guess that would stop him from being suspicious. I'll do it, if that's what you want."
+                the_person "Okay, I guess that would stop him from being suspicious. I'll do it, if that's what you want."
 
         "She gives you a quick hug and a kiss."
-        the_person.char "That's all, I suppose. I'll keep you updated on how things are going."
+        the_person "That's all, I suppose. I'll keep you updated on how things are going."
 
     elif the_person.is_family(): #TODO: Expand this into full events for each family member. This is a placeholder until then
-        if was_accident:
-            the_person.char "I... Well, I'm pregnant, [the_person.mc_title]."
-            the_person.char "I don't know how it happened. I've been very careful with my birth control since we've been having sex."
+        if the_person.event_triggers_dict.get("immaculate_conception", False):
+            the_person "There's no easy way to explain this, so I'll just say it. I'm pregnant."
+            the_person "I don't know how it could have even happened. I haven't had sex in so long!"
+            the_person "It's not important now though, what is important is that I'm going to have a baby!"
+        elif the_person.event_triggers_dict.get("preg_accident", False):
+            the_person "I... Well, I'm pregnant, [the_person.mc_title]."
+            the_person "I don't know how it happened. I've been very careful with my birth control since we've been having sex."
         else:
-            the_person.char "We've been being pretty risky, since I'm not on my birth control and you like cumming inside me so much."
-            the_person.char "I took a test and it looks like you finally knocked me up. I'm going to have your baby."
+            the_person "We've been being pretty risky, since I'm not on my birth control and you like cumming inside me so much."
+            the_person "I took a test and it looks like you finally knocked me up. I'm going to have your baby."
 
-        the_person.char "You don't need to do anything special, I'm going to take care of everything for us. I just wanted you to know."
+        the_person "You don't need to do anything special, I'm going to take care of everything for us. I just wanted you to know."
         if the_person.love > 0:
             mc.name "Okay, I love you [the_person.title]."
-            the_person.char "I love you too [the_person.mc_title]."
+            the_person "I love you too [the_person.mc_title]."
         else:
             mc.name "Okay, I appreciate you telling me [the_person.title]."
-            the_person.char "I still hate you, [the_person.mc_title]."
+            the_person "I still hate you, [the_person.mc_title]."
 
         "[the_person.possessive_title] gives you a tight hug."
 
     elif the_person.relationship != "Single": # You aren't having a formal affair, but she's in a relationship. More of a "one night stand" kind of thing.
         $ so_title = SO_relationship_to_title(the_person.relationship)
-        if was_accident:
-            the_person.char "Well... I know I said I was on birth control when we fooled around, but it looks like something went wrong."
-            the_person.char "I took a test, and I'm pregnant. You got me pregnant."
-        else:
-            the_person.char "I wasn't on any sort of birth control when we fooled around and you came inside me."
-            the_person.char "It must have been the right time of the month, because I'm pregnant."
+        if the_person.event_triggers_dict.get("immaculate_conception", False):
+            the_person "Well I wanted you to know that... I'm pregnant. It's probably not yours, since we've never had sex."
+            the_person "You don't think your cum might have ended up in my by... accident, do you?"
+            mc.name "Nothing's impossible, I suppose."
+            the_person "I was worried you'd say that... What do you think I should do?"
 
-        the_person.char "I never meant for this to be so serious. I don't know how to tell my [so_title] that I let another man get me pregnant."
+        elif the_person.event_triggers_dict.get("preg_accident", False):
+            the_person "Well... I know I said I was on birth control when we fooled around, but it looks like something went wrong."
+            the_person "I took a test, and I'm pregnant. You got me pregnant."
+            the_person "I never meant for this to be so serious. I don't know how to tell my [so_title] that I let another man get me pregnant."
+        else:
+            the_person "I wasn't on any sort of birth control when we fooled around and you came inside me."
+            the_person "It must have been the right time of the month, because I'm pregnant."
+            the_person "I never meant for this to be so serious. I don't know how to tell my [so_title] that I let another man get me pregnant."
         menu:
             "Leave him for me" if the_person.love > leave_SO_love_calculation(the_person):
                 mc.name "Just leave him. I'll take responsibility for what happened, I'm ready to commit to a relationship with you [the_person.title]."
-                the_person.char "Are you really? I..."
+                the_person "Are you really? I..."
                 "She thinks for a long moment, then she takes your hand and nods."
-                the_person.char "Okay, if you promise to be there for me I think he deserves to tell the truth. I'll have to break it to him later today."
+                the_person "Okay, if you promise to be there for me I think he deserves to tell the truth. I'll have to break it to him later today."
                 call transform_affair(the_person) from _call_transform_affair_5 # She doesn't have the affair role, but it is effectively the same here and the functionality works.
 
             "Start having an affair" if ask_girlfriend_requirement(the_person):
@@ -182,31 +205,36 @@ label pregnant_announce(the_person):
             "Tell him it's his":
                 mc.name "Just tell him it's his. I'm sure he'll be ecstatic to hear the good news."
                 "She seems nervous and unsure, but nods her head."
-                the_person.char "I guess that's what I'll have to do. Anyways, you don't need to do anything. I just thought you should know."
+                the_person "I guess that's what I'll have to do. Anyways, you don't need to do anything. I just thought you should know."
 
     else: #She's single, a true one night stand kind of encounter.
-        if was_accident:
-            the_person.char "Well... I know I said I was on birth control when we fooled around, but it looks like something went wrong."
-            the_person.char "I took a test, and I'm pregnant. You got me pregnant."
+        if the_person.event_triggers_dict.get("immaculate_conception", False):
+            the_person "I know this is going to come out of the blue, but... I'm pregnant."
+            the_person "I know we haven't had sex, but I can't even think of anyone else I've been close to other than you."
+            the_person "Maybe... I got some of your cum inside me by accident? Like it dripped between my legs? I don't know."
+            the_person "What I do know is that I'm pregnant, and I think it's yours."
+        elif the_person.event_triggers_dict.get("preg_accident", False):
+            the_person "Well... I know I said I was on birth control when we fooled around, but it looks like something went wrong."
+            the_person "I took a test, and I'm pregnant. You got me pregnant."
         else:
-            the_person.char "I wasn't on any sort of birth control when we fooled around. It felt so good when you came inside me, but..."
+            the_person "I wasn't on any sort of birth control when we fooled around. It felt so good when you came inside me, but..."
             "She sighs and shrugs."
-            the_person.char "It must have been the right time of the month, because I'm pregnant."
-        the_person.char "You don't need to do anything, I knew the risks when we had sex. I just thought you should know."
+            the_person "It must have been the right time of the month, because I'm pregnant."
+        the_person "You don't need to do anything, I knew the risks when we had sex. I just thought you should know."
         menu:
             "Take responsibility" if ask_girlfriend_requirement(the_person):
                 mc.name "I knew the risks too, and I think it's important we're both together for this. If you'd have me, I want to be your partner for this."
                 "She blinks away a few tears and nods."
                 $ the_person.change_happiness(10)
-                the_person.char "I'm sorry, I guess the hormones are already getting to me. I'd like that."
+                the_person "I'm sorry, I guess the hormones are already getting to me. I'd like that."
                 $ the_person.add_role(girlfriend_role)
                 "You hug [the_person.possessive_title], and she hugs you back."
-                the_person.char "That's all for now, I'll keep you informed as things progress."
+                the_person "That's all for now, I'll keep you informed as things progress."
 
             "Thanks for telling me":
                 mc.name "Thank you for telling me. Let me know how things are progressing."
-                the_person.char "Okay, I will."
-
+                the_person "Okay, I will."
+    $ clear_scene()
     return
 
 init 2 python:
@@ -216,7 +244,7 @@ init 2 python:
         person.personal_region_modifiers["breasts"] = person.personal_region_modifiers["breasts"] + 0.1 #As her tits get larger they also become softer, unlike large fake tits. (Although even huge fake tits get softer)
 
         pregnant_tits_announce_action = Action("Announce Pregnant Tits", pregnant_tits_announcement_requirement, "pregnant_tits_announce", args = day)
-        person.on_talk_event_list.append(Limited_Time_Action(pregnant_tits_announce_action, 7))
+        person.on_talk_event_list.append(Limited_Time_Action(pregnant_tits_announce_action, 15))
         return
 
 label pregnant_tits_start(the_person):
@@ -302,21 +330,13 @@ label pregnant_transform_announce(start_day, the_person):
     return
 
 init 2 python:
-    def clone_schedule(person):
-        schedule = {}
-        for day in range(0, 7):
-            schedule[day] = {}
-            for tod in range(0, 5):
-                schedule[day][tod] = person.schedule[day][tod]
-        return schedule
-
     def pregnant_finish_announce_person(person):
         if "preg_old_schedule" in person.event_triggers_dict:
             renpy.say("Warning", "Something went wrong with setting the pregnancy for " + person.name + ", she is already giving birth.")
             return # she is already giving birth
 
         # copy schedule
-        person.event_triggers_dict["preg_old_schedule"] = clone_schedule(person)
+        person.event_triggers_dict["preg_old_schedule"] = copy.copy(person.schedule)
         person.set_schedule(person.home, times = [0,1,2,3,4])
 
         preg_finish_action = Action("Pregnancy Finish", preg_finish_requirement, "pregnant_finish", args = person, requirement_args = [person, day + renpy.random.randint(4,7)])

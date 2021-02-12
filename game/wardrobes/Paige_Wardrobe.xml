@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Wardrobe name="Paige_Wardrobe">
+    <FullSets>
+        <Outfit name="Paige_2_Full">
+            <UpperBody>
+                <Item alpha="1" blue="0.1" green="0.1" name="Bra" red="0.1" />
+                <Item alpha="1.0" blue="0.72" green="0.26" name="Tshirt" red="0.15" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.1" green="0.1" name="Panties" red="0.1" />
+                <Item alpha="1.0" blue="0.16" green="0.16" name="Capris" red="0.16" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.16" green="0.16" name="Sneakers" red="0.16" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1.0" blue="1.0" green="1.0" name="Bead_Bracelet" red="1.0" />
+                <Item alpha="1.0" blue="0.0" green="0.67" name="Gold_Chain_Necklace" red="0.9" />
+            </Accessories>
+        </Outfit>
+        <Outfit name="Paige_3_Full">
+            <UpperBody>
+                <Item alpha="0.95" blue="0.1" green="0.1" name="Thin_Bra" red="0.1" />
+                <Item alpha="0.95" blue="0.9" green="0.75" name="Dress_Shirt" red="0.77" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="0.95" blue="0.1" green="0.1" name="Thong" red="0.1" />
+                <Item alpha="1" blue="0.37" green="0.2" name="Mini_Skirt" red="0.3" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="0.95" blue="0.1" green="0.1" name="Garter_and_Fishnets" red="0.1" />
+                <Item alpha="1" blue="0.1" green="0.1" name="High_Heels" red="0.1" />
+            </Feet>
+            <Accessories>
+                <Item alpha="0.95" blue="0.9" green="0.75" name="Chandelier_Earings" red="0.77" />
+                <Item alpha="0.95" blue="0.9" green="0.75" name="Wool_Scarf" red="0.77" />
+            </Accessories>
+        </Outfit>
+    </FullSets>
+    <UnderwearSets />
+    <OverwearSets>
+        <Outfit name="Paige_1_Overwear">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.11" green="0.1" name="Sweater" red="0.13" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.57" green="0.74" name="Lace_Skirt" red="1.0" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.88" green="0.88" name="Boot_Heels" red="1.0" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1.0" blue="0.57" green="0.74" name="Wool_Scarf" red="1.0" />
+            </Accessories>
+        </Outfit>
+    </OverwearSets>
+</Wardrobe>

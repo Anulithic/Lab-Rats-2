@@ -200,11 +200,15 @@ label ask_be_girlfriend_label(the_person):
         $ the_person.change_love(5)
         if the_person.age > 40:
             the_person.char "Oh I'm so happy to hear you say that! I was worried about our age difference, but I don't want that to stop us!"
+            $ the_person.draw_person(position = "kissing")
             "She puts her arms around you and pulls you close."
 
         else:
-            the_person.char "Oh my god, I'm so happy! Yes, I want you to be your girlfriend!"
+            the_person.char "Oh my god, I'm so happy! Yes, I want to be your girlfriend!"
+            $ the_person.draw_person(position = "kissing")
             "She puts her arms around you and pulls you close."
+
+        $ the_person.draw_person(position = "kissing", special_modifier = "kissing")
         "She kisses you, and you kiss her back."
         $ the_person.add_role(girlfriend_role)
 

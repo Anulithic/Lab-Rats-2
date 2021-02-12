@@ -234,25 +234,25 @@ label mom_strip_obedience_accept(the_person, the_clothing, strip_type = "Full"):
 label mom_grope_body_reject(the_person):
     if the_person.effective_sluttiness("touching_body") < 5: #Fail point for touching shoulder
         "[the_person.title] seems uncomfortable as you touch her."
-        the_person "What are you doing [the_person.mc_title]?"
+        the_person.char "What are you doing [the_person.mc_title]?"
         mc.name "I was... going to give you a shoulder rub? You seem tense."
         if the_person.love > 20:
-            the_person "It's so sweet of you to think about that. I'm okay right now though."
+            the_person.char "It's so sweet of you to think about that. I'm okay right now though."
             "She gives you a quick hug, then steps back and smiles."
-            the_person "I'm so lucky, you're always looking out for ways to help me."
+            the_person.char "I'm so lucky, you're always looking out for ways to help me."
             $ the_person.change_love(1) #Just cancels out the -1 Love you'd get otherwise.
 
         else:
-            the_person "Oh, it's okay [the_person.title]. My shoulders feel fine."
+            the_person.char "Oh, it's okay [the_person.title]. My shoulders feel fine."
             mc.name "Well, if you ever change your mind."
             "She smiles and nods, but she still seems slightly uncomfortable."
 
     else: #Fail point for touching waist
-        the_person "[the_person.mc_title], maybe you should move your hand..."
+        the_person.char "[the_person.mc_title], maybe you should move your hand..."
         mc.name "Is there something wrong?"
-        the_person "I know you're just being affectionate, but it's a little... personal."
+        the_person.char "I know you're just being affectionate, but it's a little... personal."
         mc.name "Oh, I'm sorry [the_person.title], I didn't mean..."
-        the_person "It's fine, it really is. Let's just forget about it, okay?"
+        the_person.char "It's fine, it really is. Let's just forget about it, okay?"
         "You nod, and [the_person.possessive_title] seems to relax a little bit."
     return
 
@@ -414,6 +414,8 @@ label mom_flirt_response_high(the_person):
                     else:
                         "You lean in and kiss her. She seems startled for a second, then wraps her arms around you and returns the kiss."
                     call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_20
+                    $ the_person.call_dialogue("sex_review", the_report = _return)
+                    $ the_person.review_outfit()
 
                 "Just flirt":
                     mc.name "And you'll always be my beautiful, loving mom."
@@ -460,6 +462,8 @@ label mom_flirt_response_high(the_person):
                         the_person.char "Only because you really need it."
                         "You lean forward and kiss her passionately. It takes her a few seconds to warm up, but soon she is kissing you back with just as much enthusiasm."
                     call fuck_person(the_person, private = True, start_position = kissing, skip_intro = True) from _call_fuck_person_21
+                    $ the_person.call_dialogue("sex_review", the_report = _return)
+                    $ the_person.review_outfit()
 
                 "Just flirt":
                     mc.name "Relax, I'm just joking around. What I mean is you're looking stunning today."
@@ -510,7 +514,7 @@ label mom_cum_pullout(the_person):
     if mc.condom:
         if the_person.wants_creampie() and the_person.get_opinion_score("creampies") > 0 and not the_person.has_taboo("condomless_sex"): #TODO: FIgure out we want any more requirements for this to fire.
             if the_person.event_triggers_dict.get("preg_knows", False):
-                the_person.char "Do you want to take off that condom? You already got mommy pregnant, I don't mind."
+                the_person.char "Do you want to take off that condom? You already got mommy pregnant..."
 
             elif the_person.on_birth_control:
                 the_person.char "Do you... want to take the condom off, [the_person.mc_title]?"
@@ -783,6 +787,131 @@ label mom_sex_beg_finish(the_person):
     "Wait [the_person.mc_title], you can't stop now, I'm so close! Please, please help your mother cum!"
     return
 
+label mom_sex_review(the_person, the_report):
+    $ comment_position = the_person.pick_position_comment(the_report)
+    if comment_position is None:
+        return #You didn't actually do anything, no need to comment.
+
+    $ used_obedience = the_report.get("obedience_used", False) #True if a girl only tried a position because you ordered her to.
+    $ the_person.draw_person()  # make sure she stands up for talking with you
+
+    #She's worried about her SO finding out because it was in public
+    if the_report.get("was_public", False) and (the_person.effective_sluttiness()+10*the_person.get_opinion_score("public sex") < comment_position.slut_cap):
+        if used_obedience:
+            the_person "Oh, why did I let you do that here... People are watching [the_person.mc_title], someone might recognize me!"
+            mc.name "It's fine [the_person.title], I don't think anyone knows who we are."
+            "[the_person.possessive_title] seems unconvinced, but she doesn't say anything more."
+
+        else:
+            the_person "Oh [the_person.mc_title], what was I thinking... People are watching, someone might recognize me!"
+            mc.name "It's fine [the_person.title], I don't think anyone knows who we are."
+            "[the_person.possessive_title] seems unconvinced, but she doesn't say anything more."
+
+    # special condition - you fucked her brains out
+    elif the_report.get("girl orgasms", 0) > 2:
+        if used_obedience:
+            the_person "Are you feeling satisfied now [the_person.mc_title]?"
+            mc.name "Yeah, that was great [the_person.title]. I know you enjoyed it too?"
+            "[the_person.possessive_title] blushes and looks away from you."
+            the_person "It was... amazing. You're so good, I won't ask you who you learned that from."
+        else:
+            the_person "Oh my... I'm sorry sweetheart, I shouldn't have let myself go like that."
+            the_person "I don't know what came over me, I just stopped thinking straight after my second orgasm! I..."
+            "She stops herself and takes a deep breath."
+            mc.name "Don't worry [the_person.title], I really enjoyed our time together."
+
+    #No special conditions, just respond based on how orgasmed and how slutty the position was.
+    elif the_report.get("girl orgasms", 0) > 0 and the_report.get("guy orgasms", 0) > 0: #You both came
+        if the_person.effective_sluttiness() > comment_position.slut_cap: #She's sluttier than the position cap, it was tame
+            the_person "Did you have a good time sweetheart? That was some fun exercise."
+            the_person "We could even... go a little further, next time. Only if you're comfortable with that, of course!"
+
+        elif the_person.effective_sluttiness() > comment_position.slut_requirement: #She thought it was fun/exciting
+            the_person "I hope you're feeling satisfied sweetheart. That was nice."
+            "She gives you a warm, loving smile."
+
+        elif used_obedience: #She only did it because she was commanded
+            the_person "Are you feeling satisfied now sweetheart?"
+            mc.name "Yeah, that was great [the_person.title]. Did you like it too?"
+            "[the_person.possessive_title] blushes and looks away from you."
+            the_person "It was... nice. You're very good at that, I'm not sure I want to know where you learned it."
+
+        else: # She's suprised she even tried that.
+            the_person "Oh my... I'm sorry sweetheart, I shouldn't have let that get so serious."
+            the_person "I don't know what came over me, I just stopped thinking straight and wanted more! I..."
+            "She stops herself and takes a deep breath."
+            the_person "I think I'm going to need a moment to catch my breath."
+            # the_person "I just got so carried away, and then you made me... Wow... I think I need a sec."
+
+    elif the_report.get("girl orgasms", 0) > 0: #Only she came
+        if the_person.effective_sluttiness() > comment_position.slut_cap: #She's sluttier than the position
+            the_person "All done? Well, it's very kind of you making sure your partner finishes even if you don't."
+            the_person "I didn't realise I raised such a gentleman, but I'm glad I did!"
+            the_person "I'll have to give you some sort of reward. I'm sure I'll think of something for next time."
+
+        elif the_person.effective_sluttiness() > comment_position.slut_requirement: #She thought it was fun/exciting
+            the_person "Thank you for being so considerate and making sure I finished even though you're tired."
+            the_person "It felt wonderful, and I'll try and make it up to you some other way, okay?"
+
+        elif used_obedience: #She only did it because she was commanded
+            the_person "We're done? I thought you would want to finish too."
+            mc.name "Maybe some other time, but I wanted to make sure you were taken care of first."
+            "[the_person.possessive_title] blushes and looks away from you."
+            the_person "Oh [the_person.mc_title], I didn't realise you were being thoughtful, not selfish. I feel a little silly now..."
+            the_person "It felt amazing. Thank you."
+
+        else: # She's suprised she even tried that.
+            the_person "Oh, that's all? I mean, you're right... we should stop. We've taken this too far already."
+            the_person "It felt nice wonderful, but I should have stopped you earlier."
+            the_person "I think I need to catch my breath after that. Ah..."
+
+    elif the_report.get("guy orgasms", 0) > 0: #Only you came
+        if the_person.effective_sluttiness() > comment_position.slut_cap: #She's sluttier than the position
+            the_person "How was that sweetheart, was it everything you wanted it to be?"
+            mc.name "Yeah, that was great [the_person.title]."
+            the_person "Good, that's what I like to hear. Next time we can go even further, if you'd like."
+            the_person "Anything to make my special man happy."
+
+        elif the_person.effective_sluttiness() > comment_position.slut_requirement: #She thought it was fun/exciting
+            the_person "How was that sweetheart, did you have a good time?"
+            mc.name "Yeah, that was great [the_person.title]."
+            "She smiles warmly."
+            the_person "Good, that's what I like to hear. I love making you happy."
+
+        elif used_obedience: #She only did it because she was commanded
+            the_person "[the_person.possessive_title] sighs, obviously relieved that you're finished."
+
+        else:  # She's suprised she even tried that.
+            the_person "I hope you enjoyed yourself [the_person.mc_title]."
+            mc.name "Yeah, that was great [the_person.title]."
+            the_person "Good, but... we shouldn't take things so far in the future, okay?"
+            the_person "It's my fault, really. I should be the more responsible of the two of us."
+
+    else: #Nobody came.
+        if the_person.effective_sluttiness() > comment_position.slut_cap: #She's sluttier than the position
+            the_person "Are you tired out already [the_person.mc_title]?"
+            the_person "Next time you should just let me take care of you, okay? I'll do everything for my special man."
+
+        elif the_person.effective_sluttiness() > comment_position.slut_requirement: #She thought it was fun/exciting
+            the_person "Tired out already? Oh, well that's okay [the_person.mc_title], you have a busy life."
+            the_person "Next time we'll take it slower, and I'll spend a little more time focused on you."
+
+        elif used_obedience: #She only did it because she was commanded
+            the_person "Tired out? Well, that's okay [the_person.mc_title]."
+            the_person "We shouldn't be doing this anyways, so it's probably for the best."
+            "[the_person.possessive_title] seems relieved that you're stopping."
+
+        else:  # She's suprised she even tried that.
+            the_person "Oh what am I thinking! Of course we should stop, this has gone too far already."
+            the_person "I'm sorry [the_person.mc_title], it's my job to be the responsible one and set boundaries."
+            # the_person "You're right, we should probably stop. I just go so carried away, I wouldn't normally do something like this..."
+            # "She laughs nervously, trying to hide her embarrassment."
+
+    # Gave creampie while she is not on birth control (extra dialog when she could get pregnant)
+    if the_report.get("creampies", 0) > 0 and not the_person.on_birth_control and not the_person.event_triggers_dict.get("preg_knows", False):
+        the_person "Well [the_person.mc_title], how can I explain to your sister how I got pregnant?"
+    return
+
 ## Taboo break dialogue ##
 label mom_kissing_taboo_break(the_person):
     the_person.char "[the_person.mc_title], what are you doing?"
@@ -932,7 +1061,7 @@ label mom_sucking_cock_taboo_break(the_person):
         mc.name "You've given a blowjob before, right?"
         "She nods meekly."
         the_person.char "When I was younger. It's been a long time..."
-        mc.name "Then you know what to do. Just kneel down, put slide your lips onto it, and it'll all come back to you."
+        mc.name "Then you know what to do. Just kneel down, put your lips onto it, and it'll all come back to you."
         $ the_person.draw_person(position = "kissing")
         "[the_person.possessive_title] grabs your head and kisses you passionately. You wrap your arms around her reciprocate."
         "She finally breaks the kiss, pulling back her head and staring into your eyes."

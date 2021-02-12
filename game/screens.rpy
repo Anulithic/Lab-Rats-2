@@ -135,12 +135,12 @@ style namebox_label is say_label
 
 
 style window:
-    xalign 0.55
+    xalign 0.54
     xfill True
     yalign gui.textbox_yalign
     ysize gui.textbox_height
 
-    background Image("gui/textbox.png", xalign=0.55, yalign=1.0)
+    background im.Alpha("gui/textbox.png", .9, xalign=0.54, yalign=1.0)
 
 style namebox:
     xpos gui.name_xpos
@@ -155,7 +155,8 @@ style namebox:
 style say_label:
     color gui.accent_color
     font gui.name_font
-    size gui.name_text_size
+    size gui.name_text_size - 4
+    xoffset -4
     xalign gui.name_xalign
     yalign 0.5
     outlines [(2,"#222222",0,0)]
@@ -165,6 +166,7 @@ style say_dialogue:
     xanchor gui.text_xalign
     xsize gui.text_width
     ypos gui.text_ypos
+    yoffset -10
     first_indent 50
     outlines [(2,"#222222",0,0)]
 
@@ -1614,7 +1616,7 @@ screen notify(message):
     frame at notify_appear:
         text message
 
-    timer 3.25 action Hide('notify')
+    timer 5 action Hide('notify')
 
 
 transform notify_appear:

@@ -6,16 +6,12 @@ init -2 python:
         return False
 
     def freeuse_fuck_requirement(person):
-        if not mc.is_at_work():
-            return False
-        elif not mc.business.is_open_for_business():
-            return False
-        return True
+        return mc.is_at_work() and mc.business.is_open_for_business()
 
     def remove_employee_freeuse_role(person):
         person.remove_role(employee_freeuse_role, remove_linked = False)
         if person.has_role(employee_role):
-            busywork_report_action = Action("Freeuse report crisis", employee_freeuse_report_requirement, "employee_freeuse_report_label", args = person, requirement_args = person)
+            busywork_report_action = Action("Freeuse report crisis", freeuse_fuck_requirement, "employee_freeuse_report_label", args = person, requirement_args = person)
             mc.business.mandatory_crises_list.append(busywork_report_action)
 
 
@@ -26,7 +22,7 @@ label employee_freeuse_remove_label(the_person):
 label employee_freeuse_report_label(the_person):
     $ the_person.draw_person()
     "[the_person.title] catches your attention while you are working."
-    the_person.char "Do you have a moment [the_person.title]?"
+    the_person.char "Do you have a moment [the_person.mc_title]?"
     mc.name "Sure, what do you need?"
     the_person.char "I wanted to let you know that I've finished my week of punishment."
     mc.name "Good, I hope you've learned your lesson."
@@ -99,4 +95,6 @@ label employee_freeuse_fuck(the_person):
         $ the_person.event_triggers_dict["freeuse orgasms"] += the_report.get("girl orgasms", 0)
     else:
         $ the_person.event_triggers_dict["freeuse orgasms"] = the_report.get("girl orgasms", 0)
+
+    $ the_person.review_outfit()
     return

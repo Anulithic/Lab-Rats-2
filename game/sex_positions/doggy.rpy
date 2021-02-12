@@ -2,8 +2,8 @@
     python:
         doggy = Position(name = "Doggy", slut_requirement = 60, slut_cap = 80, requires_hard = True, requires_large_tits = False,
             position_tag = "doggy", requires_location = "Lay", requires_clothing = "Vagina", skill_tag = "Vaginal",
-            girl_arousal = 16, girl_energy = 9,
-            guy_arousal = 22, guy_energy = 13,
+            girl_arousal = 16, girl_energy = 14,
+            guy_arousal = 22, guy_energy = 20,
             connections = [],
             intro = "intro_doggy",
             scenes = ["scene_doggy_1","scene_doggy_2"],

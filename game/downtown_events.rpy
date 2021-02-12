@@ -78,7 +78,7 @@ label discover_stripclub_label():
             "You open the door and are immediately assaulted by pulsing, base heavy music."
 
             $ mc.change_location(strip_club)
-
+            $ mc.location.show_background()
 
 
         "Keep exploring":
@@ -132,13 +132,20 @@ label lady_of_the_night_label():
             $ the_report = _return
             $ the_person.clear_situational_obedience("prostitute")
 
-            if the_report.get("girl orgasms",0) > 0:
+            if the_report.get("girl orgasms", 0) > 0 and the_report.get("guy orgasms", 0) > 0:
                 "It takes [the_person.title] a few moments to catch her breath."
                 the_person.char "Maybe I should be paying you... Whew!"
+            elif the_report.get("girl orgasms", 0) > 0:
+                "It takes [the_person.title] a few moments to catch her breath."
+                the_person.char "Am I not hot enough for you, darling?"
+            else:
+                the_person.char "Not bad darling, I hope you had a good time."
 
             $ the_person.review_outfit()
+            $ the_person.draw_person()
 
             the_person.char "It's been fun, if you ever see me around maybe we can do this again."
+            $ the_person.draw_person(position = "walking_away")
             "She gives you a peck on the cheek, then turns and struts off into the night."
             $ clear_scene()
 

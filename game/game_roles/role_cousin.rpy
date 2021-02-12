@@ -178,7 +178,7 @@ init -2 python:
         the_cousin.set_schedule(strip_club, times = [3, 4])
 
         the_cousin.event_triggers_dict["stripping"] = True #Used to flag the blackmail event.
-        cousin_room_search_action = Action("Search her room. {image=gui/heart/Time_Advance.png}", cousin_room_search_requirement, "cousin_search_room_label",requirement_args = [the_cousin], args = [the_cousin, the_aunt])
+        cousin_room_search_action = Action("Search her room {image=gui/heart/Time_Advance.png}", cousin_room_search_requirement, "cousin_search_room_label",requirement_args = [the_cousin], args = [the_cousin, the_aunt])
         cousin_bedroom.actions.append(cousin_room_search_action) #Lets you search her room for a clue about where to go to find her.
         return
 
@@ -196,7 +196,7 @@ init -2 python:
         cousin_talk_boobjob_again_action = Action("Talk to her about getting a boobjob\nCosts: $5000", cousin_talk_boobjob_again_requirement, "cousin_talk_boobjob_again_label")
         cousin_role.actions.append(cousin_talk_boobjob_again_action)
         return
-    
+
     def remove_cousin_talk_boobjob_again_action():
         for role in cousin.special_role:
             for act in role.actions:
@@ -389,9 +389,12 @@ label cousin_blackmail_list(the_person):
             mc.name "I want to see you strip for me."
             if the_person.effective_sluttiness() >= 15:
                 "[the_person.possessive_title] doesn't say anything for a second."
-                the_person.char "Fine. Sit down and pay attention. I'm only doing this once."
+                the_person.char "Fine. Sit down and pay attention. I'm not doing this for fun."
                 if the_person.effective_sluttiness("underwear_nudity") <= 20:
                     #She only wants to show you her underwear.
+                    "She starts to move, then pauses to glare at you."
+                    the_person.char "And I'm not taking off my underwear. Got it?"
+                    mc.name "Whatever, just make sure you put on a good show for me."
                     if the_person.outfit.wearing_bra(): #If she's wearing a bra strip down to it.
                         while the_person.outfit.bra_covered():
                             $ the_item = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
@@ -401,7 +404,8 @@ label cousin_blackmail_list(the_person):
                     else: #She's not wearing a bra and doesn't want you to see her tits.
                         "[the_person.title] seems nervous and plays with her shirt." #TODO: Check that she is wearing a shirt
                         mc.name "What's wrong?"
-                        the_person.char "I don't have a bra on... I can't take this off."
+                        "She scoffs and looks away."
+                        the_person.char "Nothing. I just... don't have a bra on... I can't take this off."
                         mc.name "Come on, you know the deal."
                         the_person.char "Nope. Not doing it. Be happy with what you're getting."
 
@@ -425,6 +429,7 @@ label cousin_blackmail_list(the_person):
                     $ the_person.draw_person(position = "back_peek")
                     $ the_person.update_outfit_taboos()
                     the_person.char "Finished yet? I bet you're about to cream your fucking pants looking at this."
+                    #TODO: Add a strip-show-and-masturbate event that we can pass people into.
                     "You take a second to enjoy the view."
                     mc.name "Alright, that'll do."
                     the_person.char "Finally..."
@@ -573,6 +578,7 @@ label cousin_blackmail_list(the_person):
 
                 call fuck_person(the_person) from _call_fuck_person_25
                 $ the_report = _return
+                $ the_person.draw_person()
                 if the_report.get("girl orgasms", 0) > 0:
                     "[the_person.possessive_title] closes her eyes and tries to catch her breath."
                     the_person.char "Fuck... God fucking damn it..."
@@ -606,7 +612,7 @@ label aunt_cousin_hint_label(the_aunt, the_cousin):
     # prevent event from triggering twice
     python:
         if any(x.effect == "cousin_search_room_label" for x in cousin.home.actions):
-            renpy.return_statement()       
+            renpy.return_statement()
 
     #Your aunt calls at night to ask if you know where Gabrielle is. Hints that she's up to something late at night.
     "You get a call on your phone. It's [the_aunt.possessive_title]."
@@ -723,6 +729,7 @@ label cousin_search_room_label(the_cousin, the_aunt):
             $ mom.change_happiness(-5)
             $ mom.change_love(-1)
             $ mc.change_location(downtown)
+            $ mc.location.show_background()
             "You'll need [the_aunt.possessive_title] out of the apartment if you want to search [the_cousin.title]'s room undisturbed."
             return
         else:
@@ -735,6 +742,7 @@ label cousin_search_room_label(the_cousin, the_aunt):
                 $ the_aunt.change_love(-1)
                 "You're forced to abandon your search. [the_aunt.possessive_title] escorts you to the living room."
                 $ mc.change_location(aunt_apartment)
+                $ mc.location.show_background()
                 "If she was more obedient she might let you continue the search, or you could wait until she isn't in the apartment."
                 return
 

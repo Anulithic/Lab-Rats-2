@@ -2,8 +2,8 @@ init:
     python:
         doggy_anal = Position(name = "Anal Doggy", slut_requirement = 70, slut_cap = 90, requires_hard = True, requires_large_tits = False,
             position_tag = "doggy", requires_location = "Lay", requires_clothing = "Vagina", skill_tag = "Anal",
-            girl_arousal = 11, girl_energy = 6,
-            guy_arousal = 14, guy_energy = 6,
+            girl_arousal = 16, girl_energy = 14,
+            guy_arousal = 22, guy_energy = 20,
             connections = [],
             intro = "intro_doggy_anal",
             scenes = ["scene_doggy_anal_1","scene_doggy_anal_2"],
@@ -91,7 +91,7 @@ label taboo_break_doggy_anal(the_girl, the_location, the_object):
         "You spit onto your cock and try again. This time making better progress, sliding the tip of your dick into [the_girl.title]'s ass."
         the_girl.char "Oh god... Fuck!"
     "Inch by inch you slide your entire length into [the_girl.possessive_title]. She grunts and gasps the whole way down."
-    "When stop when you've bottomed out, to give your cock time to properly stretch her out."
+    "You stop when you've bottomed out, to give your cock time to properly stretch her out."
     the_girl.char "I think... I'm ready for you to move some more..."
     "You pull back a little bit and give her a few testing strokes. When she can handle those you speed up, until you're thrusting your entire length."
     return

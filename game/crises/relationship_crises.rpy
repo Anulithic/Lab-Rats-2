@@ -680,13 +680,13 @@ label friends_help_friends_be_sluts_label():
                             "They turn and leave the room together."
 
 
-                else: #She wants to suck your dick, but is embarassed about it.
+                else: #She wants to suck your dick, but is embarrassed about it.
                     $ the_group.draw_group()
                     "You're thinking about taking a break and stretching your legs when you see [person_one.title] and [person_two.title] through your office door."
                     "They're talking quietly with each other, occasionally glancing in your direction. When [person_two.title] sees you watching she looks away quickly."
                     "[person_one.title] stands up and grabs her friend's hand, pulling her out of her chair. They walk over to you together."
                     person_one.char "[person_one.mc_title], could me and [person_two.title] talk to you privately for a moment?"
-                    if person_two.effective_sluttiness("sucking_cock") < 50: #She's embarassed, but wants to do it
+                    if person_two.effective_sluttiness("sucking_cock") < 50: #She's embarrassed, but wants to do it
                         $ the_group.draw_person(person_two)
                         person_two.char "It's nothing important, it could probably wait until later. In fact, never mind at all."
                         $ the_group.draw_person(person_one)
@@ -745,14 +745,17 @@ label friends_help_friends_be_sluts_label():
                             if the_report.get("guy orgasms", 0) > 0:
                                 "You sit down in your office chair, thoroughly drained. [person_two.title] smiles, seemingly proud of her work."
                                 mc.name "So, was that everything you wanted it to be?"
+                                $ person_two.draw_person()
                                 person_two.char "It was fun, I can't wait to tell [person_one.title] all about it."
 
                             else:
                                 "You sit down in your office chair and sigh."
                                 person_two.char "I'm sorry, I'm not doing a good job, am I?"
+                                $ person_two.draw_person()
                                 mc.name "You were doing fine, I'm just not in the mood. You should get back to work."
                                 $ person_two.change_happiness(-5)
                             $ person_two.review_outfit(dialogue = False)
+                            $ person_two.draw_person(position = "walking_away")
                             "[person_two.possessive_title] takes a moment to get herself tidied up, then steps out of your office."
 
                         "Decline her offer":
@@ -771,12 +774,14 @@ label friends_help_friends_be_sluts_label():
                             $ person_one.add_infraction(Infraction.inappropriate_behaviour_factory())
                             $ person_two.add_infraction(Infraction.inappropriate_behaviour_factory())
                             person_two "I... Of course, I'm sorry I even brought it up [person_two.mc_title]!"
+                            $ person_two.draw_person(position = "walking_away")
                             "She hurries out of your office. [person_one.title] sighs and rolls her eyes."
                             $ clear_scene()
                             $ person_one.draw_person()
                             person_one "Really? I bring you a cute girl to suck your dick and you decide you need to punish both of us? What more do you want?"
                             mc.name "I'm sorry, but rules are rules. You didn't leave me much of a choice."
                             person_one "Whatever, I need to go make sure [person_one.title] is fine."
+                            $ person_one.draw_person(position = "walking_away")
                             "She turns and leaves your office, following after her friend."
 
             "Ignore them":
@@ -801,6 +806,17 @@ init 1 python:
     work_relationship_change_crisis = Action("Work Relationship Change Crisis", work_relationship_change_crisis_requirement, "work_relationship_change_label")
     crisis_list.append([work_relationship_change_crisis,12])
 
+    def work_relationship_get_friend_chance(person_one, person_two):
+        friend_chance = 50
+        for an_opinion in person_one.opinions:
+            if person_one.get_opinion_score(an_opinion) == person_two.get_opinion_score(an_opinion):
+                friend_chance += 10
+            elif (person_one.get_opinion_score(an_opinion) > 0 and person_two.get_opinion_score(an_opinion) < 0) or (person_two.get_opinion_score(an_opinion) > 0 and person_one.get_opinion_score(an_opinion) < 0):
+                friend_chance += -10
+
+        friend_chance += (person_one.get_opinion_score("small talk")*5) + (person_two.get_opinion_score("small talk")*5)
+        return friend_chance
+
 label work_relationship_change_label():
     $ the_relationship = get_random_from_list(town_relationships.get_business_relationships())
     if the_relationship is None:
@@ -813,18 +829,7 @@ label work_relationship_change_label():
         $ person_one = the_relationship.person_b
         $ person_two = the_relationship.person_a
 
-    $ friend_chance = 50
-    python:
-        for an_opinion in person_one.opinions:
-            if person_one.get_opinion_score(an_opinion) == person_two.get_opinion_score(an_opinion):
-                friend_chance += 10
-            elif (person_one.get_opinion_score(an_opinion) > 0 and person_two.get_opinion_score(an_opinion) < 0) or (person_two.get_opinion_score(an_opinion) > 0 and person_one.get_opinion_score(an_opinion) < 0):
-                friend_chance += -10
-
-        friend_chance += (person_one.get_opinion_score("small talk")*5) + (person_two.get_opinion_score("small talk")*5)
-
-
-    if renpy.random.randint(0,100) < friend_chance:
+    if renpy.random.randint(0,100) < work_relationship_get_friend_chance(person_one, person_two):
         #Their relationship improves
         $ town_relationships.improve_relationship(person_one, person_two)
         if mc.is_at_work():
@@ -835,4 +840,8 @@ label work_relationship_change_label():
         if mc.is_at_work():
             "While working you notice [person_one.title] and [person_two.title] aren't getting along with each other. They seem to have developed an unfriendly rivalry."
 
+    python:
+        del person_one
+        del person_two
+        del the_relationship
     return

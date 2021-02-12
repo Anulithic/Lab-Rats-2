@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Wardrobe name="Aunt_Wardrobe">
+    <FullSets>
+        <Outfit name="Aunt_Full_1">
+            <UpperBody>
+                <Item alpha="1" blue="1.0" green="1.0" name="Tight_Vest" red="1.0" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.7" green="0.63" name="Tiny_G_String" red="0.8" />
+                <Item alpha="1" blue="0.15" green="0.15" name="Capris" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="0.18" green="0.18" name="Heels" red="0.18" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1" blue="0.15" green="0.15" name="Lace_Choker" red="0.15" />
+            </Accessories>
+        </Outfit>
+        <Outfit name="Aunt_Full_2">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.7" green="0.63" name="Corset" palpha="1.0" pattern="Pattern_1" pblue="0.62" pgreen="0.52" pred="0.79" red="0.8" />
+                <Item alpha="1.0" blue="0.84" green="0.79" name="Tanktop" red="0.94" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.62" green="0.52" name="Thong" palpha="1.0" pattern="Pattern_1" pblue="0.7" pgreen="0.63" pred="0.8" red="0.79" />
+                <Item alpha="1" blue="0.18" green="0.18" name="Capris" red="0.18" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="0.18" green="0.18" name="High_Heels" red="0.18" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1.0" blue="0.7" green="0.63" name="Wide_Choker" red="0.8" />
+            </Accessories>
+        </Outfit>
+    </FullSets>
+    <UnderwearSets>
+        <Outfit name="Aunt_Underwear_3">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.7" green="0.63" name="Lace_Bra" palpha="1.0" pattern="Pattern_1" pblue="0.53" pgreen="0.49" pred="0.63" red="0.8" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.7" green="0.63" name="Lace_Panties" palpha="1.0" pattern="Pattern_1" pblue="0.53" pgreen="0.49" pred="0.63" red="0.8" />
+            </LowerBody>
+            <Feet />
+            <Accessories />
+        </Outfit>
+        <Outfit name="Aunt_Underwear_2">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.7" green="0.63" name="Sports_Bra" palpha="1.0" pattern="Pattern_1" pblue="0.46" pgreen="0.47" pred="0.46" red="0.8" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.8" green="0.71" name="Cotton_Panties" red="0.89" />
+            </LowerBody>
+            <Feet />
+            <Accessories />
+        </Outfit>
+        <Outfit name="Aunt_Underwear_1">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.7" green="0.63" name="Strapless_Bra" red="0.8" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.82" green="0.58" name="Thin_Panties" palpha="1.0" pattern="Pattern_1" pblue="0.7" pgreen="0.63" pred="0.8" red="0.81" />
+            </LowerBody>
+            <Feet />
+            <Accessories />
+        </Outfit>
+    </UnderwearSets>
+    <OverwearSets>
+        <Outfit name="Aunt_Overwear_1">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.73" green="0.66" name="Tshirt" red="0.87" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.18" green="0.18" name="Capris" red="0.18" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="0.18" green="0.18" name="Sandal_Heels" red="0.18" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="Aunt_Overwear_2">
+            <UpperBody>
+                <Item alpha="1" blue="0.8" green="0.89" name="Lace_Crop_Top" red="0.89" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.18" green="0.18" name="Leggings" red="0.18" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="0.18" green="0.18" name="Sandal_Heels" red="0.18" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="Aunt_Overwear_3">
+            <UpperBody>
+                <Item alpha="1" blue="0.91" green="0.91" name="Tanktop" red="0.91" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="0.8" blue="1.0" green="0.91" name="Jean_Hotpants" red="0.9" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="0.48" green="0.48" name="Sneakers" palpha="1" pattern="Pattern_1" pblue="0.73" pgreen="0.73" pred="0.73" red="0.48" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+    </OverwearSets>
+</Wardrobe>

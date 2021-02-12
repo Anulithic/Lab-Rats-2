@@ -322,7 +322,7 @@ init -1:
                 the_person.change_slut_core(amount, add_to_log)
 
         def nora_reward_genius_trait_on_apply(the_person, add_to_log):
-            if (the_person.charisma < 7):        
+            if (the_person.charisma < 7):
                 the_person.charisma = 7
             if (the_person.int < 7):
                 the_person.int = 7
@@ -898,7 +898,7 @@ init -1:
             base_side_effect_chance = 1000000,
             on_apply = nora_suggest_up_on_apply,
             on_remove = nora_suggest_up_on_remove,
-            tier = 2,
+            tier = 1,
             start_researched = False,
             research_needed = 1000000,
             exclude_tags = "Suggest")
@@ -910,7 +910,7 @@ init -1:
             research_added = 75,
             base_side_effect_chance = 1000000,
             on_day = nora_nightmares_on_day,
-            tier = 2,
+            tier = 1,
             start_researched = False,
             research_needed = 1000000)
 
@@ -921,7 +921,7 @@ init -1:
             research_added = 75,
             base_side_effect_chance = 1000000,
             on_turn = nora_obedience_swing_on_turn,
-            tier = 2,
+            tier = 1,
             start_researched = False,
             research_needed = 1000000)
 
@@ -934,7 +934,7 @@ init -1:
             base_side_effect_chance = 1000000,
             on_apply = nora_sluttiness_boost_on_apply,
             on_remove = nora_sluttiness_boost_on_remove,
-            tier = 2,
+            tier = 1,
             start_researched = False,
             research_needed = 1000000)
 

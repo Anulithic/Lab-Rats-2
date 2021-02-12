@@ -136,6 +136,13 @@ init -2:
         list_of_names.append("Stephine")
         list_of_names.append("Sydney")
         list_of_names.append("Amai")
+        list_of_names.append("Edith")
+        list_of_names.append("Alina")
+        list_of_names.append("Jae")
+        list_of_names.append("Abbigail")
+        list_of_names.append("Kayla")
+        list_of_names.append("Tia")
+        list_of_names.append("Mimi")
 
         def get_random_name():
             return get_random_from_list(list_of_names)
@@ -240,6 +247,13 @@ init -2:
         list_of_last_names.append("Sladek")
         list_of_last_names.append("Liu")
         list_of_last_names.append("Carbonara")
+        list_of_last_names.append("Anne")
+        list_of_last_names.append("Li")
+        list_of_last_names.append("West")
+        list_of_last_names.append("Everette")
+        list_of_last_names.append("Derry")
+        list_of_last_names.append("Ling")
+        list_of_last_names.append("Bjornson")
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)
@@ -797,7 +811,7 @@ init -2:
             return
 
         def add_aunt_introduction_actions():
-            aunt_intro_action = Action("Aunt introduction", aunt_intro_requirement, "aunt_intro_label", requirement_args = renpy.random.randint(15,20))
+            aunt_intro_action = Action("Aunt introduction", aunt_intro_requirement, "aunt_intro_label", requirement_args = renpy.random.randint(24,30))
             mc.business.mandatory_crises_list.append(aunt_intro_action) #Aunt and cousin will be visiting tomorrow in the morning
             family_games_night_intro_action = Action("Family games night intro", family_games_night_intro_requirement, "family_games_night_intro")
             aunt.on_room_enter_event_list.append(family_games_night_intro_action)
@@ -898,6 +912,7 @@ init 1 python:
             stat_array = [3,4,3], skill_array = [1,1,4,2,1], sex_array = [3,4,2,1], start_sluttiness = 24, start_obedience = 12, start_happiness = 119, start_love = 7, \
             title = "Stephanie", possessive_title = "Your friend", mc_title = mc.name, relationship = "Single", kids = 0)
         stephanie.generate_home()
+        stephanie.home.add_person(stephanie)
         stephanie.opinions["research work"] = [2, True] #Steph always loves research work, which you know
 
         ### NORA ##

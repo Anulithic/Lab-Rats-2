@@ -97,7 +97,7 @@ init -2 python:
             return "Requires: 15 Love"
         else:
             return True
-    
+
     def add_advance_serum_unlock_stage_two(the_person):
         mc.business.event_triggers_dict["advanced_serum_stage_1"] = True
         advanced_serum_unlock_stage_2 = Action("Advanced serum unlock stage 2",advanced_serum_stage_2_requirement,"advanced_serum_stage_2_label", args = the_person, requirement_args = [the_person, day + renpy.random.randint(2,4)])
@@ -245,7 +245,7 @@ label advanced_serum_stage_2_label(the_person):
         the_person.char "I have news about the prototype serum you asked me to retrieve. Meet me in the R&D department when you have a moment."
         "You finish up what you were working on and head over to meet [the_person.title]."
         $ mc.change_location(mc.business.r_div)
-        $ mc.business.r_div.show_background()
+        $ mc.location.show_background()
         $ the_person.draw_person()
         mc.name "What's the news [the_person.title]?"
 
@@ -317,6 +317,7 @@ label advanced_serum_stage_2_label(the_person):
                 "[the_person.possessive_title] giggles softly."
                 the_person.char "Ahh, that was a lot of fun [the_person.mc_title]. I really want to give that another try, maybe once you've had a chance to recharge."
 
+            $ the_person.draw_person()
             "It's been a few minutes since [the_person.title] took the dose of prototype serum. Besides the obvious spike in arousal she seems more carefree and eager to please you."
             "Even her tone of voice has changed; She's practically bubbling over with excitement right now. She certainly doesn't seem like the intelligent research head you've come to rely on though."
 
@@ -330,9 +331,11 @@ label advanced_serum_stage_2_label(the_person):
                     mc.name "Okay [the_person.title], we're all done here."
                     "Her eyebrows knit together, like a child's attempt to concentrate."
                     the_person.char "I... wasn't there something I was supposed to do first? Or have done? Uh... I'm sorry [the_person.mc_title], I'm having a real hard time thinking right."
+                    $ the_person.draw_person(emotion = "happy")
                     "She sticks out her tongue, then giggles and shrugs."
                     the_person.char "Oh well, how important can it be, right? Glad I could help you with your science. And all that fun other stuff."
                     mc.name "And thank you for all that help."
+                    $ the_person.draw_person(position = "walking_away")
                     "[the_person.possessive_title] gives you a wink and leaves the room. "
                     $ clear_scene()
                     "You take [the_person.title]'s phone off of it's tripod and make a copy of the footage it took. Maybe your next head researcher can make use of this to figure out how to press forward."

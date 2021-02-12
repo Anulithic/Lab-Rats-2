@@ -2,8 +2,8 @@
     python:
         piledriver = Position(name = "Piledriver", slut_requirement = 70, slut_cap = 90, requires_hard = True, requires_large_tits = False,
             position_tag = "missionary", requires_location = "Lay", requires_clothing = "Vagina", skill_tag = "Vaginal",
-            girl_arousal = 18, girl_energy = 8,
-            guy_arousal = 26, guy_energy = 14,
+            girl_arousal = 14, girl_energy = 12,
+            guy_arousal = 26, guy_energy = 20,
             connections = [],
             intro = "intro_piledriver",
             scenes = ["scene_piledriver_1","scene_piledriver_2"],
@@ -224,7 +224,7 @@ label outro_piledriver(the_girl, the_location, the_object):
                 if mc.condom:
                     "You had no intention of stopping, but hearing her ask for it makes you cum even harder."
                     "You push yourself as deep as you can manage and pump your load out into her cunt, hopefully contained by your condom."
-                    $ the_girl.call_dialogue("cum_vagina")
+                    $ the_girl.call_dialogue("cum_condom")
                     "You take a moment to catch your breath, then you pull your cock out of [the_girl.title] and sit back down. The condom tip is ballooned out, hanging to one side and filled with your cum."
                     if the_girl.get_opinion_score("drinking cum") > 0 and the_girl.sluttiness > 50:
                         $ the_girl.discover_opinion("drinking cum")
@@ -238,13 +238,12 @@ label outro_piledriver(the_girl, the_location, the_object):
 
                 else:
                     "You had no intention of stopping either way, but hearing her ask for it makes you cum even harder. You gasp and push yourself as deep as you can, draining your balls into [the_girl.title]'s cunt."
-                    $ the_girl.call_dialogue("cum_vagina")
                     $ the_girl.cum_in_vagina()
                     $ piledriver.redraw_scene(the_girl)
+                    $ the_girl.call_dialogue("cum_vagina")
                     the_girl.char "Mmmm, it's so nice and warm..."
                     "You take a moment to catch your breath, then sit back and pull your cock out of [the_girl.title]."
                     "You keep her on her back for a few more seconds, enjoying the way the position keeps your semen inside of her."
-
             else:
                 if not the_girl.on_birth_control or not the_person.event_triggers_dict.get("preg_knows", False):
                     the_girl.char "Wait, make sure to pull out!"

@@ -7,7 +7,7 @@ init -1:
     define bedroom_background = Image("Bedroom_1.png")
     define bedroom_background_dark = Image("Bedroom_1_Dark.png")
 
-    define home_bathroom_background = Image("Home_Bathroom_Background.jpg")
+    define home_bathroom_background = Image("Home_Bathroom_Background.png")
 
     define kitchen_background = Image("Kitchen_1.png")
     define kitchen_background_dark = Image("Kitchen_Dark.png")
@@ -24,10 +24,10 @@ init -1:
     define outside_background_dark = Image("Outside_Background_Dark.png")
 
     define bar_background = Image("Bar_Background.png")
-    define stripclub_background = Image("Club_Background.jpg")
+    define stripclub_background = Image("Club_Background.png")
 
-    define campus_background = Image("Campus.jpg")
-    define campus_background_dark = Image("Campus_dark.jpg")
+    define campus_background = Image("Campus.png")
+    define campus_background_dark = Image("Campus_dark.png")
 
     define restaraunt_background = Image("Restaraunt_Background.png")
 
@@ -51,3 +51,5 @@ init -1:
         standard_indoor_lighting = [[0.91,0.91,0.95],[0.98,0.98,0.98],[0.98,0.98,0.98],[0.98,0.98,0.98],[0.91,0.91,0.95]]
         standard_outdoor_lighting = [[0.7,0.7,0.8],[1,1,1],[1,1,1],[1,1,1],[0.7,0.7,0.8]]
         standard_club_lighting = [[0.8,0.8,0.9], [0.8,0.8,0.9], [0.8,0.8,0.9], [0.8,0.8,0.9], [0.8,0.8,0.9]]
+
+        dark_lighting = [[0.4,0.4,0.55],[0.4,0.4,0.55],[0.4,0.4,0.55],[0.4,0.4,0.55],[0.4,0.4,0.55]]

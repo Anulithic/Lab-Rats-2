@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Wardrobe name="Dinah_Wardrobe">
+    <FullSets>
+        <Outfit name="Business Outfit 1">
+            <UpperBody>
+                <Item alpha="1" blue="0.1" green="0.1" name="Thin_Bra" red="0.6" />
+                <Item alpha="1" blue="0.1" green="0.1" name="Tie_Sweater" red="0.6" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.1" green="0.1" name="Lace_Panties" red="0.6" />
+                <Item alpha="1" blue="0.1" green="0.1" name="Suit_Pants" red="0.1" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="0.1" green="0.1" name="Boot_Heels" red="0.6" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="Business Outfit 2">
+            <UpperBody>
+                <Item alpha="1" blue="0.1" green="0.1" name="Bra" red="0.6" />
+                <Item alpha="1" blue="0.1" green="0.1" name="Dress_Shirt" red="0.6" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.1" green="0.1" name="Panties" red="0.6" />
+                <Item alpha="1" blue="0.1" green="0.1" name="Suit_Pants" red="0.6" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="0.1" green="0.1" name="Boot_Heels" red="0.1" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="Business Outfit 3">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.1" green="0.1" name="Bra" red="0.262" />
+                <Item alpha="1.0" blue="0.18" green="0.18" name="Dress_Shirt" red="0.64" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.1" green="0.1" name="Panties" red="0.262" />
+                <Item alpha="1.0" blue="0.132" green="0.138" name="Pencil_Skirt" red="0.142" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.277" green="0.288" name="High_Socks" red="0.291" />
+                <Item alpha="1" blue="0.1" green="0.1" name="Heels" red="0.1" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+    </FullSets>
+    <UnderwearSets>
+        <Outfit name="Business Underwear 1">
+            <UpperBody>
+                <Item alpha="1" blue="0.1" green="0.1" name="Thin_Bra" red="0.6" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.1" green="0.1" name="Lace_Panties" red="0.6" />
+            </LowerBody>
+            <Feet />
+            <Accessories />
+        </Outfit>
+		<Outfit name="Business Underwear 2">
+           <UpperBody>
+                <Item alpha="1" blue="0.1" green="0.1" name="Bra" red="0.6" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.1" green="0.1" name="Panties" red="0.6" />
+            </LowerBody>
+            <Feet />
+            <Accessories />
+        </Outfit>
+        <Outfit name="Business Underwear 3">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.1" green="0.1" name="Bra" red="0.262" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.1" green="0.1" name="Panties" red="0.262" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.277" green="0.288" name="High_Socks" red="0.291" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+    </UnderwearSets>
+    <OverwearSets>
+        <Outfit name="Business Overwear 1">
+            <UpperBody>
+                <Item alpha="1" blue="0.1" green="0.1" name="Tie_Sweater" red="0.6" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.1" green="0.1" name="Suit_Pants" red="0.1" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="0.1" green="0.1" name="Boot_Heels" red="0.6" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="Business Overwear 2">
+            <UpperBody>
+                <Item alpha="1" blue="0.1" green="0.1" name="Dress_Shirt" red="0.6" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.1" green="0.1" name="Suit_Pants" red="0.6" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="0.1" green="0.1" name="Boot_Heels" red="0.1" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="Business Overwear 3">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.18" green="0.18" name="Dress_Shirt" red="0.64" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.132" green="0.138" name="Pencil_Skirt" red="0.142" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="0.1" green="0.1" name="Heels" red="0.1" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+    </OverwearSets>
+</Wardrobe>

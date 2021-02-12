@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Wardrobe name="Nora_Wardrobe">
+    <FullSets />
+    <UnderwearSets>
+        <Outfit name="Nora_Underwear_1">
+            <UpperBody>
+                <Item alpha="1" blue="0.6" green="0.53" name="Bra" palpha="1" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="0.45" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.15" green="0.15" name="Thin_Panties" palpha="1" pattern="Pattern_1" pblue="0.6" pgreen="0.53" pred="0.45" red="0.15" />
+            </LowerBody>
+            <Feet />
+            <Accessories />
+        </Outfit>
+        <Outfit name="Nora_Underwear_2">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.52" green="0.56" name="Strapless_Bra" red="0.74" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.52" green="0.56" name="Cotton_Panties" red="0.74" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="0.89" green="0.89" name="Short_Socks" red="0.89" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="Nora_Underwear_3">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.52" green="0.55" name="Lace_Bra" palpha="1.0" pattern="Pattern_1" pblue="0.27" pgreen="0.27" pred="0.8" red="0.77" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.27" green="0.27" name="Tiny_G_String" red="0.8" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="0.8" blue="0.15" green="0.15" name="Thigh_Highs" red="0.15" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="Nora_Underwear_4">
+            <UpperBody>
+                <Item alpha="1" blue="0.6" green="0.53" name="Bra" palpha="1" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="0.45" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.15" green="0.15" name="Thin_Panties" palpha="1" pattern="Pattern_1" pblue="0.6" pgreen="0.53" pred="0.45" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="0.8" blue="0.6" green="0.53" name="Thigh_Highs" red="0.45" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="Nora_Underwear_5">
+            <UpperBody>
+                <Item alpha="1" blue="0.15" green="0.15" name="Bra" palpha="1.0" pattern="Pattern_1" pblue="0.27" pgreen="0.27" pred="0.8" red="0.15" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.15" green="0.15" name="Thong" palpha="1.0" pattern="Pattern_1" pblue="0.27" pgreen="0.27" pred="0.8" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="0.95" blue="0.15" green="0.15" name="Garter_and_Fishnets" palpha="0.95" pattern="Pattern_1" pblue="0.27" pgreen="0.27" pred="0.8" red="0.15" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+    </UnderwearSets>
+    <OverwearSets>
+		 <Outfit name="Nora_Overwear_1">
+            <UpperBody>
+                <Item alpha="0.95" blue="0.9" green="0.9" name="Lab_Coat" red="0.9" />
+                <Item alpha="1.0" blue="0.15" green="0.15" name="Sleveless_Top" red="0.15" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.15" green="0.15" name="Suit_Pants" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.15" green="0.15" name="Slips" red="0.15" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="Nora_Overwear_2">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.15" green="0.15" name="Sleveless_Top" red="0.15" />
+                <Item alpha="1.0" blue="0.28" green="0.34" name="Suit_Jacket" red="0.47" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.15" green="0.15" name="Suit_Pants" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.15" green="0.15" name="Slips" red="0.15" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="Nora_Overwear_4">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.8" green="0.7" name="Short_Sleeve_Blouse" red="0.56" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.15" green="0.15" name="Pencil_Skirt" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.15" green="0.15" name="High_Heels" red="0.15" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="Nora_Overwear_3">
+            <UpperBody>
+                <Item alpha="0.95" blue="1.0" green="1.0" name="Long_Sleeve_Blouse" red="1.0" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.15" green="0.15" name="Suit_Pants" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.15" green="0.15" name="Slips" red="0.15" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="Nora_Overwear_5">
+            <UpperBody>
+                <Item alpha="1" blue="0.91" green="0.72" name="Tight_Vest" red="0.58" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.15" green="0.15" name="Pencil_Skirt" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.15" green="0.15" name="High_Heels" red="0.15" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+    </OverwearSets>
+</Wardrobe>

@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Wardrobe name="Sylvia_Wardrobe">
+    <FullSets>
+        <Outfit name="Casual Outfit 1">
+            <UpperBody>
+                <Item alpha="1.0" blue="1.0" green="1.0" name="Bra" red="1.0" />
+                <Item alpha="1" blue="0.2" green="0.4" name="Lace_Sweater" red="0.2" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="1.0" green="1.0" name="Plain_Panties" red="1.0" />
+                <Item alpha="1" blue="0.2" green="0.4" name="Long_Skirt" red="0.2" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="0.1" green="0.1" name="Sandal_Heels" red="0.6" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1.0" blue="1.0" green="1.0" name="Gold_Earings" red="1.0" />
+                <Item alpha="1" blue="0.05" green="0.8" name="Diamond_Ring" red="0.9" />
+                <Item alpha="1" blue="0.1" green="0.1" name="Wool_Scarf" red="0.6" />
+            </Accessories>
+        </Outfit>
+    </FullSets>
+    <UnderwearSets>
+        <Outfit name="Underwear 1">
+            <UpperBody>
+                <Item alpha="1.0" blue="1.0" green="1.0" name="Bra" red="1.0" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="1.0" green="1.0" name="Plain_Panties" red="1.0" />
+            </LowerBody>
+            <Feet />
+            <Accessories>
+                <Item alpha="1.0" blue="1.0" green="1.0" name="Gold_Earings" red="1.0" />
+                <Item alpha="1" blue="0.05" green="0.8" name="Diamond_Ring" red="0.9" />
+            </Accessories>
+        </Outfit>
+    </UnderwearSets>
+    <OverwearSets>
+        <Outfit name="Overwear 1">
+            <UpperBody>
+                <Item alpha="1" blue="0.2" green="0.4" name="Lace_Sweater" red="0.2" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.2" green="0.4" name="Long_Skirt" red="0.2" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="0.1" green="0.1" name="Sandal_Heels" red="0.6" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1" blue="0.1" green="0.1" name="Wool_Scarf" red="0.6" />
+            </Accessories>
+        </Outfit>
+    </OverwearSets>
+</Wardrobe>

@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Wardrobe name="Business_Wardrobe">
+    <FullSets>
+        <Outfit name="business_conservative">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.62" green="0.69" name="Bra" palpha="1" pattern="Pattern_1" pblue="0" pgreen="0.0" pred="0.0" red="0.83" />
+                <Item alpha="1" blue="0.15" green="0.1" name="Suit_Jacket" red="0.1" />
+                <Item alpha="1" blue="1" green="1" name="Sleveless_Top" red="1" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.62" green="0.69" name="Panties" palpha="1" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="0.83" />
+                <Item alpha="1" blue="0.15" green="0.1" name="Pencil_Skirt" red="0.1" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.1" green="0.1" name="Heels" red="0.1" />
+                <Item alpha="1.0" blue="0.1" green="0.1" name="Thigh_Highs" red="0.1" />
+            </Feet>
+            <Accessories>
+                <Item alpha="0.95" blue="0.32" green="0.33" name="Blush" red="0.74" />
+                <Item alpha="1.0" blue="0.32" green="0.33" name="Lipstick" red="0.74" />
+                <Item alpha="0.95" blue="0.1" green="0.1" name="Upper_Eye_Shadow" red="0.1" />
+            </Accessories>
+        </Outfit>
+        <Outfit name="business_slutty">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.17" green="0.17" name="Strapless_Bra" palpha="1.0" pattern="Pattern_1" pblue="0.1" pgreen="0.1" pred="0.1" red="0.81" />
+                <Item alpha="1.0" blue="0.15" green="0.15" name="Tight_Vest" red="0.15" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.1" green="0.1" name="Thin_Panties" palpha="0.8" pattern="Pattern_1" pblue="0.17" pgreen="0.17" pred="0.81" red="0.1" />
+                <Item alpha="1.0" blue="0.15" green="0.15" name="Belted_Skirt" palpha="1" pattern="Pattern_1" pblue="0.13" pgreen="0.18" pred="0.33" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.11" green="0.11" name="Garter_and_Fishnets" red="0.11" />
+                <Item alpha="1.0" blue="0.17" green="0.17" name="High_Heels" red="0.81" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1.0" blue="0.53" green="0.86" name="Gold_Chain_Necklace" red="1.0" />
+                <Item alpha="0.95" blue="0.17" green="0.17" name="Lipstick" red="0.81" />
+                <Item alpha="0.8" blue="0.32" green="0.33" name="Blush" red="0.74" />
+                <Item alpha="1.0" blue="0.1" green="0.1" name="Upper_Eye_Shadow" red="0.1" />
+            </Accessories>
+        </Outfit>
+    </FullSets>
+    <UnderwearSets>  
+    </UnderwearSets>
+    <OverwearSets>
+    </OverwearSets>
+</Wardrobe>

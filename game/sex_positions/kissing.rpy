@@ -2,8 +2,8 @@
     python:
         kissing = Position(name = "Kissing", slut_requirement = 10, slut_cap = 40, requires_hard = False, requires_large_tits = False,
             position_tag = "kissing", requires_location = "Stand", requires_clothing = "None", skill_tag = "Foreplay",
-            girl_arousal = 7, girl_energy = 6,
-            guy_arousal = 7, guy_energy = 6,
+            girl_arousal = 5, girl_energy = 10,
+            guy_arousal = 5, guy_energy = 10,
             connections = [],
             intro = "intro_kissing",
             scenes = ["scene_kissing_1","scene_kissing_2"],

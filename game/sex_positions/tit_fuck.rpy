@@ -2,8 +2,8 @@ init:
     python:
         tit_fuck = Position(name = "Tit Fuck", slut_requirement = 30, slut_cap = 55, requires_hard = True, requires_large_tits = True,
             position_tag = "blowjob", requires_location = "Kneel", requires_clothing = "Tits", skill_tag = "Foreplay",
-            girl_arousal = 5, girl_energy = 14,
-            guy_arousal = 15, guy_energy = 3,
+            girl_arousal = 5, girl_energy = 20,
+            guy_arousal = 15, guy_energy = 5,
             connections = [],
             intro = "intro_tit_fuck",
             scenes = ["scene_tit_fuck_1","scene_tit_fuck_2", "scene_tit_fuck_3"],
@@ -111,6 +111,7 @@ label outro_tit_fuck(the_girl, the_location, the_object):
         "Cum on her face":
             "You close your eyes and focus on the sensation of [the_girl.possessive_title]'s warm, soft breasts massaging your cock."
             "As your orgasm builds to it's peak you step back, sliding your cock out from her cleavage and take it up in your own hand."
+            $ the_girl.draw_person(position = "kneeling1")
             if the_girl.effective_sluttiness() > 40 or the_girl.get_opinion_score("cum facials") > 0:
                 "[the_girl.title] understands immediately what is about to happens and tilts her head up, giving you a clear target."
                 "You stroke yourself to completion and blast your load over her face, throwing thick ropes of cum her lips and nose and eyes."
@@ -118,7 +119,7 @@ label outro_tit_fuck(the_girl, the_location, the_object):
                 the_girl.char "What's wrong? I...!"
                 "You grunt and climax, blasting thick ropes of cum over [the_girl.title]'s surprised face. She jerks back, then waits until you're finished."
             $ the_girl.cum_on_face()
-            $ tit_fuck.redraw_scene(the_girl)
+            $ the_girl.draw_person(position = "kneeling1")
 
     the_girl.char "Ah... Wow..."
     return

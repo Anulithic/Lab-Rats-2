@@ -27,7 +27,7 @@ init -2 python:
 
     def sister_strip_intro_requirement(the_person): #Note that this only ever triggers once, so we don't need to worry if it will retrigger at any point.
         if time_of_day == 4 and mc.location == bedroom:
-            if the_person.sluttiness >= 30 and mc.business.event_triggers_dict.get("sister_serum_test_count") and mc.business.event_triggers_dict.get("sister_serum_test_count") >= 4:
+            if the_person.sluttiness >= 30 and mc.business.event_triggers_dict.get("sister_serum_test_count",0) >= 4:
                 return True
         return False
 
@@ -110,6 +110,15 @@ init -2 python:
     def add_sister_instathot_mom_report_action(person):
         sister_instathot_mom_report_crisis = Action("Sister instathot mom report crisis", sister_instathot_mom_report_requirement, "sister_instathot_mom_report", requirement_args = day)
         person.on_talk_event_list.append(sister_instathot_mom_report_crisis)
+        return
+
+    def sister_instahot_special_pictures_strip(person):
+        for clothing in person.outfit.get_tit_strip_list(): #TODO: Have a way of figuring out if pieces of clothing can be moved half off to get to her tits
+            person.draw_animated_removal(clothing)
+            if person.outfit.tits_visible():
+                renpy.say("","Her perky breasts are set free as she pulls her " + clothing.display_name + " off and drops it beside her bed.")
+            else:
+                renpy.say("","")
         return
 
 #SISTER ACTION LABELS#
@@ -428,7 +437,7 @@ label sister_instathot_label_solo(the_person):
             the_person.char "Uh huh? Let me see it!"
             call outfit_master_manager() from _call_outfit_master_manager_1
             $ the_suggested_outfit = _return
-            if the_suggested_outfit == "No Return":
+            if the_suggested_outfit is None:
                 mc.name "On second thought, I don't think I have anything better than what you're wearing."
                 the_person.char "Well, let's get started with this then!"
 
@@ -568,13 +577,7 @@ label sister_instathot_special_pictures(the_person):
 
     "[the_person.title] starts to pull her clothes off."
 
-    python:
-        for clothing in the_person.outfit.get_tit_strip_list(): #TODO: Have a way of figuring out if pieces of clothing can be moved half off to get to her tits
-            the_person.draw_animated_removal(clothing)
-            if the_person.outfit.tits_visible():
-                renpy.say("","Her perky breasts are set free as she pulls her " + clothing.display_name + " off and drops it beside her bed.")
-            else:
-                renpy.say("","")
+    $ sister_instahot_special_pictures_strip(the_person)
 
     $ the_person.update_outfit_taboos()
     "She gets onto her bed, onto her knees, and looks at you and the camera."
@@ -650,12 +653,11 @@ label sister_instathot_mom_discover(the_person): # TODO: Hook this up as a night
 label sister_instathot_label_mom(the_sister, the_mom):
     $ clear_scene()
     "You leave [the_sister.title] in her room and go to find [the_mom.possessive_title]."
-    $ first_time = the_mom.event_triggers_dict.get("mom_instathot_pic_count",0) == 0
     $ kitchen.show_background()
     $ the_mom.draw_person(position = "back_peek")
     "You find her in the kitchen, standing in front of the open fridge."
     the_mom.char "Oh, hi sweetheart. I'm just thinking about what to make for dinner. Do you need anything?"
-    if first_time:
+    if the_mom.event_triggers_dict.get("mom_instathot_pic_count",0) == 0:
         mc.name "[the_sister.title] is getting ready to take some pictures for her Insta-pic account."
         mc.name "She wanted to know if you wanted to join in."
         $ the_mom.draw_person(emotion = "happy")
@@ -675,7 +677,7 @@ label sister_instathot_label_mom(the_sister, the_mom):
     $ the_group = GroupDisplayManager([the_sister, the_mom], primary_speaker = the_sister)
     $ the_group.draw_group()
 
-    if first_time:
+    if the_mom.event_triggers_dict.get("mom_instathot_pic_count",0) == 0:
         the_sister.char "Hey [the_mom.title], come on in."
         $ the_group.draw_person(the_mom)
         the_mom.char "Thank you for inviting me, I just hope I'm not going to get in your way."
@@ -781,7 +783,7 @@ label sister_instathot_label_mom(the_sister, the_mom):
     mc.name "That's looking good you two, now look at me and smile."
     "You take a few pictures of them, moving around the bed to get a few different angles."
     menu:
-        "Get a little friendlier" if not first_time:
+        "Get a little friendlier" if not the_mom.event_triggers_dict.get("mom_instathot_pic_count",0) == 0:
             mc.name "Squeeze together you two, I need to get you both in the shot."
             "[the_mom.title] slides closer to [the_sister.title] on the bed."
             the_mom.char "Like this?"
@@ -863,7 +865,10 @@ label sister_instathot_label_mom(the_sister, the_mom):
     else:
         $ the_sister.event_triggers_dict["sister_instathot_pic_count"] += 1
 
-    $ the_group = None
+    python:
+        insta_outfit_mom = None
+        insta_outfit_sister = None
+        the_group = None
     return
 
 label sister_instathot_mom_report(the_person): #Lily tells you that her shots with Mom were super popular and that you want to do more

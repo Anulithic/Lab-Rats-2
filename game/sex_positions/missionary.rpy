@@ -2,8 +2,8 @@
     python:
         missionary = Position(name = "Missionary", slut_requirement = 50, slut_cap = 70, requires_hard = True, requires_large_tits = False,
             position_tag = "missionary", requires_location = "Lay", requires_clothing = "Vagina", skill_tag = "Vaginal",
-            girl_arousal = 16, girl_energy = 8,
-            guy_arousal = 15, guy_energy = 10,
+            girl_arousal = 16, girl_energy = 12,
+            guy_arousal = 15, guy_energy = 14,
             connections = [],
             intro = "intro_missionary",
             scenes = ["scene_missionary_1","scene_missionary_2"],

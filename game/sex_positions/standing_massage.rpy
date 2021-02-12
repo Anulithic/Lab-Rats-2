@@ -2,8 +2,8 @@ init:
     python:
         standing_grope = Position(name = "Groping", slut_requirement = 0, slut_cap = 30, requires_hard = False, requires_large_tits = False,
             position_tag = "walking_away" , requires_location = "Stand", requires_clothing = "None", skill_tag = "Foreplay",
-            girl_arousal = 10, girl_energy = 3,
-            guy_arousal = 5, guy_energy = 8,
+            girl_arousal = 10, girl_energy = 5,
+            guy_arousal = 5, guy_energy = 15,
             connections = [],
             intro = "intro_standing_grope",
             scenes = ["scene_standing_grope_1","scene_standing_grope_2","scene_standing_grope_3"],
@@ -13,7 +13,7 @@ init:
             orgasm_description = "orgasm_standing_grope",
             taboo_break_description = "taboo_break_standing_grope",
             verb = "grope", verbing = "groping",
-            opinion_tags = None,
+            opinion_tags = ["sex standing up"],
             associated_taboo = "touching_body")
 
         list_of_positions.append(standing_grope)

@@ -154,7 +154,7 @@ init 1 python:
         return False
 
     def person_at_home(the_person): #Returns true if the person is at home somewhere.
-        if the_person in hall.people or the_person in bedroom.people or the_person in lily_bedroom.people or the_person in mom_bedroom.people or the_person in kitchen.people:
+        if hall.has_person(the_person) or bedroom.has_person(the_person) or lily_bedroom.has_person(the_person) or mom_bedroom.has_person(the_person) or kitchen.has_person(the_person):
             return True
         return False
 
@@ -355,7 +355,7 @@ label broken_AC_crisis_label():
                         if removed_something:
                             "..."
 
-                    if choice_removed_anything = True:
+                    if choice_removed_anything:
                         if girl_choice.outfit.tits_visible() and girl_choice.outfit.vagina_visible():
                             "Once she's done stripping [girl_choice.possessive_title] is practically naked."
                             if girl_choice.has_taboo(["bare_pussy","bare_tits"]):
@@ -468,197 +468,40 @@ label get_drink_crisis_label():
 
     return
 
-init 1 python:
-    def no_uniform_punishment_requirement():
-        if mc.business.get_employee_count() > 0:
-            if mc.business.is_open_for_business() and mc.is_at_work():
-                for person in mc.business.get_employee_list():
-                    if person.obedience < 110: #Only triggers on disobedient characters, so make sure we have some.
-                        if mc.business.get_uniform_wardrobe(mc.business.get_employee_title(person)).get_count()>0: #Make sure that person has a uniform assigned for their department
-                            return True
-        return False
+# init 1 python:
+#     def no_uniform_punishment_requirement():
+#         if mc.business.get_employee_count() > 0:
+#             if mc.business.is_open_for_business() and mc.is_at_work():
+#                 for person in mc.business.get_employee_list():
+#                     if person.obedience < 110: #Only triggers on disobedient characters, so make sure we have some.
+#                         if mc.business.get_uniform_wardrobe(mc.business.get_employee_title(person)).get_count()>0: #Make sure that person has a uniform assigned for their department
+#                             return True
+#         return False
+#
+#     no_uniform_punishment_crisis = Action("Not In Uniform Crisis", no_uniform_punishment_requirement, "no_uniform_punishment_label")
+#     crisis_list.append([no_uniform_punishment_crisis,5])
 
-    def no_uniform_punishment_get_disobedient_person():
-        disobedient_people = []
-        for person in mc.business.get_employee_list():
-            if person.obedience < 110:
-                if mc.business.get_uniform_wardrobe(mc.business.get_employee_title(person)).get_count()>0: #Make sure we're getting only people who should be wearing a uniform.
-                    disobedient_people.append(person)
-        return get_random_from_list(disobedient_people)
-
-
-    no_uniform_punishment_crisis = Action("Not In Uniform Crisis", no_uniform_punishment_requirement, "no_uniform_punishment_label")
-    crisis_list.append([no_uniform_punishment_crisis,5])
-
-label no_uniform_punishment_label():
-    if mc.business.get_employee_count() <= 0:
-        return #We must have fired someone in another crisis, so don't run this because there might not be anyone.
-
-    $ the_person = no_uniform_punishment_get_disobedient_person()
-    if the_person is None:
-        return #We must have fixed up any obedience problems, they'll all be in uniform.
-    else:
-        $ the_person.apply_outfit(the_person.planned_outfit) #Put them in their non-work outfit.
-
-    "You decide to take a break and stretch your legs. You start walking around the office, peeking in on your different divisions. You turn a corner and run into [the_person.title]."
-    $ the_person.draw_person()
-    the_person.char "Oh, hey [the_person.mc_title]. I was just getting back to work."
-    mc.name "Shouldn't you be in your uniform [the_person.title]?"
-    $ ran_num = renpy.random.randint(0,2) #Get a random excuse for why she's not wearing her uniform.
-    if ran_num == 0:
-        the_person.char "I'm sorry, I just had to step out for a moment to pick something up. I was assuming that wouldn't be a problem."
-    elif ran_num == 1:
-        the_person.char "It's just so impractical though, I was hoping I could just wear this for a few hours and try and get some real work done."
-    else: # ran_num == 2:
-        the_person.char "I mean, that uniform policy was just a suggestion, right? There's no way you expect us to actually wear it all the time."
-
-    $ pay_percent = int(the_person.salary*0.1)
-    menu:
-        "Let it go":
-            mc.name "The uniform policy isn't just a suggestion, if you're on the clock you need to be dressed appropriately. Go get changed."
-            "She nods and starts to walk off."
-            $ the_person.change_obedience(-2)
-            the_person.char "I'll take care of it boss, it won't happen again."
-
-        "Punish her":
-            mc.name "The uniform policy isn't just a suggestion. When you're on the clock you're the face of this company, which means I expect you to be in uniform."
-            the_person.char "It won't happen again, I'll go get changed right now."
-            mc.name "I'm sorry, but that's not good enough. I'm going to have to write you up for this."
-            $ the_person.add_infraction(Infraction.out_of_uniform_factory())
-            mc.name "I can't be making rules exceptions just for you. Go get changed and get back to work, we can deal with this later."
-            "[the_person.title] huffs and walks off."
-            # menu:
-            #     "Lecture her.":
-            #         "You shake your head, disappointed."
-            #         mc.name "You should know better than this [the_person.title], I honestly thought you were smarter."
-            #         the_person.char "I'll make sure it doesn't happen again."
-            #         mc.name "Make sure you do. If you aren't able to fit into the corporate culture here I'll have to find someone to replace you."
-            #         $ the_person.draw_person(emotion="sad")
-            #         the_person.char "Understood. I'm sorry."
-            #         $ the_person.change_obedience(1)
-            #         $ the_person.change_happiness(-2)
-            #         "[the_person.title] walks off."
-            #
-            #     "Reduce her pay. -$[pay_percent]/day":
-            #         mc.name "This is honestly unacceptable [the_person.title]. You knew what the uniform policy was and chose to violate it anyway."
-            #         the_person.char "It won't happen again, I'll go get changed right now."
-            #         mc.name "I'm sorry, but that's not good enough. I'm going to have to reduce your pay until your behaviour improves."
-            #         $ the_person.draw_person(emotion="angry")
-            #         $ the_person.change_obedience(5)
-            #         $ the_person.change_happiness(-10)
-            #         $ the_person.salary += -pay_percent
-            #         $ mc.log_event("[the_person.title] -$[pay_percent]/day Salary","float_text_green")
-            #         the_person.char "What? Come on [the_person.mc_title], that's bullshit!"
-            #         mc.name "I can't be making rules exceptions just for you. Go get changed and get back to work, we can talk about this later."
-            #         "[the_person.title] huffs and walks off."
-            #
-            #     "Tell her to work naked instead." if the_person.effective_sluttiness() > 40 and reduced_coverage_uniform_policy.is_active():
-            #         "You shake your head, disappointed."
-            #         mc.name "Well if you don't want to wear your uniform, I guess you're just going to be wearing nothing at all."
-            #         if the_person.effective_sluttiness(["bare_pussy","bare_tits"]) > 60 - (10 * the_person.get_opinion_score("not wearing anything")): #triggers easier if the person likes getting naked.
-            #             the_person.char "Ugh, fine."
-            #             if the_person.outfit.slut_requirement < 40:
-            #                 "[the_person.title] starts to strip down right in front of you, pulling off one piece of clothing at a time."
-            #             else:
-            #                 "[the_person.title] starts to pull off what little clothing she was wearing."
-            #
-            #             python:
-            #                 for clothing in the_person.outfit.get_upper_ordered():
-            #                     the_person.draw_animated_removal(clothing)
-            #                     renpy.say("","") #Make the player click through as she strips
-            #                 for clothing in the_person.outfit.get_lower_ordered():
-            #                     the_person.draw_animated_removal(clothing)
-            #                     renpy.say("","")
-            #
-            #             $ the_person.update_outfit_taboos()
-            #
-            #             the_person.char "There, can I get back to work now?"
-            #             mc.name "Yes. Maybe you'll think next time before you violate company policy."
-            #             $ the_person.change_obedience(5)
-            #             $ the_person.change_happiness(-5)
-            #             $ slut_report = the_person.change_slut_temp(3)
-            #
-            #         else:
-            #             the_person.char "Very funny [the_person.mc_title]. I promise I'll get changed as soon as I can."
-            #             mc.name "I'm not joking [the_person.title]. You can put your uniform back on in a few hours; until then you'll be working naked."
-            #             if the_person.get_opinion_score("not wearing anything") > 0:
-            #                 the_person.char "What? Are you really going to make me do that?"
-            #                 mc.name "I am. You're welcome to check your contract - the latest uniform changes, which you signed off on by the way, made it official company policy."
-            #                 "[the_person.possessive_title] is flustered for a moment."
-            #                 the_person.char "I... If you say I have to."
-            #                 "She turns and heads to the washroom. You follow and wait outside until she's changed out of her clothing."
-            #             else:
-            #                 $ the_person.draw_person(emotion = "angry")
-            #                 the_person.char "You can't make me do that!"
-            #                 mc.name "Actually I can. You're welcome to check your contract - the latest uniform changes everyone signed off on made it offical company policy."
-            #                 "[the_person.possessive_title] stammers for a moment."
-            #                 the_person.char "Ugh! Fine!"
-            #                 $ clear_scene()
-            #                 "She storms off to the washroom. You wait outside until she's changed."
-            #                 the_person.char "This is humiliating."
-            #             python:
-            #                 for clothing in the_person.outfit.get_upper_ordered():
-            #                     the_person.outfit.remove_clothing(clothing)
-            #                 for clothing in the_person.outfit.get_lower_ordered():
-            #                     the_person.outfit.remove_clothing(clothing)
-            #             $ the_person.draw_person(emotion = "angry")
-            #             $ the_person.update_outfit_taboos()
-            #             "She steps out into the hallway again, completely naked."
-            #             mc.name "Well maybe you'll think next time before you violate company policy."
-            #
-            #             if the_person.get_opinion_score("not wearing anything") <= 0:
-            #                 "[the_person.possessive_title] glares at you."
-            #                 $ the_person.change_happiness(-10)
-            #
-            #             else:
-            #                 "[the_person.possessive_title] seems embarrassed and looks away from you."
-            #             the_person.char "Can I get back to work now?"
-            #             mc.name "Get going."
-            #
-            #             $ the_person.change_obedience(10)
-            #             $ slut_report = the_person.change_slut_temp(5)
-            #
-            #         $ the_person.change_love(the_person.get_opinion_score("not wearing anything"))
-            #         $ the_person.discover_opinion("not wearing anything")
-            #         "You watch [the_person.title] as she walks away completely naked, then get back to work yourself."
-            #
-            #     "Deny her an orgasm." if the_person.effective_sluttiness() > 60:
-            #         mc.name "I'm starting to think there's only one thing that will actually teach you a lesson though..."
-            #         "You step close to [the_person.title] and reach a hand around, grabbing onto her ass and squeezing it hard."
-            #         the_person.char "Ah... What are you doing?"
-            #         mc.name "Showing a disobedient slut why she should follow the rules."
-            #         "The closer you can bring [the_person.possessive_title] to orgasm without allowing her to the more effective this will be."
-            #         call fuck_person(the_person) from _call_fuck_person_6
-            #         $ the_report = _return
-            #         if the_report.get("girl orgasms") > 0:
-            #             #You made her cum, she gets even more disobedient
-            #             the_person.char "Oh wow... I need to ignore this uniform thing more often. That felt amazing."
-            #             mc.name "Please, I need you to at least try and follow the rules [the_person.title]."
-            #             the_person.char "Yeah... Sure..."
-            #             $ obedience_change = -5
-            #             $ the_person.change_love(2)
-            #
-            #         elif the_report.get("end arousal") >= 0.8*the_person.max_arousal or the_report.get("beg finish", 0) > 0: #Get her within 80% of cumming or otherwise get her to beg for it without finishing her
-            #             #You got her close but didn't push her over the edge. Full gain.
-            #             the_person.char "Ah... damn it [the_person.mc_title], I was so close!"
-            #             mc.name "If you were in uniform I would have let you cum, but I can't reward you unless you're following the rules. Understood?"
-            #             "[the_person.title] bites her lip and nods. Her face is flush and she's still breathing deeply."
-            #             $ obedience_change = 10
-            #
-            #         else:
-            #             #You probably just got a blowjob or something. partial gain.
-            #             the_person.char "Wait, that's it?"
-            #             mc.name "If you were in uniform maybe we could have had some more fun, but I can't reward you unless you're following the rules. Understood?"
-            #             "[the_person.title] sighs and pouts."
-            #             the_person.char "Yes sir."
-            #             $obedience_change = 5
-            #
-            #         $ the_person.change_obedience(obedience_change)
-            #         $ the_person.review_outfit()
-            #         "You leave [the_person.title] to get cleaned up and get back to work."
-
-    $ clear_scene()
-    return
+# label no_uniform_punishment_label():
+#     if mc.business.get_employee_count() <= 0:
+#         return #We must have fired someone in another crisis, so don't run this because there might not be anyone.
+#
+#     python:
+#         disobedient_people = []
+#         for person in mc.business.get_employee_list():
+#             if person.obedience < 110:
+#                 if mc.business.get_uniform_wardrobe(mc.business.get_employee_title(person)).get_count()>0: #Make sure we're getting only people who should be wearing a uniform.
+#                     disobedient_people.append(person)
+#         the_person = get_random_from_list(disobedient_people)
+#
+#
+#     if the_person is None:
+#         return #We must have fixed up any obedience problems, they'll all be in uniform.
+#     else:
+#         $ the_person.apply_outfit(the_person.planned_outfit) #Put them in their non-work outfit.
+#         # $ the_person.outfit = the_person.planned_outfit.get_copy() Changed v0.24.1
+#
+#
+#     return
 
 
 init 1 python:
@@ -1094,7 +937,7 @@ label extra_mastery_crisis_label():
     elif isinstance(the_research, SerumDesign):
         $ the_trait = get_random_from_list(the_research.traits)
 
-    if the_person in mc.location.people:
+    if mc.location.has_person(the_person):
         #She's in the same room as you.
         the_person.char "[the_person.mc_title], I have something interesting to show you."
         $ the_person.draw_person()
@@ -1150,11 +993,15 @@ init 1 python:
 
     def trait_for_side_effect_get_trait_and_side_effect(the_design):
         list_of_valid_traits = []
-        for trait in list_of_traits:
-            if trait.researched and trait not in the_design.traits:
-                list_of_valid_traits.append(trait)
+        exclude_tags = []
+        for trait in the_design.traits:
+            exclude_tags.extend(trait.exclude_tags)
 
-        return (get_random_from_list(list_of_valid_traits), get_random_from_list(list_of_side_effects))
+        for trait in list_of_traits:
+            if trait.researched and trait not in the_design.traits and not any([x for x in trait.exclude_tags if x in exclude_tags]):
+                list_of_valid_traits.append([trait, int(trait.mastery_level)])
+
+        return (get_random_from_weighted_list(list_of_valid_traits), get_random_from_list(list_of_side_effects))
 
     trait_for_side_effect_crisis = Action("Trait for Side Effect Crisis", trait_for_side_effect_requirement, "trait_for_side_effect_label")
     crisis_list.append([trait_for_side_effect_crisis,5])
@@ -1174,7 +1021,8 @@ label trait_for_side_effect_label():
     else:
         "You get a call from your head researcher [the_person.title]."
         the_person.char "[the_person.mc_title], if you can come down to the research lab I think I've discovered something interesting."
-        $mc.change_location(mc.business.r_div)
+        $ mc.change_location(mc.business.r_div)
+        $ mc.location.show_background()
         "You head to your R&D lab and meet [the_person.title]. She leads you over to her lab bench."
 
     the_person.char "I've been working on the design you set out for [the_design.name] and one of the test batches developed some very interesting side effects."
@@ -1298,6 +1146,7 @@ label water_spill_crisis_label():
                 "Keep going... \n{color=#ff0000}{size=18}Requires: Minimal Coverage Corporate Uniforms{/size}{/color} (disabled)" if not minimal_coverage_uniform_policy.is_active():
                     pass
 
+            $ the_clothing.colour[3] *= 1.25
             $ the_person.review_outfit()
 
         else:
@@ -1325,7 +1174,7 @@ label water_spill_crisis_label():
                     $ the_person.change_obedience(1)
                     $ slut_report = the_person.change_slut_temp(1)
                     "After a few minutes you've answered all of [the_person.possessive_title]'s questions, and she heads off to dry her [the_clothing.name] off."
-                    $ the_clothing.colour[3] = 1.25
+                    $ the_clothing.colour[3] *= 1.25
 
                 "Take it off":
                     mc.name "I'm really quite busy right now, just take it off now and you can dry it off later."
@@ -1516,7 +1365,7 @@ label quitting_crisis_label(the_person): #The person tries to quit, you have a c
             "[the_person.possessive_title] takes a long moment before responding."
             the_person.char "I think I would need an extra $[deficit] a day in wages. That would keep me here."
             menu:
-                "Accept (+$[deficit]/day)":
+                "Accept\n{color=#ff0000}{size=18}Costs: $[deficit] / day{/size}{/color}":
                     $ the_person.salary += deficit
                     $ raise_string = the_person.title +": +$" +str(deficit) + "/day Salary"
                     $ mc.log_event(raise_string,"float_text_green")
@@ -1547,8 +1396,11 @@ label quitting_crisis_label(the_person): #The person tries to quit, you have a c
                 the_person.char "Ah... Ah..."
                 mc.name "Well [the_person.title], are you still thinking of leaving?"
                 "[the_person.title] pants slowly and shakes her head."
+                $ the_person.draw_person()
                 the_person.char "I don't think I will be, sir. Sorry to have wasted your time."
                 mc.name "It was my pleasure."
+                $ the_person.apply_outfit()
+                $ the_person.draw_person(position = "walking_away")
                 "[the_person.possessive_title] takes a moment to put herself back together, then steps out of your office."
 
             else: #If you fail to make them cum first they quit and leave.
@@ -2007,7 +1859,7 @@ label work_chat_crisis_label:
 
                     "Punish her for inappropriate behaviour" if office_punishment.is_active():
                         mc.name "[the_person.title], this isn't appropriate for the office. I'm going to have to write you up for this."
-                        the_person "Oh, I... I'm sorry [the_person.mc_title], I didn't think you would care..."
+                        the_person.char "Oh, I... I'm sorry [the_person.mc_title], I didn't think you would care..."
                         $ the_person.add_infraction(Infraction.inappropriate_behaviour_factory())
                         mc.name "I'm sure you'll have learned your lesson in the future."
 
@@ -2079,12 +1931,12 @@ label work_chat_crisis_label:
                     menu:
                         "Punish her for her inappropriate behaviour":
                             mc.name "Good, but I'm still going to have to write you up for this."
-                            the_person "Ha ha, very... Wait, are you serious? You let me do all of... that, just to punish me?"
+                            the_person.char "Ha ha, very... Wait, are you serious? You let me do all of... that, just to punish me?"
                             mc.name "It looked like you really needed it. Sorry, but these are the rules."
                             $ the_person.add_infraction(Infraction.inappropriate_behaviour_factory())
                             "She sits up and her chair and sighs."
-                            the_person "Fine, those are the rules..."
-                        "Let it go.":
+                            the_person.char "Fine, those are the rules..."
+                        "Let it go":
                             mc.name "Well thanks for letting me be part of the show."
                             "She sits up in her chair and smiles."
                             the_person.char "Any time. Now, I really do have work I need to get done."
@@ -2121,6 +1973,7 @@ label work_chat_crisis_label:
                     else:
                         the_person.char "Fuck... I don't think that's made the situation any better. All I can think about is getting off..."
                     $ the_person.review_outfit()
+                    $ the_person.draw_person()
                     #Tidy up our situational modifiers, if any.
                     $ the_person.clear_situational_slut("seduction_approach")
                     $ the_person.clear_situational_obedience("seduction_approach")
@@ -2134,11 +1987,11 @@ label work_chat_crisis_label:
 
                 "Punish her for inappropriate behaviour" if office_punishment.is_active():
                     mc.name "[the_person.title], this isn't appropriate for the office. I'm going to have to write you up for this."
-                    the_person "Oh, I... I'm sorry [the_person.mc_title], I didn't actually mean anything by it."
+                    the_person.char "Oh, I... I'm sorry [the_person.mc_title], I didn't actually mean anything by it."
                     $ the_person.add_infraction(Infraction.inappropriate_behaviour_factory())
                     mc.name "I think we both know you're lying. Let's just move on, alright?"
                     "She sits back and sighs dramatically."
-                    the_person "Fine, whatever..."
+                    the_person.char "Fine, whatever..."
 
         else:
             "You're getting some good work done when [the_person.title] slides her chair next to yours and runs her hands along your thighs."
@@ -2153,6 +2006,7 @@ label work_chat_crisis_label:
                     call fuck_person(the_person,private = False) from _call_fuck_person_10
                     the_person.char "Ah... Thank you sir, I hope that helps you focus on all your hard, hard work."
                     $ the_person.review_outfit()
+                    $ the_person.draw_person()
                     #Tidy up our situational modifiers, if any.
                     $ the_person.clear_situational_slut("seduction_approach")
                     $ the_person.clear_situational_obedience("seduction_approach")
@@ -2167,11 +2021,11 @@ label work_chat_crisis_label:
 
                 "Punish her for inappropriate behaviour" if office_punishment.is_active():
                     mc.name "[the_person.title], this isn't appropriate for the office. I'm going to have to write you up for this."
-                    the_person "Oh, I... I'm sorry [the_person.mc_title], I didn't actually mean anything by it."
+                    the_person.char "Oh, I... I'm sorry [the_person.mc_title], I didn't actually mean anything by it."
                     $ the_person.add_infraction(Infraction.inappropriate_behaviour_factory())
                     mc.name "I think we both know you're lying. Let's just move on, alright?"
                     "She sits back and looks away, avoiding making eye contact."
-                    the_person "Okay, I should be getting back to my work anyways..."
+                    the_person.char "Okay, I should be getting back to my work anyways..."
 
     $ clear_scene()
     return
@@ -2210,20 +2064,20 @@ label cat_fight_crisis_label():
 
 
     person_one.char "Excuse me, [person_one.mc_title]?"
-    $ the_gropu.draw_group(emotion = "angry")
+    $ the_group.draw_group(emotion = "angry")
     "You feel a tap on your back while you're working. [person_one.title] and [person_two.title] are glaring at each other while they wait to get your attention."
     person_one.char "I was just in the break room and saw [person_two.title] digging around in the fridge looking for other people's lunches."
-    $ the_group.draw_group(person_two, emotion = "angry")
+    $ the_group.draw_person(person_two, emotion = "angry")
     person_two.char "That's a lie and you know it! I was looking for my own lunch and you're just trying to get me in trouble!"
     "[person_two.title] looks at you and pleads."
     person_two.char "You have to believe me, [person_one.title] is making all of this up! That's just the kind of thing she would do, too."
-    $ the_group.draw_group(person_one, emotion = "angry")
+    $ the_group.draw_person(person_one, emotion = "angry")
     if person_two.effective_sluttiness() > 50:
         person_one.char "Jesus, why don't you just suck his cock and get it over with. That's how you normally convince people, right?"
     else:
         person_one.char "Oh boo hoo, you got caught and now you're going to get in trouble. Jesus, is this what you're always like?"
     "[person_two.title] spins to glare at [person_one.title]."
-    $ the_group.draw_group(person_two, emotion = "angry")
+    $ the_group.draw_person(person_two, emotion = "angry")
     if person_one.effective_sluttiness() > 50:
         person_two.char "At least I'm not slave to some guys dick like you are. You're such a worthless slut."
     else:
@@ -2243,7 +2097,7 @@ label cat_fight_crisis_label():
         "Stop the argument, side with no one":
             #Obedience boost to both, happiness drop to both. At high sluttiness have them "kiss and make up"
             mc.name "Enough! I can't be the arbitrator for every single conflict we have in this office. You two are going to have to figure this out between yourselves."
-            $ the_group.draw_group(person_one, emotion = "angry")
+            $ the_group.draw_person(person_one, emotion = "angry")
             person_one.char "But sir..."
             if person_one.effective_sluttiness() > 40 and person_two.effective_sluttiness() > 40:
                 mc.name "I said enough. Clearly you need help sorting this out."
@@ -2251,21 +2105,21 @@ label cat_fight_crisis_label():
                 mc.name "The two of you are part of a larger team. I need you to work together."
                 "You bring the girls hands together and wrap yours around both of theirs."
                 person_one.char "Sorry sir, you're right."
-                $ the_group.draw_group(person_two, emotion = "angry")
+                $ the_group.draw_person(person_two, emotion = "angry")
                 person_two.char "You're right, I'm sorry sir. And I'm sorry [person_one.title]."
                 "You bring your hands back, leaving [person_one.title] and [person_two.title] holding hands. They look away from each other sheepishly."
                 mc.name "Good to hear. Now kiss and make up, then you can get back to work."
                 "The girls glance at you, then at each other. After a moment of hesitation [person_two.title] leans forward and kisses [person_one.title] on the lips."
                 "You watch for a moment as your two employees kiss next to your desk. What starts out as a gentle peck turns into a deep, heavy kiss."
-                $ the_group.draw_group(person_one)
+                $ the_group.draw_person(person_one)
                 "[person_one.title] breaks the kiss and steps back, blushing and panting softly."
                 $ person_one.change_obedience(5)
                 $ slut_report = person_one.change_slut_temp(10)
                 person_one.name "I should... I should get back to work. Sorry for causing any trouble."
-                $ the_group.draw_group(person_one, position = "walking_away")
+                $ the_group.draw_person(person_one, position = "walking_away")
                 "[person_two.title] watches [person_one.title] leave, eyes lingering on her ass as she walks away."
                 mc.name "Go on, you should get back to work too."
-                $ the_group.draw_group(person_two)
+                $ the_group.draw_person(person_two)
                 $ person_two.change_obedience(5)
                 $ slut_report = person_two.change_slut_temp(10)
                 "You give [person_two.title] a light slap on the butt to pull her attention back to you. She nods quickly and heads the other way."
@@ -2277,7 +2131,7 @@ label cat_fight_crisis_label():
                 $ person_one.change_happiness(-5)
                 $ person_one.change_obedience(+5)
                 person_one.char "No sir, I think we will be alright."
-                $ the_group.draw_group(person_two, emotion = "sad")
+                $ the_group.draw_person(person_two, emotion = "sad")
                 $ person_two.change_happiness(-5)
                 $ person_two.change_obedience(+5)
                 person_two.char "Understood sir, there won't be any more problems."
@@ -2674,7 +2528,7 @@ label serum_creation_crisis_label(the_serum): # Called every time a new serum is
                     the_person.char "That's a big risk you know. If I'm going to do something like that, I think I deserve a raise."
                     $ raise_amount = int(the_person.salary*0.1)
                     menu:
-                        "Give [the_person.title] a 10%% raise (+$[raise_amount]/day)":
+                        "Give [the_person.title] a 10%% raise\n{color=#ff0000}{size=18}Costs: $[raise_amount] / day{/size}{/color}":
                             $ mc.log_event(the_person.title + ": +$[raise_amount]/day Salary", "float_text_green")
                             mc.name "Alright, you've got yourself a deal. I'll have the books updated by the end of the day."
                             $ the_person.salary += raise_amount
@@ -2717,15 +2571,13 @@ init 1 python:
         # Requires you and her to be at work.
         # Requires you to have a free slot in the company
         if mc.business.is_open_for_business() and mc.is_at_work() and mc.business.get_employee_count() < mc.business.max_employee_count:
-            for person in mc.business.get_employee_list():
-                if person.kids != 0 and person.age >= 34 and person.kids > town_relationships.get_existing_child_count(person): #At least one person fits the criteria we need to select a mother, the crisis is valid.
-                    return True
+            return not daughter_work_crisis_get_mother() is None
         return False
 
     def daughter_work_crisis_get_mother():
         valid_people_list = []
-        for person in mc.business.get_employee_list():
-            if person.kids != 0 and person.age >= 34 and person.kids > town_relationships.get_existing_child_count(person): #They have undiscovered kids we can add in.
+        for person in [x for x in mc.business.get_employee_list() if x.kids != 0 and x.age >= 34]:
+            if person.kids > town_relationships.get_existing_child_count(person): #They have undiscovered kids we can add in.
                 valid_people_list.append(person)
 
         return get_random_from_list(valid_people_list) #Pick someone appropriate from the company.
@@ -2878,15 +2730,15 @@ init 1 python:
 
     def horny_at_work_get_person_and_cause():
         potential_cause = []
-        for a_person in mc.location.people:
-            if a_person.outfit.slut_requirement >= 20:
-                potential_cause.append([a_person, "slutty_outfit"])
-            if a_person.has_large_tits():
-                potential_cause.append([a_person, "large_tits"])
-            if a_person.outfit.vagina_visible():
-                potential_cause.append([a_person, "vagina_visible"])
-            if a_person.outfit.tits_visible():
-                potential_cause.append([a_person, "tits_visible"])
+        for person in mc.location.people:
+            if person.outfit.slut_requirement >= 20:
+                potential_cause.append([person, "slutty_outfit"])
+            if person.has_large_tits():
+                potential_cause.append([person, "large_tits"])
+            if person.outfit.vagina_visible():
+                potential_cause.append([person, "vagina_visible"])
+            if person.outfit.tits_visible():
+                potential_cause.append([person, "tits_visible"])
 
         if potential_cause:
             the_cause = get_random_from_list(potential_cause)
@@ -2903,19 +2755,45 @@ init 1 python:
 
     def horny_at_work_get_follower():
         potential_follower = []
-        for a_person in mc.location.people:
-            if a_person.sluttiness >= 30 and renpy.random.randint(0,10) < a_person.focus:
-                potential_follower.append(a_person)
+        for person in mc.location.people:
+            if person.sluttiness >= 30 and renpy.random.randint(0,10) < person.focus:
+                potential_follower.append(person)
         return get_random_from_list(potential_follower)
 
     def horny_at_work_get_licker(helpful_people):
         licker = None
-        for a_person in helpful_people:
-            a_person.change_obedience(3)
-            a_person.change_slut_temp(1)
-            if a_person.get_opinion_score("being submissive") > 0 and a_person.get_opinion_score("drinking cum") > 0 and licker is None:
-                licker = a_person #The list was randomized, so even if you have multiple people who meet this criteria this should still end up random.
+        for person in helpful_people:
+            person.change_obedience(3)
+            person.change_slut_temp(1)
+            if person.get_opinion_score("being submissive") > 0 and person.get_opinion_score("drinking cum") > 0 and licker is None:
+                licker = person #The list was randomized, so even if you have multiple people who meet this criteria this should still end up random.
         return licker
+
+    def horny_at_work_get_people_sets():
+        unhappy_people = [] #They're surprised/shocked/disgusted that you're doing this.
+        neutral_people = [] #They're neither surprised that you're doing this, nor willing to come help out.
+        masturbating_people = []
+        helpful_people = [] #They're happy to come over and help you take care of your "needs"
+        for person in mc.location.people:
+            person.discover_opinion("public sex")
+            if person.sluttiness < (30 - person.get_opinion_score("public sex")*10):
+                unhappy_people.append(person)
+
+            elif person.obedience > (130 - (person.get_opinion_score("being submissive")*10)):
+                helpful_people.append(person)
+
+            else:
+                neutral_people.append(person)
+
+        for person in neutral_people:
+            if person.get_opinion_score("masturbating") > 0 and person.sluttiness >= 40:
+                masturbating_people.append(person)
+
+        renpy.random.shuffle(unhappy_people)
+        renpy.random.shuffle(neutral_people)
+        renpy.random.shuffle(masturbating_people)
+        renpy.random.shuffle(helpful_people)
+        return (unhappy_people, neutral_people, masturbating_people, helpful_people)
 
     horny_at_work_crisis = Action("Horny at work crisis", horny_at_work_crisis_requirement, "horny_at_work_crisis_label")
     crisis_list.append([horny_at_work_crisis,8])
@@ -2971,29 +2849,7 @@ label horny_at_work_crisis_label():
             $ clear_scene()
             # Girls around the room react. If some are particularly obedient and slutty they will offer to help get you off.
             "You wheel your chair back to give yourself some space, then unzip your pants and pull out your cock. You relax and start to jerk yourself off."
-            $ unhappy_people = [] #They're surprised/shocked/disgusted that you're doing this.
-            $ neutral_people = [] #They're neither surprised that you're doing this, nor willing to come help out.
-            $ masturbating_people = []
-            $ helpful_people = [] #They're happy to come over and help you take care of your "needs"
-            python:
-                for a_person in mc.location.people:
-                    a_person.discover_opinion("public sex")
-                    if a_person.sluttiness < (30 - a_person.get_opinion_score("public sex")*10):
-                        unhappy_people.append(a_person)
-
-                    elif a_person.obedience > (130 - (a_person.get_opinion_score("being submissive")*10)):
-                        helpful_people.append(a_person)
-
-                    else:
-                        neutral_people.append(a_person)
-
-                for a_person in neutral_people:
-                    if a_person.get_opinion_score("masturbating") > 0 and a_person.sluttiness >= 40:
-                        masturbating_people.append(a_person)
-
-                renpy.random.shuffle(unhappy_people)
-                renpy.random.shuffle(helpful_people)
-                renpy.random.shuffle(neutral_people)
+            $ unhappy_people, neutral_people, masturbating_people, helpful_people = horny_at_work_get_people_sets()
 
             if unhappy_people: #There's someone in this list.
                 $ main_unhappy_person = get_random_from_list(unhappy_people) #Someone to lead the unhappy group, if there is more than one person.
@@ -3039,29 +2895,32 @@ label horny_at_work_crisis_label():
                         unhappy_person.change_slut_temp(2)
                         mc.location.move_person(unhappy_person, lobby) #Move everyone to the lobby so they aren't considered observers for the rest of teh event.
                 #TODO: ALso move them to the lobby so they aren't considered watchers forthe rest of the event.
+                $ del main_unhappy_person
                 $ clear_scene() #TODO We should have an event for the angry girls coming back (maybe we need a general apology event?)
 
             if neutral_people:
-                $ the_group = GroupDisplayManager(neutral_people)
-                $ the_group.draw_group(position = "sitting")
-                if len(neutral_people) > 1:
-                    $ neutral_string = format_group_of_people(neutral_people) + " all see you jerking off at your desk, but none of them seem upset or surprised by it."
-                else:
-                    $ neutral_string = format_group_of_people(neutral_people) + " notices you jerking off, but she doesn't seem upset or surprised by it."
-                $ renpy.say("",neutral_string)
+                python:
+                    the_group = GroupDisplayManager(neutral_people)
+                    the_group.draw_group(position = "sitting")
+                    if len(neutral_people) > 1:
+                        neutral_string = format_group_of_people(neutral_people) + " all see you jerking off at your desk, but none of them seem upset or surprised by it."
+                    else:
+                        neutral_string = format_group_of_people(neutral_people) + " notices you jerking off, but she doesn't seem upset or surprised by it."
+                    renpy.say("", neutral_string)
+                    neutral_string = None
 
                 if masturbating_people:
                     python:
                         for mast_person in masturbating_people:
                             the_group.draw_person(mast_person, make_primary = False, emotion = "happy")
-                    $ renpy.random.shuffle(masturbating_people)
-                    if len(masturbating_people) == 1:
-                        $ masturbating_string = format_group_of_people(masturbating_people) + " even joins in, quietly sliding her hand down to her crotch and rubbing her pussy."
-                    elif len(masturbating_people) == 2:
-                        $ masturbating_string = format_group_of_people(masturbating_people) + " even join in, both sliding their hands down to their pussies and rubbing them quietly."
-                    else:
-                        $ masturbating_string =  format_group_of_people(masturbating_people) + " all quietly join in as well, quietly sliding hands down to their pussies and joining the group masturbation session."
-                    $ renpy.say("",masturbating_string)
+                            if len(masturbating_people) == 1:
+                                masturbating_string = format_group_of_people(masturbating_people) + " even joins in, quietly sliding her hand down to her crotch and rubbing her pussy."
+                            elif len(masturbating_people) == 2:
+                                masturbating_string = format_group_of_people(masturbating_people) + " even join in, both sliding their hands down to their pussies and rubbing them quietly."
+                            else:
+                                masturbating_string = format_group_of_people(masturbating_people) + " all quietly join in as well, quietly sliding hands down to their pussies and joining the group masturbation session."
+                            renpy.say("",masturbating_string)
+                        masturbating_string = None
 
             if helpful_people:
                 $ helpful_person = get_random_from_list(helpful_people)
@@ -3083,10 +2942,10 @@ label horny_at_work_crisis_label():
 
                     else:
                         $ others_string =  format_group_of_people(others) + " all get up and stand behind [helpful_person.possessive_title], obviously willing to do the same."
-                    $ others = None
+                    $ del others
                     $ renpy.say("",others_string)
                     $ others_string = None
-                $ helpful_person = None
+                $ del helpful_person
                 if len(helpful_people) > 1:
                     $ exit_option = "Just have them watch."
                 else:
@@ -3115,7 +2974,7 @@ label horny_at_work_crisis_label():
                         licker.char "Right away!"
                         $ licker.change_obedience(2)
                         "She licks your still-warm cum directly off of the floor, drinking it down eagerly. When she's finished she stands up and wipes her lips with the back of her hand."
-                        $ licker = None
+                        $ del licker
                     else:
                         "You pull your pants up and get back to work, basking in your post orgasm clarity."
 
@@ -3168,7 +3027,7 @@ label horny_at_work_crisis_label():
                     else:
                         "You sit back down in your office chair, feeling satisfied."
                         "After getting yourself cleaned up you're able to focus perfectly again and you get back to work."
-
+                $ del the_choice
 
 
             else: #You get yourself off.
@@ -3187,7 +3046,6 @@ label horny_at_work_crisis_label():
                 del neutral_people
                 del masturbating_people
                 del helpful_people
-                a_person = None
 
         "Sneak away to the bathroom and jerk off (tooltip)A few minutes in private should fix this right up." if mc.location.people: #If there are people around here's an option to jerk off. There might
             $ clear_scene()
@@ -3198,11 +3056,8 @@ label horny_at_work_crisis_label():
             if your_follower is not None:
                 #You were followed.
                 $ old_location = mc.location
-                $ work_bathroom = Room("work bathroom", "Work Bathroom", [], bathroom_background, [], [], [], False, [0,0], visible = False)
-                $ work_bathroom.show_background()
-                $ work_bathroom.add_object(make_wall())
-                $ work_bathroom.add_object(make_floor())
                 $ mc.change_location(work_bathroom)
+                $ mc.location.show_background()
                 "You relax when you reach the bathroom, but a moment after you enter [your_follower.title] opens the door and comes inside too."
                 $ your_follower.draw_person()
                 mc.name "[your_follower.title], I..."
@@ -3247,10 +3102,9 @@ label horny_at_work_crisis_label():
                         "You pull up some porn on your phone and get comfortable, jerking yourself off until you cum."
                         "When you're finished you clean up and get back to work, your mind now crystal clear."
 
-                $ del your_follower
-                $ del work_bathroom
                 $ mc.change_location(old_location)
                 $ mc.location.show_background()
+                $ del your_follower
                 $ del old_location
 
             else:
@@ -3433,15 +3287,14 @@ label horny_at_work_crisis_label():
                                 the_person.char "Ah!"
 
                             if the_person.outfit.can_half_off_to_vagina():
-                                $ strip_list = the_person.outfit.get_half_off_to_vagina_list()
                                 python:
-                                    for clothing in strip_list:
+                                    for clothing in the_person.outfit.get_half_off_to_vagina_list():
                                         the_person.draw_animated_removal(the_item, half_off_instead = True)
                                         if the_person.outfit.vagina_available():
                                             renpy.say("","You pull her " + clothing.display_name + " out of the way so you can get to her pussy.")
                                         else:
                                             renpy.say("","You pull her " + clothing.display_name + " out of the way.")
-                                    strip_list = None
+                                    clothing = None
 
                             else: #We need to strip her down completely. TODO: We need a way to determine if we can strip someone half down, then pull things aside (ie. pull off pants, pull panties to the side)
                                 $ the_item = the_person.outfit.remove_random_lower(top_layer_first = True, do_not_remove = True) #Start by stripping off her bottom.
@@ -3495,7 +3348,7 @@ label horny_at_work_crisis_label():
                             "She stammers for something more to say before settling on storming out of the room instead."
                             $ clear_scene()
                             "Frustrated, her rejection has at least taken your mind off of your erection and you're able to get back to work eventually."
-
+                $ del others
     $ clear_scene()
     $ the_group = None
     return

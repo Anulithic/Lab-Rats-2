@@ -20,8 +20,8 @@ init -1 python:
             return True
 
     def fuck_date_requirement(the_person):
-        if mc.business.event_triggers_dict.get("date_scheduled", False):
-            return "You already have a date planned!"
+        if mc.business.event_triggers_dict.get("fuck_date_scheduled", False):
+            return "Already planned fuck date!"
         else:
             return True
 
@@ -29,9 +29,9 @@ init -1 python:
         return True
 
     def add_plan_fuck_date_action(the_person):
-        evening_fuck_date_action = Action("Fuck date", evening_date_trigger, "fuck_date_label", args = the_person, requirement_args = 4) #Happens on a friday
+        evening_fuck_date_action = Action("Fuck date", evening_date_trigger, "fuck_date_label", args = the_person, requirement_args = 3) #Happens on a thursday
         mc.business.mandatory_crises_list.append(evening_fuck_date_action)
-        mc.business.event_triggers_dict["date_scheduled"] = True
+        mc.business.event_triggers_dict["fuck_date_scheduled"] = True
         return
 
     def add_so_morning_breakup_crisis(the_person):
@@ -69,12 +69,12 @@ label plan_fuck_date_label(the_person):
     "You place a hand on [the_person.possessive_title]'s hips and caress her leg. She smiles and leans into your hand."
     mc.name "I want to be alone with you. When will your [so_title] be out of the way so I can have you all to myself?"
     if the_person.kids > 0:
-        the_person.char "He normally stays late at work on Fridays. I can make sure the house is empty and we can get down to business the moment you're in the door."
+        the_person.char "He normally stays late at work on Thursdays. I can make sure the house is empty and we can get down to business the moment you're in the door."
     else:
-        the_person.char "He's normally stuck late at work on Fridays. Just come on over and we can get down to business."
+        the_person.char "He's normally stuck late at work on Thursdays. Just come on over and we can get down to business."
 
     menu:
-        "Plan a date for Friday night":
+        "Plan a date for Thursday night":
             mc.name "Good, I'll be there."
             the_person.char "I'll be ready and waiting."
             "She winks at you and smiles."
@@ -92,7 +92,7 @@ label fuck_date_label(the_person):
     #You go to her home and fuck her as much as your energy can support. Small chance her SO either calls or walks in.
     # Occurs at night. You go to her place.
 
-    $ mc.business.event_triggers_dict["date_scheduled"] = False #Deflag this event so you can schedule a date with another person for next week.
+    $ mc.business.event_triggers_dict["fuck_date_scheduled"] = False #Deflag this event so you can schedule a date with another person for next week.
     if the_person.relationship == "Single":
         return #If she's single she must have broken up with her SO at some point, which means you're no longer having an affair with her. Clear out your date and move on with your life.
 
@@ -111,6 +111,7 @@ label fuck_date_label(the_person):
             return
 
     $ mc.change_location(the_person.home)
+    $ mc.location.show_background()
     $ so_title = SO_relationship_to_title(the_person.relationship) #TODO: Make sure she's still in a relationship, or void this date if she isn't (because she's your girlfriend now).
 
     if the_person.home not in mc.known_home_locations:
@@ -120,10 +121,16 @@ label fuck_date_label(the_person):
         "You make your way to [the_person.possessive_title]'s house. You text her first, in case her [so_title] is unexpectedly home."
     mc.name "I'm here. Are you ready?"
     the_person.char "Come on in, the door is unlocked. I'm in the bedroom"
-    $ mc.location.show_background()
+    $ aunt_bedroom.show_background()
     "You go inside. The only light in the house comes from a room with its door ajar. When you swing it open you see [the_person.title] waiting."
     $ the_person.add_situational_slut("Date", 20, "There's no reason to hold back, he's here to fuck me!") # Bonus to sluttiness since you're in an affair and this is blatently a date to get fucked on.
+    call fuck_date_event(the_person) from _call_fuck_date_event
+    return "Advance Time"
+
+label fuck_date_event(the_person): #A breakout function so we can call the fuck_date stuff any time you go back to a girls place.
     #Figure out her outfit for this
+    $ so_title = SO_relationship_to_title(the_person.relationship)
+
     if the_person.get_opinion_score("not wearing anything") > the_person.get_opinion_score("lingerie"):
         $ the_person.apply_outfit(Outfit("Nude"), update_taboo = True) #She's wearing nothing at all. nothing at all. nothing at all...
 
@@ -139,7 +146,7 @@ label fuck_date_label(the_person):
         the_person.char "Hello, I'm ready for you [the_person.mc_title]..."
         "She licks her lips and watches you from her knees."
         the_person.char "Don't waste any time, I want you in my mouth."
-        call fuck_person(the_person, private = True, start_position = blowjob) from _call_fuck_person_34
+        call fuck_person(the_person, private = True, start_position = blowjob, skip_intro = True) from _call_fuck_person_34
 
     else:
         #She's standing and ready to make out as soon as you come in."
@@ -154,12 +161,14 @@ label fuck_date_label(the_person):
     $ done = False
     $ girl_came = False
     $ so_called = False
-    $ energy_gain_amount = 50 #Drops each round, representing your flagging endurance.
-    while done == False:
+    $ count = 0
+    $ energy_gain_amount = mc.max_energy // 3 #Drops each round, representing your flagging endurance.
+    while not done:
         if the_report.get("girl orgasms", 0) > 0: #TODO: Have some variation to this based on how many times we've looped around.
             $ the_person.change_love(2 + the_person.get_opinion_score("cheating on men"))
             $ the_person.change_slut_temp(1)
             the_person.char "Oh god... That was amazing. You're so much better at that than my [so_title]."
+            $ the_person.draw_person(position = "missionary")
             "[the_person.title] lies down on her bed and catches her breath."
             the_person.char "Ready to get back to it?"
             $ girl_came = True
@@ -167,6 +176,7 @@ label fuck_date_label(the_person):
         else:
             the_person.char "Whew, good job. Get some water and let's go for another!"
             "You take some time to catch your breath, drink some water, and wait for your refractory period to pass."
+            $ the_person.draw_person(position = "missionary")
             "You hold [the_person.title] in bed while she caresses you and touches herself, keeping herself ready for you."
 
 
@@ -191,12 +201,14 @@ label fuck_date_label(the_person):
             $ mc.change_energy(energy_gain_amount)
             $ the_person.change_energy(energy_gain_amount) #She gains some back too
             if energy_gain_amount >= 10:
-                $ energy_gain_amount += -10 #Gain less and less energy back each time until eventually you're exhausted and gain nothing back.
+                $ energy_gain_amount -= 10 #Gain less and less energy back each time until eventually you're exhausted and gain nothing back.
             menu:
                 "Fuck her again":
                     "Soon you're ready to go again and you wrap your arms around [the_person.title]."
                     mc.name "Come here you little slut."
-                    if renpy.random.randint(0,100) < 8 and not so_called:
+                    $ ran_num = renpy.random.randint(0, 100 - (count * 10))
+                    $ count += 1
+                    if ran_num < 15 and not so_called:
                         #Her SO Comes home (unless he's called, in which case we know where he is.)
                         "She smiles and wraps her arms around you in return, pressing her body against yours."
                         the_person.char "Come and take me. I..."
@@ -285,17 +297,11 @@ label fuck_date_label(the_person):
                                 the_person.char "I... I can't believe I'm actually doing this! Oh my god!"
                                 if not the_person.outfit.vagina_available():
                                     "You strip her down as quickly as you can, not a minute to spare."
-                                    python:
-                                        while not the_person.outfit.vagina_available():
-                                            the_item = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
-                                            the_person.draw_animated_removal(the_item)
-                                            renpy.pause(1)
+                                    if the_person.outfit.can_half_off_to_vagina():
+                                        $ generalised_strip_description(the_person, the_person.outfit.get_half_off_to_vagina_list(), position = "doggy", half_off_instead = True)
+                                    else:
+                                        $ generalised_strip_description(the_person, the_person.outfit.get_full_strip_list(), position = "doggy")
 
-                                        while not the_person.outfit.vagina_available():
-                                            the_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                                            the_person.draw_animated_removal(the_item)
-                                            renpy.pause(1)
-                                        the_item = None
                                 menu:
                                     "Put on a condom":
                                         "You pause for a second to put on a condom, spreading it over your hard cock before lining it up with her wet pussy."
@@ -330,15 +336,16 @@ label fuck_date_label(the_person):
                                 the_person.char "All I want is his cock!"
                                 "He gibbers weakly to himself and turns around, leaving the room. Shortly after you hear the engine of his car start up and he drives away."
 
-                                call fuck_person(the_person, private = True, start_position = doggy, start_object = mc.location.get_object_with_name("bed"), skip_intro = True) from _call_fuck_person_36
+                                call fuck_person(the_person, private = True, start_position = doggy, start_object = mc.location.get_object_with_name("bed"), skip_intro = True, asked_for_condom = True) from _call_fuck_person_101
                                 $ the_report = _return
                                 call transform_affair(the_person) from _call_transform_affair_1 #She's no longer with her husband, obviously.
 
                                 $ the_person.change_obedience(5)
                                 the_person.char "Oh my god, that was actually it. It's just me and you, nobody else in our way."
                                 "She holds onto you tightly and rests her head on your chest."
+                                $ so_called = True
 
-                    elif ran_num < 20 and not so_called:
+                    elif ran_num < 30 and not so_called:
                         #Her SO calls home. Depending on Love/Sluttiness she might want to stop, or keep going while talking to him.
                         $ so_called = True
                         "She smiles and moves to kiss you, when a happy little jingle fills the room."
@@ -410,7 +417,7 @@ label fuck_date_label(the_person):
                                 the_person.char "Of course everything is fine. I'm just having something to eat before bed. That might be what you're hearing."
                                 "She licks the bottom of your dick and winks at you."
                                 the_person.char "Mhmm, it's delicious. I can't wait to get into bed though, it's been a long day."
-                                the_person.char "I love you too, love you sweetheart."
+                                the_person.char "I love you too, goodnight sweetheart."
                                 "She slides you back into her mouth and holds her phone up to show you as she ends the call."
                                 call fuck_person(the_person, private = True, start_position = blowjob, skip_intro = True) from _call_fuck_person_39
                                 $ the_report = _return
@@ -421,25 +428,17 @@ label fuck_date_label(the_person):
                                 the_person.char "Yeah? You don't say... Uh huh?"
                                 "With a little bit of pressure on her shoulders you guide [the_person.possessive_title] down onto her back."
                                 $ the_person.draw_person(position = "missionary")
-                                if the_person.outfit.vagina_available():
-                                    "She spreads her legs as you climb on top of her, still talking to her [so_title] on her phone."
+                                if not the_person.outfit.vagina_available():
+                                    "You strip her down as quickly as you can, not a minute to spare."
+                                    if the_person.outfit.can_half_off_to_vagina():
+                                        $ generalised_strip_description(the_person, the_person.outfit.get_half_off_to_vagina_list(), position = "missionary", half_off_instead = True)
+                                    else:
+                                        $ generalised_strip_description(the_person, the_person.outfit.get_full_strip_list(), position = "missionary")
 
-                                else:
-                                    # You undress her so you can get to the point you can fuck her
-                                    "You undress her while she's still on the phone with her [so_title]."
-                                    python:
-                                        while not the_person.outfit.vagina_available():
-                                            the_item = the_person.outfit.remove_random_upper(top_layer_first = True, do_not_remove = True)
-                                            the_person.draw_animated_removal(the_item)
-                                            renpy.pause(1)
-
-                                        while not the_person.outfit.vagina_available():
-                                            the_item = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                                            the_person.draw_animated_removal(the_item)
-                                            renpy.pause(1)
-                                        the_item = None
                                     "Once her cute little pussy is available, she spreads her legs for you."
                                     $ the_person.update_outfit_taboos()
+                                else:
+                                    "She spreads her legs as you climb on top of her, still talking to her [so_title] on her phone."
 
                                 $ wanted_condom = False
                                 if the_person.effective_sluttiness("condomless_sex") < the_person.get_no_condom_threshold():
@@ -476,7 +475,7 @@ label fuck_date_label(the_person):
                                 the_person.char "Oh fuck, you're crazy [the_person.mc_title]! What if we get caught?"
                                 mc.name "We'll deal with that if it happens. Just relax and enjoy."
 
-                                call fuck_person(the_person, private = True, start_position = missionary, start_object = mc.location.get_object_with_name("bed"), skip_intro = True) from _call_fuck_person_40
+                                call fuck_person(the_person, private = True, start_position = missionary, start_object = mc.location.get_object_with_name("bed"), skip_intro = True, asked_for_condom = True) from _call_fuck_person_102
                                 $ the_report = _return
 
                         #TODO: At this point run a check on her arousal.
@@ -495,6 +494,7 @@ label fuck_date_label(the_person):
                     "You kiss [the_person.title], then get up and start collecting your clothes."
                     if girl_came:
                         the_person.char "Okay then. We need to do this again, you rocked my world [the_person.mc_title]."
+                        $ the_person.draw_person(position = "missionary")
                         "She sighs happily and lies down on her bed."
 
                     else:
@@ -508,9 +508,12 @@ label fuck_date_label(the_person):
 
     #As soon as done is True we finish looping. This means each path should narrate it's own end of encounter stuff.
     #Generic stuff to make sure we don't keep showing anyone.
-    $ the_person.clear_situational_slut("Date")
-    $ mc.change_location(bedroom) # go home
-    $ clear_scene()
+    python:
+        the_person.clear_situational_slut("Date")
+        mc.change_location(bedroom) # go home
+        clear_scene()
+        so_title = None
+        del energy_gain_amount
     return "Advance Time"
 
 

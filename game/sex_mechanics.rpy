@@ -42,6 +42,10 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
         else:
             $ the_person.add_situational_slut("public_sex", the_person.get_opinion_score("public sex") * 5, "There are people watching!")
 
+    $ report_log["was_public"] = not private
+
+
+
     #Love modifiers. Always applies if negative, but only adds a bonus if you are in private.
     if the_person.love < 0:
         $ the_person.add_situational_slut("love_modifier", the_person.love, "I hate you, get away from me!")
@@ -62,7 +66,6 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
     $ happiness_effect = __builtin__.round((the_person.happiness - 100)/5.0)
     if the_person.happiness <= 95:
-
         if the_person.happiness <= 75:
             $ the_person.add_situational_slut("happiness_modifier", happiness_effect, "I'm so unhappy, I just don't want to do anything!")
         else:
@@ -95,6 +98,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
             if position_choice is None and (first_round or not position_locked):
                 call girl_choose_position(the_person, ignore_taboo = ignore_taboo) from _call_girl_choose_position #Get her to pick a position based on what's available #TODO: This function
                 $ position_choice = _return #Can be none, if no option was available for her to take.
+
             if position_choice is not None:
                 if initial_position != position_choice:
                    $ object_choice = None
@@ -152,7 +156,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
             $ option_list = []
             python:
                 if position_choice is not None:
-                    option_list.append(["Keep " + position_choice.verbing + " her.","Continue"]) #Note: you're prevented from continuing if the energy cost would be too high by the pre-round checks.
+                    option_list.append(["Keep " + position_choice.verbing + " her.\n" + position_choice.build_energy_arousal_line(the_person),"Continue"]) #Note: you're prevented from continuing if the energy cost would be too high by the pre-round checks.
                     option_list.append(["Pause and strip her down","Strip"])
 
                     if not position_locked and object_choice:
@@ -177,6 +181,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
         # Now that a round_choice has been picked we can do something.
         if round_choice == "Change" or round_choice == "Continue":
             if round_choice == "Change": # If we are changing we first select and transition/intro the position, then run a round of sex. If we are continuing we ignroe all of that
+                $ mc.condom = False # If we're changing position we want to be able to re-check if we need a condom.
                 if start_position is None: #The first time we get here,
                     call pick_position(the_person, ignore_taboo = ignore_taboo) from _call_pick_position
                     $ position_choice = _return
@@ -190,7 +195,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                     call pick_object(the_person, position_choice, forced_object = start_object) from _call_pick_object_1
                     $ object_choice = _return
 
-                if position_choice and object_choice:
+                if position_choice and object_choice and not position_locked:
                     call check_position_willingness(the_person, position_choice, ignore_taboo = ignore_taboo) from _call_check_position_willingness
                     if not _return: #If she wasn't willing for whatever reason (too slutty a position, not willing to wear a condom) we clear our settings and try again.
                         $ position_choice = None
@@ -271,7 +276,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
 
         elif isinstance(round_choice, Position): #The only non-strings on the list are positions we are changing to
-            call check_position_willingness(the_person, round_choice, ignore_taboo = ignore_taboo, skip_dialog = True) from _call_check_position_willingness_1
+            call check_position_willingness(the_person, round_choice, ignore_taboo = ignore_taboo, skip_condom = True) from _call_check_position_willingness_1
             if _return:
                 $ round_choice.redraw_scene(the_person)
                 if the_person.has_taboo(round_choice.associated_taboo) and not ignore_taboo:
@@ -289,7 +294,7 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
         elif round_choice == "Leave":
             $ finished = True # Unless something stops us the encounter is over and we can end
-            if renpy.random.randint(0,the_person.arousal) + 50 > the_person.obedience and the_person.energy >= 30: #She's disobedient and will take control of the encounter. disobed disobd
+            if renpy.random.randint(0,the_person.arousal) + 50 > the_person.obedience and the_person.energy >= 30 and report_log.get("girl orgasms", 0) == 0: #She's disobedient and will take control of the encounter. disobed
                 $ the_person.call_dialogue("sex_take_control")
                 $ the_person.change_obedience(-3)
                 $ girl_in_charge = True
@@ -302,7 +307,10 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
                 menu:
                     "Give her what she wants":
                         $ the_person.change_obedience(2)
-                        $ report_log["beg finish"] = report_log.get("beg finish", 0) + 1
+                        if "beg finished" in report_log.keys():
+                            $ report_log["beg finish"] += 1
+                        else:
+                            $ report_log["beg finish"] = 1
                         $ finished = False
 
                     "Stop and leave":
@@ -326,11 +334,12 @@ label fuck_person(the_person, private = True, start_position = None, start_objec
 
     # Teardown the sex modifiers
     $ the_person.clear_situational_slut("love_modifier")
-    $ the_person.clear_situational_slut("happiness_effect")
+    $ the_person.clear_situational_slut("happiness_modifier")
     $ the_person.clear_situational_slut("cheating")
     $ the_person.clear_situational_slut("taboo_sex")
     $ the_person.clear_situational_slut("public_sex")
     $ the_person.clear_situational_slut("sex_object")
+    $ the_person.clear_situational_slut("public_sex")
     $ the_person.clear_situational_obedience("sex_object")
 
     $ report_log["end arousal"] = the_person.arousal
@@ -438,26 +447,34 @@ label pick_object(the_person, the_position, forced_object = None):
     $ the_person.add_situational_obedience("sex_object",picked_object.obedience_modifier, the_position.verbing + " on a " + picked_object.name)
     return picked_object
 
-label check_position_willingness(the_person, the_position, ignore_taboo = False, skip_dialog = False): #Returns if the person is willing to do this position or not, and charges the appropriate happiness hit if they needed obedience to be willing.
+label check_position_willingness(the_person, the_position, ignore_taboo = False, skip_condom = False): #Returns if the person is willing to do this position or not, and charges the appropriate happiness hit if they needed obedience to be willing.
     $ willing = True
     $ the_taboo = the_position.associated_taboo
     if ignore_taboo:
         $ the_taboo = None
 
     if the_person.effective_sluttiness(the_taboo) >= the_position.slut_requirement:
-        if not (skip_dialog or the_person.has_taboo(the_taboo)):
+        if the_person.has_taboo(the_taboo):
             $ the_person.call_dialogue("sex_accept")
     elif the_person.effective_sluttiness(the_taboo) + (the_person.obedience-100) >= the_position.slut_requirement:
         # She's willing to be commanded to do it. Reduce her happiness by the difference (increase arousal if she likes being submissive)
-        $ happiness_drop = the_person.effective_sluttiness(the_position.associated_taboo) - the_position.slut_requirement #Our initial conditions mean this is a negative number
-        $ the_person.change_arousal(the_person.get_opinion_score("being submissive")*2)
-        $ the_person.discover_opinion("being submissive")
-        $ the_person.change_happiness(happiness_drop)
-        if the_person.has_taboo(the_taboo):
-            pass #If there is a taboo being broken we have special taboo break dialogue called from the position.
-        else:
-            $ the_person.call_dialogue("sex_obedience_accept")
-        $ willing = True
+        "[the_person.possessive_title] doesn't seem enthusiastic, but a little forceful encouragement would probably convince her."
+        menu:
+            "Order her":
+                mc.name "[the_person.title], this is going to happen."
+                $ happiness_drop = the_person.effective_sluttiness(the_position.associated_taboo) - the_position.slut_requirement #Our initial conditions mean this is a negative number
+                $ the_person.change_arousal(the_person.get_opinion_score("being submissive")*2)
+                $ the_person.discover_opinion("being submissive")
+                $ the_person.change_happiness(happiness_drop)
+                if the_person.has_taboo(the_taboo):
+                    pass #If there is a taboo being broken we have special taboo break dialogue called from the position. TODO: We should have obedience specific taboo breaks (with variants for how much she dislikes it)
+                else:
+                    $ the_person.call_dialogue("sex_obedience_accept")
+                $ report_log["used_obedience"] = True
+                $ willing = True
+            "Try something else":
+                mc.name "Let's try something else that you might be more comfortable with."
+                $ willing = False
 
     elif the_person.effective_sluttiness(the_taboo) > the_position.slut_requirement/2:
         # She's not willing to do it, but gives you a soft reject.
@@ -472,7 +489,8 @@ label check_position_willingness(the_person, the_position, ignore_taboo = False,
         $ the_person.call_dialogue("sex_angry_reject")
         $ willing = False
 
-    if willing and the_position.skill_tag == "Vaginal" and not mc.condom: #We might need a condom, which means she might say no. TODO: Add an option to pull _off_ a condom while having sex.
+    if willing and the_position.skill_tag == "Vaginal" and not mc.condom and not skip_condom: #We might need a condom, which means she might say no. TODO: Add an option to pull _off_ a condom while having sex.
+        # skip_condom is should be used any time you're transitioning - it's a fluid change and not enough of a difference for them to have a moment to stop you.
         call condom_ask(the_person) from _call_condom_ask
         $ willing = _return
 
@@ -505,17 +523,18 @@ label sex_description(the_person, the_position, the_object, private = True, repo
         else:
             $ her_arousal_change += 2 * the_person.get_opinion_score("bareback sex")
 
-    if the_position.opinion_tags: #If she likes or dislikes this position in particular she will gain (or lose) a little bit of arousal.
-        python:
+    $ opinion_score = 0
+    python:
+        if the_position.opinion_tags: #If she likes or dislikes this position in particular she will gain (or lose) a little bit of arousal.
             for opinion_tag in the_position.opinion_tags:
-                her_arousal_change += the_person.get_opinion_score(opinion_tag) #Add a bonus or penalty if she likes or dislikes the position.
+                opinion_score += the_person.get_opinion_score(opinion_tag) #Add a bonus or penalty if she likes or dislikes the position.
                 the_person.discover_opinion(opinion_tag)
+            her_arousal_change += opinion_score
 
     if the_person.sluttiness > the_position.slut_cap: #She's sluttier than this position, it's only good to warm her up.
-        if the_person.arousal > the_position.slut_cap: #Once her arousal is higher than the cap he's completely bored by it.
+        if opinion_score < 1 and the_person.arousal > the_position.slut_cap: #Once her arousal is higher than the cap he's completely bored by it.
             $ mc.log_event(the_person.title + ": Bored by position. Arousal gain halved.", "float_text_red")
-            $ her_arousal_change = her_arousal_change/2.
-
+            $ her_arousal_change = her_arousal_change / 2
 
     $ clothing_count = 0
     $ interfering_clothing = []
@@ -536,7 +555,7 @@ label sex_description(the_person, the_position, the_object, private = True, repo
     if clothing_count > 0:
         $ clothing_string = format_list_of_clothing(interfering_clothing)
         "[the_person.title]'s half off [clothing_string] get in the way, lowering your enjoyment somewhat."
-
+    $ del interfering_clothing
 
     $ her_arousal_change += -clothing_count
     $ the_person.change_arousal(her_arousal_change)
@@ -676,8 +695,6 @@ label condom_ask(the_person):
                 else:
                     if the_person.on_birth_control:
                         the_person.char "Okay. I'm on birth control, so it should be fine."
-                    # if the_person.has_taboo("creampie"):
-                    #     the_person.char "Just make sure to pull out if you're going to cum, okay?"
                     else:
                         the_person.char "Fine, but you {i}really{/i} need to pull out this time. We shouldn't be taking risks like that."
 
@@ -788,14 +805,14 @@ label strip_menu(the_person, the_verbing = "fucking", is_private = True): #TODO:
             if willing_if_ordered:
                 $ the_person.call_dialogue("strip_obedience_accept", the_clothing = strip_choice, strip_type = strip_type)
                 menu:
-                    "Do it anyways.":
+                    "Do it anyways":
                         "You proceed despite [the_person.possessive_title]'s objections, trusting her to remain obedient and docile."
                         $ willing_to_strip = True
                         $ ordered_to_strip = True
                         $ the_person.discover_opinion("being submissive")
                         $ the_person.change_happiness(-5 + (5*the_person.get_opinion_score("being submissive")))
 
-                    "Let it be.":
+                    "Let it be":
                         "You leave [the_person.possessive_title]'s [strip_choice.display_name] in place, and she relaxes."
 
         if willing_to_strip:
@@ -865,9 +882,13 @@ label strip_menu(the_person, the_verbing = "fucking", is_private = True): #TODO:
                 $ the_person.call_dialogue("strip_reject", the_clothing = strip_choice , strip_type = strip_type) #TODO: pass the piece of clothing and base some dialogue off of that.
         $ renpy.call("strip_menu", the_person, the_verbing, is_private) #TODO: Girl sometimes interupts you to get you to keep going. Have to strip them down in segments.
 
-    $ test_outfit = None
-    $ full_off_list = None
-    $ half_off_list = None
+    python:
+        choice_return = None
+        test_outfit = None
+        full_off_list = None
+        half_off_list = None
+        other_list = None
+        strip_choice = None
     return
 
 label girl_strip_event(the_person, the_position, the_object):

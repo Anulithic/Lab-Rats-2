@@ -543,7 +543,7 @@ label photo_blowjob(the_person):
     $ the_person.draw_person(position = "blowjob", special_modifier = "blowjob")
     "She licks at the tip a couple of times, then slips it into her mouth."
     $ the_person.break_taboo("sucking_cock")
-    "You feel [the_person.title]'s tounge lick at the bottom of your shaft as she starts to move her head, bobbing it back and forth."
+    "You feel [the_person.title]'s tongue lick at the bottom of your shaft as she starts to move her head, bobbing it back and forth."
     "You try to stay focused and snap a few more pictures as she sucks you off."
 
 
@@ -582,15 +582,26 @@ label photo_sex(the_person):
     if the_person.effective_sluttiness("vaginal_sex") < 65 or the_person.has_taboo("vaginal_sex"):
         if the_person.relationship != "Single":
             $ SO_title = SO_relationship_to_title(the_person.relationship)
-            the_person.char "I can't do that [the_person.mc_title], my [SO_title]..."
-            mc.name "We've gone so far already, what's the difference? Just relax and do what feel natural."
-            "Her resistance wavers, then melts away."
+            if affair_role in the_person.special_role:
+                the_person.char "That would be nice [the_person.mc_title], just make sure my [SO_title] doesn't find out."
+                mc.name "Don't worry, just do what feels natural."
+            else:
+                the_person.char "I can't do that [the_person.mc_title], my [SO_title]..."
+                mc.name "We've gone so far already, what's the difference? Just relax and do what feels natural."
+                "Her resistance wavers, then melts away."
         else:
             the_person.char "I can't do that [the_person.mc_title]..."
-            mc.name "We've gone so far already, what's the difference? Just relax and do what feel natural."
+            mc.name "We've gone so far already, what's the difference? Just relax and do what feels natural."
             "Her resistance wavers, then melts away."
     else:
         "[the_person.title] nods excitedly."
+
+    if not the_person.outfit.vagina_available():
+        "You tell her to take of some clothes."
+        if the_person.outfit.can_half_off_to_vagina():
+            $ generalised_strip_description(the_person, the_person.outfit.get_half_off_to_vagina_list(), position = "stand3", half_off_instead = True)
+        else:
+            $ generalised_strip_description(the_person, the_person.outfit.get_full_strip_list(), position = "stand3")
 
     $ the_person.draw_person(position = "missionary")
     "She lies down and you get on your knees. You pull her close to you, legs to either side with her pussy in line with your hard cock."

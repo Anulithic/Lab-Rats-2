@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Wardrobe name="Svetlanna_Wardrobe">
+    <FullSets>
+		<Outfit name="Svetlanna Clubbing">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.0" green="0.0" name="Quarter_Cup_Bra" palpha="1" pattern="Pattern_1" pblue="1" pgreen="1" pred="1" red="0.56" />
+                <Item alpha="0.8" blue="0.6" green="0.0" name="Tight_Vest" red="1.0" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.0" green="0.0" name="String_Panties" red="0.56" />
+                <Item alpha="1.0" blue="0.0" green="0.0" name="Micro_Skirt" palpha="0.8" pattern="Pattern_1" pblue="0.6" pgreen="0.0" pred="1.0" red="0.0" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="0.8" blue="0.6" green="0.0" name="Fishnets" red="1.0" />
+                <Item alpha="1.0" blue="0.0" green="0.0" name="High_Heels" red="0.56" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1.0" blue="0.0" green="0.0" name="Lipstick" red="0.56" />
+                <Item alpha="1.0" blue="0.29" green="0.42" name="Blush" red="0.53" />
+                <Item alpha="1.0" blue="1.0" green="0.2" name="Upper_Eye_Shadow" red="0.26" />
+                <Item alpha="1.0" blue="0.0" green="1.0" name="Chandelier_Earings" red="1.0" />
+                <Item alpha="1.0" blue="0.0" green="1.0" name="Gold_Bracelet" red="1.0" />
+                <Item alpha="1.0" blue="0.0" green="0.0" name="Lace_Choker" red="0.56" />
+            </Accessories>
+        </Outfit>
+		<Outfit name="Svetlanna Workout 1">
+            <UpperBody>
+                <Item alpha="1" blue="1" green="1" name="Sports_Bra" palpha="0.95" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="1" />
+                <Item alpha="0.95" blue="0.63" green="0.44" name="Tshirt" palpha="1" pattern="Pattern_3" pblue="1" pgreen="1" pred="1" red="0.87" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="0.78" blue="0.63" green="0.44" name="Booty_Shorts" red="0.87" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="1" green="1.0" name="Short_Socks" palpha="0.95" pattern="Pattern_1" pblue="0.63" pgreen="0.44" pred="0.87" red="1" />
+                <Item alpha="0.95" blue="0.71" green="0.41" name="Sneakers" palpha="1" pattern="Pattern_1" pblue="1" pgreen="1" pred="1" red="1" />
+            </Feet>
+            <Accessories>
+                <Item alpha="0.78" blue="0.59" green="0.31" name="Full_Shimmer" red="0.45" />
+                <Item alpha="1" blue="1" green="1" name="Lace_Choker" red="1" />
+            </Accessories>
+        </Outfit>
+		<Outfit name="Svetlanna Eveningwear 1">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.0" green="0.0" name="Evening_Dress" red="0.28" />
+                <Item alpha="1.0" blue="0.71" green="0.41" name="Quarter_Cup_Bra" palpha="1" pattern="Pattern_1" pblue="1" pgreen="1" pred="1" red="1" />
+            </UpperBody>
+            <LowerBody />
+            <Feet>
+                <Item alpha="0.95" blue="0.15" green="0.15" name="Thigh_Highs" red="0.15" />
+                <Item alpha="0.95" blue="0.0" green="0.0" name="High_Heels" red="0.84" />
+            </Feet>
+            <Accessories>
+                <Item alpha="0.95" blue="0.59" green="0.31" name="Upper_Eye_Shadow" red="0.45" />
+                <Item alpha="0.95" blue="0.0" green="0.0" name="Lipstick" red="0.45" />
+                <Item alpha="0.95" blue="0.36" green="0.92" name="Diamond_Ring" red="0.98" />
+                <Item alpha="0.95" blue="0.36" green="0.92" name="Gold_Chain_Necklace" red="0.98" />
+            </Accessories>
+        </Outfit>
+    </FullSets>
+	<UnderwearSets>
+		<Outfit name="Svetlanna Underwear 1">
+            <UpperBody>
+                <Item alpha="1.0" blue="1.0" green="0.0" name="Quarter_Cup_Bra" palpha="1" pattern="Pattern_1" pblue="1" pgreen="1" pred="1" red="0.67" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="1.0" green="0.0" name="Crotchless_Panties" red="0.67" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="1.0" green="0.0" name="Fishnets" red="1.0" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1.0" blue="0.0" green="0.0" name="Lipstick" red="0.56" />
+                <Item alpha="0.8" blue="0.29" green="0.42" name="Blush" red="0.53" />
+            </Accessories>
+        </Outfit>
+        <Outfit name="Svetlanna Casual Underwear">
+            <UpperBody>
+                <Item alpha="1.0" blue="1.0" green="0.55" name="Lace_Bra" palpha="1" pattern="Pattern_1" pblue="1" pgreen="1" pred="1" red="1.0" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="1.0" green="0.55" name="Thong" palpha="1" pattern="Pattern_1" pblue="1" pgreen="1" pred="1" red="1.0" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="1" green="1" name="Long_Socks" red="1" />
+            </Feet>
+            <Accessories />
+		</Outfit>
+		<Outfit name="Svetlanna Commando 1">
+            <UpperBody>
+                <Item alpha="0.95" blue="0.85" green="0.73" name="Thin_Bra" red="1" />
+            </UpperBody>
+            <LowerBody />
+            <Feet>
+                <Item alpha="1" blue="1" green="1" name="Long_Socks" palpha="0.95" pattern="Pattern_1" pblue="0.85" pgreen="0.73" pred="1" red="1" />
+            </Feet>
+            <Accessories>
+                <Item alpha="0.95" blue="0.55" green="0.239" name="Upper_Eye_Shadow" red="0.28" />
+            </Accessories>
+        </Outfit>
+		<Outfit name="Svetlanna Laundry Day">
+            <UpperBody>
+                <Item alpha="0.95" blue="0.15" green="0.15" name="Bra" red="0.15" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="0.95" blue="0.15" green="0.15" name="Plain_Panties" palpha="1" pattern="Pattern_1" pblue="1" pgreen="1" pred="1" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="1" green="1" name="Short_Socks" palpha="0.95" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="1" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+	</UnderwearSets>
+    <OverwearSets>
+		<Outfit name="Svetlanna Casual Overwear">
+            <UpperBody>
+                <Item alpha="0.95" blue="0.0" green="0.0" name="Tube_Top" red="0.56" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="0.95" blue="0.0" green="0.0" name="Pencil_Skirt" red="0.56" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="1" green="1" name="Sneakers" palpha="0.8" pattern="Pattern_1" pblue="0.54" pgreen="0.0" pred="0.41" red="1" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1.0" blue="0.54" green="0.0" name="Modern_Glasses" red="0.41" />
+                <Item alpha="1.0" blue="0.0" green="1.0" name="Copper_Ring_Set" red="1.0" />
+                <Item alpha="0.8" blue="0.54" green="0.0" name="Bead_Bracelet" red="0.41" />
+                <Item alpha="1.0" blue="0.0" green="1.0" name="Gold_Chain_Necklace" red="1.0" />
+            </Accessories>
+        </Outfit>
+		<Outfit name="Svetlanna Overwear 2">
+            <UpperBody>
+                <Item alpha="0.8" blue="0.0" green="0.0" name="Leotard" red="0.45" />
+                <Item alpha="0.95" blue="0.71" green="0.41" name="Vest" red="1" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.15" green="0.15" name="Pencil_Skirt" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="0.95" blue="0.71" green="0.41" name="Pumps" palpha="0.95" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="1" />
+            </Feet>
+            <Accessories>
+                <Item alpha="0.95" blue="0.325" green="0.039" name="Sunglasses" red="0.843" />
+                <Item alpha="0.95" blue="0.0" green="0.0" name="Lace_Choker" red="0.45" />
+            </Accessories>
+        </Outfit>
+		<Outfit name="Svetlanna School Outfit">
+            <UpperBody>
+                <Item alpha="0.95" blue="0.85" green="0.73" name="Summer_Dress" red="1" />
+            </UpperBody>
+            <LowerBody />
+            <Feet>
+                <Item alpha="0.95" blue="0.15" green="0.15" name="High_Boots" red="0.15" />
+            </Feet>
+            <Accessories>
+                <Item alpha="0.95" blue="0.15" green="0.15" name="Modern_Glasses" red="0.15" />
+                <Item alpha="0.95" blue="0.71" green="0.41" name="Wide_Choker" red="1" />
+            </Accessories>
+        </Outfit>
+	</OverwearSets>
+</Wardrobe>

@@ -2,8 +2,8 @@ init:
     python:
         skull_fuck = Position(name = "Skull Fuck", slut_requirement = 65, slut_cap = 100, requires_hard = True, requires_large_tits = False,
             position_tag = "blowjob", requires_location = "Kneel", requires_clothing = "None", skill_tag = "Oral",
-            girl_arousal = 5, girl_energy = 15, #TODO: Balance energy costs
-            guy_arousal = 25, guy_energy = 8,
+            girl_arousal = 5, girl_energy = 10,
+            guy_arousal = 25, guy_energy = 12,
             connections = [],
             intro = "intro_skull_fuck",
             scenes = ["scene_skull_fuck_1","scene_skull_fuck_2","scene_skull_fuck_3"],
@@ -13,7 +13,7 @@ init:
             orgasm_description = "orgasm_skull_fuck",
             taboo_break_description = "taboo_break_skull_fuck",
             verb = "throat fuck",
-            opinion_tags = ["giving blowjobs","being submissive"], record_class = "Blowjobs",
+            opinion_tags = ["giving blowjobs", "being submissive"], record_class = "Blowjobs",
             default_animation = idle_wiggle_animation, modifier_animations = {"blowjob":blowjob_bob},
             associated_taboo = "sucking_cock")
 
@@ -105,10 +105,10 @@ label outro_skull_fuck(the_girl, the_location, the_object):
             mc.name "Fuck, here I cum!"
             "With both hands firmly on [the_girl.possessive_title]'s head you wait until the last possible moment to stop skull fucking her and pull out."
             $ skull_fuck.current_modifier = None
-            $ skull_fuck.redraw_scene(the_girl)
+            $ the_girl.draw_person(position = "kneeling1")
             "You step back, dragging your hard cock from her lips just as it starts to spasm out your hot load."
             $ the_girl.cum_on_face()
-            $ skull_fuck.redraw_scene(the_girl)
+            $ the_girl.draw_person(position = "kneeling1")
             "She opens her mouth to gasp for air and gets a mouthful of cum along with it."
             "You take one hand off [the_girl.title]'s head and grab your cock, guiding it as you pulse your semen all over her face."
             if the_girl.get_opinion_score("drinking cum") > 0:
@@ -181,10 +181,10 @@ label transition_default_skull_fuck(the_girl, the_location, the_object):
 label strip_skull_fuck(the_girl, the_clothing, the_location, the_object):
     "[the_girl.title] taps on your thigh and tries to move her head back."
     menu:
-        "Ignore her.": #You're really in control here.
+        "Ignore her": #You're really in control here.
             mc.name "I can't stop now, this feels too good!"
 
-        "Let her up.":
+        "Let her up":
             $ skull_fuck.current_modifier = None
             $ skull_fuck.redraw_scene(the_girl)
             "You give her throat one last thrust, then let her slide back until the tip of your cock clears her lips."
@@ -201,22 +201,22 @@ label strip_skull_fuck(the_girl, the_clothing, the_location, the_object):
 label strip_ask_skull_fuck(the_girl, the_clothing, the_location, the_object):
     "[the_girl.title] taps on your thigh and tries to move her head back."
     menu:
-        "Ignore her.": #You're really in control here.
+        "Ignore her": #You're really in control here.
             mc.name "I can't stop now, this feels too good!"
 
-        "Let her up.":
+        "Let her up":
             $ skull_fuck.current_modifier = None
             $ skull_fuck.redraw_scene(the_girl)
             "You give her throat one last thrust, then let her slide back until the tip of your cock just barely clears her lips."
             the_girl.char "I'm going to take off my [the_clothing.name], if that's okay with you."
             menu:
-                "Let her strip.":
+                "Let her strip":
                     mc.name "Take it off."
                     $ the_girl.draw_animated_removal(the_clothing, position = blowjob.position_tag)
                     "[the_girl.possessive_title] strips out of her [the_clothing.name], your hard shaft hovering inches from her face."
                     "When she drops it to the side you press yourself forward, parting her lips and sliding your cock back down her throat."
 
-                "Leave it on.":
+                "Leave it on":
                     mc.name "No, I like how you look with it on."
                     the_girl.char "Well then, what are you waiting for?"
                     "She opens her mouth wide and you slam your dick back down her throat."

@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Wardrobe name="Cousin_Wardrobe">
+    <FullSets>
+        <Outfit name="Cousin_Full_1">
+            <UpperBody>
+                <Item alpha="1" blue="0.15" green="0.15" name="Corset" palpha="0.8" pattern="Pattern_1" pblue="0.24" pgreen="0.15" pred="0.24" red="0.15" />
+                <Item alpha="1.0" blue="0.24" green="0.15" name="Long_Sweater" red="0.24" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="0.8" blue="0.24" green="0.15" name="Lace_Panties" palpha="1" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="0.24" />
+                <Item alpha="1" blue="0.18" green="0.18" name="Leggings" red="0.18" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.24" green="0.15" name="Garter_and_Fishnets" palpha="1" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="0.24" />
+                <Item alpha="1.0" blue="0.43" green="0.2" name="Sneakers" palpha="1" pattern="Pattern_1" pblue="0.77" pgreen="0.74" pred="0.73" red="0.32" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1" blue="1" green="1" name="Copper_Ring_Set" red="1" />
+                <Item alpha="1.0" blue="0.43" green="0.2" name="Lipstick" red="0.32" />
+            </Accessories>
+        </Outfit>
+        <Outfit name="Cousin_Full_2">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.24" green="0.15" name="Tanktop" red="0.24" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.24" green="0.15" name="Thong" palpha="1" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="0.24" />
+                <Item alpha="1" blue="0.15" green="0.15" name="Booty_Shorts" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.24" green="0.15" name="Garter_and_Fishnets" palpha="1" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="0.24" />
+                <Item alpha="1.0" blue="0.33" green="0.23" name="Sneakers" palpha="1" pattern="Pattern_1" pblue="0.77" pgreen="0.74" pred="0.73" red="0.33" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1" blue="1" green="1" name="Copper_Ring_Set" red="1" />
+            </Accessories>
+        </Outfit>
+    </FullSets>
+    <UnderwearSets>
+        <Outfit name="Cousin_Underwear_1">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.24" green="0.15" name="Bra" palpha="1" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="0.24" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.15" green="0.15" name="Thin_Panties" palpha="1.0" pattern="Pattern_1" pblue="0.24" pgreen="0.15" pred="0.24" red="0.15" />
+            </LowerBody>
+            <Feet />
+            <Accessories />
+        </Outfit>
+        <Outfit name="Cousin_Underwear_2">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.24" green="0.15" name="Bra" palpha="1" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="0.24" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.15" green="0.15" name="Thin_Panties" palpha="1.0" pattern="Pattern_1" pblue="0.24" pgreen="0.15" pred="0.24" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.24" green="0.15" name="Fishnets" red="0.24" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="Cousin_Underwear_3">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.24" green="0.15" name="Lace_Bra" palpha="1" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="0.24" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.24" green="0.15" name="Thong" palpha="1" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="0.24" />
+            </LowerBody>
+            <Feet />
+            <Accessories />
+        </Outfit>
+        <Outfit name="Cousin_Underwear_4">
+            <UpperBody />
+            <LowerBody>
+                <Item alpha="1.0" blue="0.24" green="0.15" name="Thong" palpha="1" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="0.24" />
+            </LowerBody>
+            <Feet />
+            <Accessories />
+        </Outfit>
+		 <Outfit name="Purple Heart">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.34" green="0.2" name="Heart_Pasties" red="0.29" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.34" green="0.2" name="Strappy_Panties" red="0.29" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="0.15" green="0.15" name="Long_Socks" red="0.15" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="No Bra">
+            <UpperBody>
+                <Item alpha="1" blue="0.15" green="0.15" name="Cincher" palpha="1.0" pattern="Pattern_1" pblue="0.33" pgreen="0.2" pred="0.26" red="0.15" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.33" green="0.23" name="Lace_Panties" palpha="1" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="0.31" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.33" green="0.23" name="Short_Socks" red="0.31" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+    </UnderwearSets>
+    <OverwearSets>
+        <Outfit name="Cousin_Overwear_1">
+            <UpperBody>
+                <Item alpha="1" blue="0.15" green="0.15" name="Long_Sweater" red="0.15" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.18" green="0.18" name="Leggings" red="0.18" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.35" green="0.26" name="Sneakers" palpha="1" pattern="Pattern_1" pblue="0.77" pgreen="0.74" pred="0.73" red="0.39" />
+            </Feet>
+            <Accessories />
+        </Outfit>
+        <Outfit name="Cousin_Overwear_2">
+            <UpperBody>
+                <Item alpha="1" blue="0.15" green="0.15" name="Lace_Sweater" red="0.15" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.15" green="0.15" name="Belted_Skirt" palpha="1" pattern="Pattern_1" pblue="0.21" pgreen="0.29" pred="0.36" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.24" green="0.15" name="Sandal_Heels" red="0.24" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1" blue="1" green="1" name="Copper_Ring_Set" red="1" />
+            </Accessories>
+        </Outfit>
+        <Outfit name="Cousin_Overwear_3">
+            <UpperBody>
+                <Item alpha="1" blue="0.15" green="0.15" name="Tshirt" palpha="1.0" pattern="Pattern_2" pblue="0.24" pgreen="0.15" pred="0.24" red="0.15" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.65" green="0.56" name="Jeans" red="0.5" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.27" green="0.2" name="Sneakers" palpha="1" pattern="Pattern_1" pblue="0.77" pgreen="0.74" pred="0.73" red="0.27" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1" blue="1" green="1" name="Copper_Ring_Set" red="1" />
+            </Accessories>
+        </Outfit>
+        <Outfit name="Cousin_Overwear_4">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.24" green="0.15" name="Long_Tshirt" palpha="1" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="0.24" />
+                <Item alpha="1" blue="0.34" green="0.34" name="Vest" red="0.34" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1" blue="0.34" green="0.34" name="Jeans" red="0.34" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.24" green="0.15" name="Sandal_Heels" red="0.24" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1" blue="1" green="1" name="Copper_Ring_Set" red="1" />
+            </Accessories>
+        </Outfit>
+    </OverwearSets>
+</Wardrobe>

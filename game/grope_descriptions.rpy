@@ -57,7 +57,7 @@ label grope_waist(the_person):
             "Slide your hand onto her ass\n-5 {image=gui/extra_images/energy_token.png} (disabled)" if the_person.energy < 5:
                 pass
 
-            "Stop touching her.":
+            "Stop touching her":
                 return False
 
     else: #Sluttiness 80 or higher, wants to fuck right away.
@@ -71,7 +71,7 @@ label grope_waist(the_person):
                 "[the_person.possessive_title] pulls her [strip_description] out of the way and spreads her legs."
                 the_person.char "Come on, do you want to fuck me?"
             else:
-                "She spreads her legs, emphasising the easy availability of her pussy."
+                "She spreads her legs, emphasizing the easy availability of her pussy."
                 the_person.char "Do you want to fuck me?"
 
             $ strip_list = None #Clear the list to save memory
@@ -81,12 +81,13 @@ label grope_waist(the_person):
             the_person.char "We both know where this is going, what are we waiting for?"
 
         menu:
-            "Skip the foreplay.":
+            "Skip the foreplay":
                 call fuck_person(the_person) from _call_fuck_person
+                $ the_person.call_dialogue("sex_review", the_report = _return)
                 $ the_person.review_outfit()
                 return False
 
-            "Stop touching her.":
+            "Stop touching her":
                 "You give her hips a final squeeze, then push her back."
                 mc.name "Maybe later, I just wanted a feel."
                 "She pouts and sighs unhappily."

@@ -2,7 +2,7 @@
 
 init 1 python:
     def mom_outfit_help_requirement():
-        if mc_at_home() and time_of_day==4 and (day%7==6 or day%7==0 or day%7==1 or day%7==2 or day%7==3): #It has to be a day before a weekday, so she has work in the morning.
+        if time_of_day == 4 and (day%7 <= 3 or day%7==7) and mc_at_home(): #It has to be a day before a weekday, so she has work in the morning.
             return True
         return False
 
@@ -12,7 +12,7 @@ init 1 python:
 label mom_outfit_help_crisis_label():
     $ the_person = mom
     # Your mom asks for help planning an outfit for the next day. As a bonus you get to watch her strip down between outfits (peek/don't peek decision given, she doesn't care at high sluttiness)
-    if not mom in mc.location.people:
+    if not mc.location.has_person(mom):
         #She's in a different room, shh calls you in.
         the_person.char "[the_person.mc_title], can you help me with something for a moment?"
         "You hear [the_person.possessive_title] call for you from her bedroom."
@@ -71,7 +71,7 @@ label mom_outfit_help_crisis_label():
                 "You shuffle to the side and manage to get a view of [the_person.possessive_title] using a mirror in the room."
 
                 $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                while strip_choice is not None and not caught:
+                while strip_choice and not caught:
                     $ the_person.draw_animated_removal(strip_choice)
                     "You watch as [the_person.possessive_title] take off her [strip_choice.display_name]."
                     if renpy.random.randint(0,100) < 10: #you got caught
@@ -90,10 +90,10 @@ label mom_outfit_help_crisis_label():
                         $ caught = True
                     else:
                         menu:
-                            "Keep watching.":
+                            "Keep watching":
                                 $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
 
-                            "Stop peeking.":
+                            "Stop peeking":
                                 "You pull your eyes away from the mirror and do your best not to peek."
                                 $ clear_scene()
                                 $ strip_choice = None
@@ -157,7 +157,7 @@ label mom_outfit_help_crisis_label():
 
 
     #Strip choices for the second peek section
-    if the_person.effective_sluttiness(["underwear_nudity","bare_pussy","bare_tits"]) + the_person.love < 35 or caught: #She really doesn't want you to see anything
+    if the_person.effective_sluttiness(["underwear_nudity","bare_pussy","bare_tits"]) + the_person.love < 30 or caught: #She really doesn't want you to see anything
         the_person.char "Okay, I just need to get changed again."
         $ clear_scene()
         "[the_person.possessive_title] shoos you out of the room while she changes into her new outfit."
@@ -174,7 +174,7 @@ label mom_outfit_help_crisis_label():
                 "You shuffle to the side and manage to get a view of [the_person.possessive_title] using a mirror in the room."
                 $ caught = False
                 $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                while strip_choice is not None and not caught:
+                while strip_choice and not caught:
                     $ the_person.draw_animated_removal(strip_choice)
                     "You watch as [the_person.possessive_title] take off her [strip_choice.display_name]."
                     if renpy.random.randint(0,100) < 10: #you got caught
@@ -216,7 +216,6 @@ label mom_outfit_help_crisis_label():
         "Once she's stripped naked she grabs another outfit and starts to put it on."
 
     $ the_person.apply_outfit(second_outfit, update_taboo = True)
-    #$ the_person.outfit = second_outfit changed v0.24.1
     $ the_person.draw_person()
 
     the_person.char "Alright, there we go! Now, do you think this is better or worse than what I was just wearing?"
@@ -240,7 +239,7 @@ label mom_outfit_help_crisis_label():
             mc.name "They both look good, but I think I have another idea for something you could wear..."
             "You go to [the_person.possessive_title]'s closet and start to put together an outfit of your own for her."
             $ clear_scene()
-            call outfit_master_manager(slut_limit = the_person.sluttiness + 10) from _call_outfit_master_manager_2
+            call outfit_master_manager(slut_limit = the_person.sluttiness + 10, show_underwear = False) from _call_outfit_master_manager_2
             $ third_outfit = _return
             $ the_person.draw_person()
 
@@ -249,11 +248,11 @@ label mom_outfit_help_crisis_label():
                 mc.name "Sorry Mom, I thought I had an idea but I guess I was wrong."
                 the_person.char "That's fine [the_person.mc_title]. I think I'm going to go with the first one anyway."
                 $ the_person.change_happiness(5)
+
             else:
                 "You lay the outfit out for [the_person.possessive_title]. She looks it over and nods."
                 the_person.char "I'll try it on, but I think I like it!"
-
-                if the_person.sluttiness + the_person.love < 35 or caught: #She really doesn't want you to see anything
+                if the_person.effective_sluttiness() + the_person.love < 30 or caught: #She really doesn't want you to see anything
                     $ clear_scene()
                     "[the_person.possessive_title] shoos you out of the room while she changes into her new outfit."
                     the_person.char "Okay, come back!"
@@ -269,7 +268,7 @@ label mom_outfit_help_crisis_label():
                             "You shuffle to the side and manage to get a view of [the_person.possessive_title] using a mirror in the room."
                             $ caught = False
                             $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
-                            while strip_choice is not None and not caught:
+                            while strip_choice and not caught:
                                 $ the_person.draw_animated_removal(strip_choice)
                                 "You watch as [the_person.possessive_title] take off her [strip_choice.display_name]."
                                 if renpy.random.randint(0,100) < 10: #you got caught
@@ -288,10 +287,10 @@ label mom_outfit_help_crisis_label():
                                     $ caught = True
                                 else:
                                     menu:
-                                        "Keep watching.":
+                                        "Keep watching":
                                             $ strip_choice = the_person.outfit.remove_random_any(top_layer_first = True, do_not_remove = True)
 
-                                        "Stop peeking.":
+                                        "Stop peeking":
                                             "You pull your eyes away from the mirror and do your best not to peek."
                                             $ clear_scene()
                                             $ strip_choice = None
@@ -369,14 +368,16 @@ label mom_lingerie_surprise_label():
             call fuck_person(the_person) from _call_fuck_person_14
             $ the_report = _return
             if the_report.get("girl orgasms", 0):
+                $ the_person.draw_person(position = "missionary", emotion = "happy")
                 "[the_person.possessive_title] needs a few minutes to lie down when you're finished. Bit by bit her breathing slows down."
                 $ the_person.change_love(5)
                 the_person.char "Oh [the_person.mc_title], that was magical. I've never felt so close to you before..."
 
             else:
+                $ the_person.draw_person(emotion = "happy")
                 "When you're finished [the_person.possessive_title] gives you a kiss on your forehead and stands up to leave."
                 $ the_person.change_love(3)
-                $ the_person.draw_person(position = "back_peek")
+                $ the_person.draw_person(position = "back_peek", emotion = "happy")
                 the_person.char "Sweet dreams."
 
             $ the_person.clear_situational_obedience("crisis_stuff")
@@ -394,7 +395,7 @@ label mom_lingerie_surprise_label():
 init 1 python:
     def mom_selfie_requirement():
         if not mc_at_home() and not (time_of_day == 0 or time_of_day == 4): #She always sents you text while you're not at home for the middle part of the day
-            if not mom in mc.location.people: #Obviously don't do it if she's right there with you.
+            if not mc.location.has_person(mom): #Obviously don't do it if she's right there with you.
                 if mom.love >= 15:
                     return True
         return False
@@ -641,9 +642,10 @@ label mom_selfie_label():
 
 init 1 python:
     def mom_morning_surprise_requirement():
-        if mc_at_home() and time_of_day==0 and mc.business.is_work_day(): #It is the end of the day.
-            if mom.love >= 45:
-                return True
+        if time_of_day == 0 and mc.business.is_work_day() and mc_at_home() and mom.love >= 45:
+            if mom.has_limited_time_event("sleeping_walk_in_label"):
+                return False #she is sleeping in
+            return True
         return False
 
     mom_morning_surprise_crisis = Action("Mom Morning Surprise", mom_morning_surprise_requirement, "mom_morning_surprise_label")
@@ -869,13 +871,7 @@ label mom_morning_surprise_label():
         # First we need to take her and remove enough clothing that we can get to her vagina, otherwise none of this stuff makes sense.
         # We do that by getting her lowest level pieces of bottom clothing and removing it, then working our way up until we can use her vagina.
         # This makes sure skirts are kept on (because this is suppose to be a quicky).
-        $ bottom_list = the_person.outfit.get_lower_ordered()
-        $ removed_something = False
-        $ the_index = 0
-        while not the_person.outfit.vagina_available() and the_index < __builtin__.len(bottom_list):
-            $ the_person.outfit.remove_clothing(bottom_list[the_index])
-            $ removed_something = True
-            $ the_index += 1
+        $ removed_something = the_person.outfit.strip_to_vagina()
         "You're woken up by your bed shifting under you and a sudden weight around your waist."
         $ the_person.draw_person(position = "cowgirl", emotion = "happy")
         "[the_person.possessive_title] has pulled down your sheets and underwear and is straddling you. The tip of your morning wood is brushing against her pussy."
@@ -893,13 +889,16 @@ label mom_morning_surprise_label():
                 if the_report.get("girl orgasms", 0) > 0:
                     $ the_person.change_love(5)
                     the_person.char "That was amazing [the_person.mc_title], you know how to make me feel like women again!"
+                    $ the_person.draw_person(position = "missionary")
                     "She rolls over and kisses you, then rests her head on your chest."
                     "After a minute she sighs and starts to get up."
+                    $ the_person.draw_person()
                     the_person.char "I shouldn't be keeping you from your work, I don't want to make you any more late!"
                     "She reaches down to help you up. She smiles at you longingly, eyes lingering on your crotch, and leaves you alone in your room."
                 else:
                     the_person.char "I'm glad I could help [the_person.mc_title]. Now you should hurry up before you're late!"
                     "[the_person.possessive_title] kisses you on the forehead and stands up to leave."
+                    $ the_person.draw_person(position = "walking_away")
                     "You get yourself put together and rush to make up for lost time."
                 $ the_person.review_outfit()
 
@@ -910,8 +909,9 @@ label mom_morning_surprise_label():
                 "She frowns but nods. She swings her leg back over you and stands up."
                 $ the_person.draw_person()
                 the_person.char "Of course [the_person.mc_title], if you need me for anything just let me know. I hope you aren't running too late!"
+                $ the_person.draw_person(position = "walking_away")
                 if removed_something:
-                    "[the_person.title] collects some of her discarded from your floor and heads for the door."
+                    "[the_person.title] collects some of her discarded clothes from your floor and heads for the door."
                 else:
                     "[the_person.title] gives you a kiss on the forehead and heads for the door."
                 $ clear_scene()
@@ -922,10 +922,19 @@ label mom_morning_surprise_label():
 
 init 1 python:
     def lily_new_underwear_requirement():
-        if mc_at_home() and time_of_day==4: #It is the end of the day.
+        if time_of_day==4 and mc_at_home(): #It is the end of the day.
             if lily.effective_sluttiness("underwear_nudity") >= 10 and lily.love >= 0: #She's slutty enough to show you her new underwear.
                 return True
         return False
+
+    def lily_new_underwear_get_underwear(person):
+        valid_underwear_options = []
+        for underwear in default_wardrobe.get_underwear_sets_list():
+            #She picks underwear that is in the top 20 sluttiness of what she considers slutty underwear AND that she would feel comfortable wearing in front of her (hopefully loving) brother.
+            if underwear.get_underwear_slut_score() <= person.sluttiness and underwear.get_underwear_slut_score() >= person.sluttiness-20 and person.judge_outfit(underwear, person.love+30):
+                valid_underwear_options.append(underwear)
+        return get_random_from_list(valid_underwear_options)
+
     lily_new_underwear_crisis = Action("Lily New Underwear Crisis", lily_new_underwear_requirement, "lily_new_underwear_crisis_label")
     crisis_list.append([lily_new_underwear_crisis, 5])
 
@@ -933,20 +942,12 @@ label lily_new_underwear_crisis_label():
     # Lily has some new underwear she wants to demo for you.
     # We base the underwear sluttiness on Lily's sluttiness and use Love+Sluttiness to see if she'll show you as a "full outfit".
     $ the_person = lily #Just so we can keep
-    $ valid_underwear_options = []
-    $ the_underwear = None
-    python:
-        for underwear in default_wardrobe.get_underwear_sets_list():
-            #She picks underwear that is in the top 20 sluttiness of what she considers slutty underwear AND that she would feel comfortable wearing in front of her (hopefully loving) brother.
-            if underwear.get_underwear_slut_score() <= the_person.sluttiness and underwear.get_underwear_slut_score() >= the_person.sluttiness-20 and the_person.judge_outfit(underwear, the_person.love+30):
-                valid_underwear_options.append(underwear)
-
-        the_underwear = get_random_from_list(valid_underwear_options)
+    $ the_underwear = lily_new_underwear_get_underwear(the_person)
     if the_underwear is None:
         return #Lily doesn't have any skimpy underwear to show us :(
 
-    $ bedroom.show_background()
     $ mc.change_location(bedroom) #Make sure we're in our bedroom.
+    $ mc.location.show_background()
     if the_person.obedience >= 95:
         "There's a knock at your door."
         the_person.char "[the_person.mc_title], can I talk to you for a sec?"
@@ -1038,11 +1039,14 @@ label lily_new_underwear_crisis_label():
             "She leaves and closes your door behind her."
 
     $ clear_scene()
+    $ the_underwear = None
     return
 
 init 1 python:
     def lily_morning_encounter_requirement():
-        if mc_at_home() and time_of_day == 0:
+        if time_of_day == 0 and day%7 != 5 and mc_at_home(): # not on saturday morning
+            if lily.has_limited_time_event("sleeping_walk_in_label"):
+                return False #she is sleeping in
             return True
         return False
 
@@ -1187,7 +1191,7 @@ label lily_morning_encounter_label():
 
 init 1 python:
     def family_weekend_breakfast_requirement():
-        if mc_at_home() and time_of_day == 0 and mc.business.is_weekend() and mom.love > 20:
+        if time_of_day == 0 and day%7 == 6 and mc_at_home() and mom.love > 20:  # only on sunday morning
             return True
         return False
 
@@ -1232,7 +1236,7 @@ label family_morning_breakfast_label():
 
     "You get up, get dressed, and head for the kitchen."
     $ mc.change_location(kitchen)
-    $ kitchen.show_background()
+    $ mc.location.show_background()
     $ the_mom.draw_person(position = "walking_away")
     if mom_slutty:
         if the_mom.outfit.wearing_panties():
@@ -1405,22 +1409,26 @@ label family_morning_breakfast_label():
         "You enjoy a relaxing breakfast bonding with your mother and sister. Your mom seems particularly happy she gets to spend time with you."
         "When you're done you help Mom put the dirty dishes away and get on with your day."
 
-    $ clear_scene()
+    python:
+        clear_scene()
+        the_mom = None
+        the_sister = None
     return
 
 init 1 python:
     def morning_shower_requirement():
-        if mc_at_home() and time_of_day == 0:
+        if time_of_day == 0 and day%7 != 5 and mc_at_home():    # not on saturdays
             return True #You're at home for the night, when you take a shower in the morning something might happen.
         return False
+
     morning_shower_criris = Action("Morning Shower", morning_shower_requirement, "morning_shower_label")
-    morning_crisis_list.append([morning_shower_criris, 15])
+    morning_crisis_list.append([morning_shower_criris, 5])
 
 label morning_shower_label(): #TODO: make a similar event for your Aunt's place.
     # You wake up and go to take a shower, lily or your mom are already in there.
     "You wake up in the morning uncharacteristically early feeling refreshed and energized. You decide to take an early shower to kickstart the day."
     $ the_person = get_random_from_list([mom, lily, None])
-    if the_person is None:
+    if the_person is None or the_person.has_limited_time_event("sleeping_walk_in_label"):
         #You run into nobody, gain some extra energy. TODO: One of the girls comes to join you.
         "You head to the bathroom and start the shower. You step in and let the water just flow over you, carrying away your worries for the day."
         "After a few long, relaxing minutes it's time to get out. You start the day feeling energized."
@@ -1470,6 +1478,7 @@ label morning_shower_label(): #TODO: make a similar event for your Aunt's place.
                     call girl_shower_enter(the_person, suprised = True) from _call_girl_shower_enter_1 #TODO: Decide if we need different dialogue for this (maybe just a "suprised" tag we can pass)
 
         $ the_person.apply_outfit(initial_outfit)
+        $ initial_outfit = None
         #$ the_person.outfit = initial_outfit #put her back in her normal outfit after her shower #changed v0.24.1
 
     $ clear_scene()
@@ -1490,6 +1499,8 @@ label girl_shower_leave(the_person):
     return
 
 label girl_shower_enter(the_person, suprised):
+    $ mc.change_location(home_bathroom)
+    $ mc.location.show_background()
     $ the_person.apply_outfit(Outfit("Nude"))
     #$ the_person.outfit = Outfit("Nude") changed v0.24.1
     $ the_person.draw_person(position = "back_peek")
@@ -1546,8 +1557,6 @@ label girl_shower_enter(the_person, suprised):
                 $ the_person.change_slut_temp(3 + the_person.get_opinion_score("showing her ass"))
                 "She steps out of the shower and grabs a towel."
                 $ the_person.apply_outfit(towel_outfit)
-                # $ the_person.outfit = Outfit("Towel") changed v0.24.1
-                # $ the_person.outfit.add_dress(towel.get_copy())
 
             # elif the_person.effective_sluttiness() <= 60: #TODO: Add a "hot dog" position and make it a starting position for this.
             #     "She wiggles her butt and strokes your tip against her cheeks."
@@ -1568,12 +1577,6 @@ label girl_shower_enter(the_person, suprised):
                 $ the_person.change_slut_temp(2)
                 menu:
                     "Fuck her":
-                        $ bathroom = Room("bathroom", "Bathroom", [], home_bathroom_background, [], [], [], False, [0,0], visible = False)
-                        $ bathroom.show_background()
-                        $ bathroom.add_object(make_wall())
-                        $ bathroom.add_object(Object("shower door", ["Lean"], sluttiness_modifier = 5, obedience_modifier = 5))
-                        $ bathroom.add_object(make_floor())
-                        $ mc.change_location(bathroom)
                         call fuck_person(the_person, skip_intro = True) from _call_fuck_person_1
                         $ the_report = _return
 
@@ -1592,7 +1595,6 @@ label girl_shower_enter(the_person, suprised):
                         $ clear_scene()
                         $ bathroom = None
                         "She leaves the room and you finish your shower alone, feeling refreshed by the water."
-                        $ mc.change_location(bedroom)
 
                     "Just have a shower":
                         mc.name "Maybe some other time, I've got to hurry up though."
@@ -1606,6 +1608,8 @@ label girl_shower_enter(the_person, suprised):
         "Join her in the shower.\n{color=#ff0000}{size=18}Requires: 120 Obedience{/size}{/color} (disabled)" if the_person.obedience < 120:
             pass
 
+
+    $ mc.change_location(bedroom)
     return
 
 #TODO: mall crisis requiprements.
@@ -1669,7 +1673,7 @@ label cousin_tease_crisis_label():
                             "You send her the money from your phone."
                             mc.name "Alright, there's your cash. Whip those girls out for me."
                             the_person.char "Ugh, I didn't think you'd actually do it."
-                            $ the_person.outfit.strip_to_tits()
+                            $ the_person.outfit.strip_to_tits(visible_enough = False)
                             $ the_person.draw_person(position = "back_peek")
                             "She sends you a picture, with her back turned to the camera."
                             the_person.char "There."
@@ -1713,7 +1717,7 @@ label cousin_tease_crisis_label():
 
                             the_person.char "Oh my god, you little rat. You wouldn't."
                             mc.name "You know I would. Come on, whip those girls out and take some shots for me."
-                            $ the_person.outfit.strip_to_tits()
+                            $ the_person.outfit.strip_to_tits(visible_enough = False)
                             $ the_person.draw_person()
                             "There's a pause, then [the_person.title] sends you some shots of herself topless."
                             the_person.char "There. Satisfied?"

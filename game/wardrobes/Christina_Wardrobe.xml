@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Wardrobe name="Christina_Wardrobe">
+    <FullSets>
+        <Outfit name="Christina_Full_1">
+            <UpperBody>
+                <Item alpha="0.8" blue="0.15" green="0.15" name="Bra" palpha="1.0" pattern="Pattern_1" pblue="0.53" pgreen="0.77" pred="1.0" red="0.15" />
+                <Item alpha="1.0" blue="0.14" green="0.1" name="Evening_Dress" red="0.37" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.15" green="0.15" name="Thin_Panties" palpha="0.8" pattern="Pattern_1" pblue="0.53" pgreen="0.77" pred="1.0" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.08" green="0.1" name="Thigh_Highs" red="0.36" />
+                <Item alpha="1.0" blue="0.15" green="0.15" name="High_Heels" red="0.15" />
+            </Feet>
+            <Accessories>
+                <Item alpha="0.8" blue="0.27" green="0.24" name="Lipstick" red="0.61" />
+                <Item alpha="1.0" blue="1.0" green="1.0" name="Gold_Earings" red="1.0" />
+                <Item alpha="1.0" blue="0.77" green="1.0" name="Necklace_Set" red="1.0" />
+            </Accessories>
+        </Outfit>
+    </FullSets>
+    <UnderwearSets>
+        <Outfit name="Christina_Underwear_1">
+            <UpperBody>
+                <Item alpha="0.95" blue="0.15" green="0.15" name="Bra" palpha="1.0" pattern="Pattern_1" pblue="0.53" pgreen="0.86" pred="1.0" red="0.15" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.53" green="0.86" name="Thin_Panties" palpha="0.95" pattern="Pattern_1" pblue="0.15" pgreen="0.15" pred="0.15" red="1.0" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1" blue="0.15" green="0.15" name="Thigh_Highs" red="0.15" />
+            </Feet>
+            <Accessories>
+                <Item alpha="0.8" blue="0.37" green="0.31" name="Lipstick" red="0.57" />
+            </Accessories>
+        </Outfit>
+    </UnderwearSets>
+    <OverwearSets>
+        <Outfit name="Christina_Overwear_1">
+            <UpperBody>
+                <Item alpha="1.0" blue="0.05" green="0.02" name="Wrapped_Blouse" red="0.37" />
+            </UpperBody>
+            <LowerBody>
+                <Item alpha="1.0" blue="0.15" green="0.15" name="Pencil_Skirt" red="0.15" />
+            </LowerBody>
+            <Feet>
+                <Item alpha="1.0" blue="0.15" green="0.15" name="High_Heels" red="0.15" />
+            </Feet>
+            <Accessories>
+                <Item alpha="1" blue="1" green="1" name="Gold_Earings" red="1" />
+                <Item alpha="1.0" blue="0.66" green="0.96" name="Necklace_Set" red="1.0" />
+            </Accessories>
+        </Outfit>
+    </OverwearSets>
+</Wardrobe>

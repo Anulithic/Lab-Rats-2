@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Wardrobe name="Kelly_Wardrobe">
+    <FullSets>
+		<Outfit name="Kelly 1">
+			<UpperBody>
+				<Item name="Bra" red="1" pred="1" pgreen="1.0" pblue="0.49" pattern="Pattern_1" palpha="1" green="0.47" blue="1" alpha="1"/>
+				<Item name="Suit_Jacket" red="0.0" green="0.54" blue="0.49" alpha="1"/>
+				<Item name="Dress_Shirt" red="1.0" green="0.54" blue="0.49" alpha="1"/>
+			</UpperBody>
+			<LowerBody>
+				<Item name="Cotton_Panties" red="1.0" pred="1" pgreen="0.47" pblue="1" pattern="Pattern_1" palpha="1" green="1.0" blue="0.68" alpha="1.0"/>
+				<Item name="Pencil_Skirt" red="0.0" green="0.54" blue="0.49" alpha="1"/>
+			</LowerBody>
+			<Feet>
+				<Item name="Thigh_Highs" red="1.0" green="0.0" blue="0.49" alpha="0.8"/>
+				<Item name="Heels" red="0.57" green="0.43" blue="1.0" alpha="1.0"/>
+			</Feet>
+			<Accessories/>
+		</Outfit>
+		<Outfit name="Kelly 2">
+			<UpperBody>
+				<Item name="Sports_Bra" red="1.0" pred="0.48" pgreen="1" pblue="1" pattern="Pattern_1" palpha="1" green="0.33" blue="1.0" alpha="0.8"/>
+				<Item name="Long_Sleeve_Blouse" red="0.48" green="0.42" blue="1" alpha="1"/>
+			</UpperBody>
+			<LowerBody>
+				<Item name="Cotton_Panties" red="0.48" pred="1" pgreen="0.47" pblue="1" pattern="Pattern_1" palpha="1" green="1" blue="1" alpha="1"/>
+				<Item name="Pencil_Skirt" red="0.48" green="0.42" blue="1" alpha="1"/>
+			</LowerBody>
+			<Feet>
+				<Item name="Short_Socks" red="1.0" pred="1" pgreen="0.36" pblue="1" pattern="Pattern_1" palpha="1" green="1.0" blue="1" alpha="1"/>
+				<Item name="High_Boots" red="0.55" green="0.36" blue="0.55" alpha="1"/>
+			</Feet>
+
+			<Accessories/>
+		</Outfit>
+		<Outfit name="Kelly 3">
+			<UpperBody>
+				<Item name="Bra" red="1" pred="1" pgreen="1.0" pblue="0.49" pattern="Pattern_1" palpha="1" green="0.3" blue="0.43" alpha="1"/>
+				<Item name="Long_Sweater" red="0.45" pred="1" pgreen="0.3" pblue="1" pattern="Pattern_1" palpha="1" green="0.3" blue="0.43" alpha="1"/>
+			</UpperBody>
+			<LowerBody>
+				<Item name="Cotton_Panties" red="0.48" pred="1" pgreen="0.47" pblue="1" pattern="Pattern_1" palpha="1" green="1" blue="1" alpha="1"/>
+				<Item name="Skirt" red="1" green="0.3" blue="0.43" alpha="1"/>
+			</LowerBody>
+			<Feet>
+				<Item name="Long_Socks" red="0.44" pred="1" pgreen="1.0" pblue="0.43" pattern="Pattern_1" palpha="1" green="0.33" blue="1.0" alpha="1.0"/>
+				<Item name="Sneakers" red="0.29" pred="0.71" pgreen="0.77" pblue="1.0" pattern="Pattern_1" palpha="1" green="0.3" blue="0.49" alpha="1"/>
+			</Feet>
+			<Accessories/>
+
+		</Outfit>
+    </FullSets>
+    <UnderwearSets>  
+    </UnderwearSets>
+    <OverwearSets>
+    </OverwearSets>
+</Wardrobe>

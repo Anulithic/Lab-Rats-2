@@ -45,6 +45,11 @@ init -2 python:
         person.event_triggers_dict["current_marks"] = 25 # Should be a value between 0 and 100%
         return
 
+    def add_student_mom_intro_action(person):
+        student_mom_intro_action = Action("Student_Mom_Intro", student_mom_intro_requirement, "student_mom_intro")
+        person.on_room_enter_event_list.append(student_mom_intro_action)
+        return
+
 label student_intro_one(the_nora, the_student): #the_nora just because we don't want to conflict with the global Nora name.
     "You knock on the door to the lab. After a moment [the_nora.title] answers and steps out into the hallway."
     $ the_group = GroupDisplayManager([the_nora], primary_speaker = the_nora)
@@ -242,8 +247,8 @@ label student_study_university(the_person):
                 mc.name "We're going to try this session without any serum."
                 the_person.char "Oh, okay."
 
-    elif the_person.event_triggers_dict.get("times_studied_university",0) or mc.inventory.get_any_serum_count() == 0:
-        pass #Don't talk about serum the first time or if we don't have any on us.
+    elif the_person.event_triggers_dict.get("times_studied_university",0) == 1 or mc.inventory.get_any_serum_count() == 0:
+        pass #Don't talk about serum the first time or if we don't have any on us. (first time counter == 1)
     else:
         menu:
             "Start studying":
@@ -331,11 +336,11 @@ label student_study_university(the_person):
                 "[the_person.possessive_title] nods and smiles."
                 the_person.char "Okay then, I'll text you my address and let my mom know you might be coming by."
                 the_person.char "I really need to do well in this course, so you're welcome any time."
-                $ mc.known_home_locations.append(the_person.home)
-                $ the_person.event_triggers_dict["home_tutor_enabled"] = True
-
-                $ student_mom_intro_action = Action("Student_Mom_Intro", student_mom_intro_requirement, "student_mom_intro")
-                $ christina.on_room_enter_event_list.append(student_mom_intro_action)
+                python:
+                    if not the_person.home in mc.known_home_locations:
+                        mc.known_home_locations.append(the_person.home)
+                    the_person.event_triggers_dict["home_tutor_enabled"] = True
+                    add_student_mom_intro_action(christina)
 
             "Offer to tutor her at home\n{color=#ff0000}{size=18}Requires: 15 Love{/size}{/color} (disabled)" if the_person.love < 15:
                 pass
@@ -349,6 +354,8 @@ label student_study_university(the_person):
 
 
 label student_study_home(the_person):
+    $ lily_bedroom.show_background()    # reuse girl bedroom background
+
     $ starting_focus = the_person.focus #Record her starting focus so we can compare it at the end (ie. after being given serum)
     $ starting_int = the_person.int
 
@@ -368,9 +375,9 @@ label student_study_home(the_person):
     mc.name "Let's talk about your grades. How have you been doing recently?"
     the_person.char "Well, I got a [current_marks]%% on my last assignment."
     if current_marks > 80:
-            mc.name "Fantastic! A little more work and you'll be the best in your class!"
-            the_person.char "Thanks, you've really helped everything come together!"
-            "Vren" "This section of the game is under construction. In v0.30.1 you will have the ability to hire [the_person.title] once her marks are high enough."
+        mc.name "Fantastic! A little more work and you'll be the best in your class!"
+        the_person.char "Thanks, you've really helped everything come together!"
+        "Vren" "This section of the game is under construction. In v0.30.1 you will have the ability to hire [the_person.title] once her marks are high enough."
     elif current_marks > 50:
         mc.name "That sounds like a pass to me!"
         the_person.char "Yeah! I need to convince Professor [nora.last_name] to shift more weight to my exam, but I might be able to do this!"
@@ -408,7 +415,7 @@ label student_study_home(the_person):
                 pass
 
             "Give her a dose of serum" if the_person.obedience >= 110 and mc.inventory.get_any_serum_count() > 0:
-                if the_person.event_triggers_dict.get("student_given_serum") == 0:
+                if the_person.event_triggers_dict.get("student_given_serum", 0) == 0:
                     mc.name "Before we get started I'd like to try something today."
                     the_person.char "Okay, what's that?"
                     mc.name "My pharmaceutical produces a number of products. Some of them help aid focus, and I think that could also help you."
@@ -498,11 +505,16 @@ label student_study_home(the_person):
     # TODO: Help the student study at home. Opens up more options for rewards/punishments
     # TODO: If you make her orgasm, and as her marks improve, she'll "talk to her mom" and improves your pay.
 
-    $ mc.business.funds += 200
-    $ the_person.event_triggers_dict["times_studied_home"] = the_person.event_triggers_dict.get("times_studied_home", 0) + 1
-    if the_person.event_triggers_dict.get("current_marks",0) > 100:
-        $ the_person.event_triggers_dict["current_marks"] = 100
-    $ clear_scene()
+    python:
+        mc.business.funds += 200
+        the_person.event_triggers_dict["times_studied_home"] = the_person.event_triggers_dict.get("times_studied_home", 0) + 1
+        if the_person.event_triggers_dict.get("current_marks",0) > 100:
+            the_person.event_triggers_dict["current_marks"] = 100
+        clear_scene()
+        del current_marks
+        del starting_int
+        del starting_focus
+
     call advance_time() from _call_advance_time_22
     return
 
@@ -680,6 +692,7 @@ label student_masturbate_label(the_person):
         mc.name "I thought it worked well last time. Any problems?"
         the_person.char "No, I guess not. It's still a little strange though..."
 
+    $ the_person.event_triggers_dict["student_masturbate"] = the_person.event_triggers_dict.get("student_masturbate", 0) + 1
     if the_person.effective_sluttiness() < 20:
         # She asks you to leave
         "[the_person.possessive_title] hums awkwardly for a moment, glancing around the room."
@@ -783,6 +796,7 @@ label student_masturbate_label(the_person):
                 "She gasps and leans against you when you slide a couple of fingers into her cunt."
                 call fuck_person(the_person, private = True, start_position = standing_finger, skip_intro = True) from _call_fuck_person_86
                 $ the_report = _return
+                $ the_person.draw_person(position = "sitting")
                 if the_report.get("girl orgasms", 0) > 0:
                     "[the_person.title] collapses into her chair and sighs happily."
                     the_person.char "I think... I'm ready to do some studying."
@@ -804,13 +818,14 @@ label student_masturbate_label(the_person):
                     pass #She's fine with what she's now "wearing"
 
                 else:
+                    $ the_person.draw_person(position = "stand3")
                     the_person.char "Just... One second, let me get dressed again."
                     $ the_person.apply_outfit()
                     $ the_person.draw_person(position = "sitting")
                     "[the_person.possessive_title] hurries back into her clothing, then sits down."
 
 
-            "Masturbate with her\n{color=#ff0000}{size=18}Requires: 50 Sluttiness{/size}{/color} (disabled)" if the_person.effective_sluttiness() < 30:
+            "Masturbate with her\n{color=#ff0000}{size=18}Requires: 30 Sluttiness{/size}{/color} (disabled)" if the_person.effective_sluttiness() < 30:
                 pass
 
     call study_normally(the_person, public = False) from _call_study_normally_2
@@ -1185,7 +1200,7 @@ label student_punish_spank(the_person, was_failure, wants_to_fail, successes = 0
         if wants_to_fail or the_person.obedience >= 125:
             the_person.char "Right away [the_person.mc_title]."
         else:
-            $ the_item = the_person.get_lower_top_layer()
+            $ the_item = the_person.outfit.get_lower_top_layer()
             if the_item:
                 the_person.char "Do I really need to? Can't you spank me over my [the_item.display_name]."
                 mc.name "That's a little too much padding. Come on, strip."
@@ -1431,6 +1446,7 @@ label student_punish_suck(the_person, was_failure, wants_to_fail, successes = 0,
 label student_mom_intro(the_person):
     # An on_room event called when you enter Emily's home for the first time while her Mom is there and meet Christina.
     "You ring the doorbell to [emily.title]'s house and wait. A moment later you hear footsteps and the door opens."
+    $ her_hallway.show_background()
     $ the_person.draw_person()
     $ the_person.set_title("???")
     the_person.char "Hello. Can I help you?"
@@ -1438,6 +1454,7 @@ label student_mom_intro(the_person):
     if emily in emily.home.people:
         the_person.char "Yes, I believe she is in her room. You must be the tutor she has been going on about."
         "She steps to the side, letting you move into the front room of the luxurious house."
+        $ mc.location.show_background()
         $ the_person.set_title("Mrs."+the_person.last_name)
         $ the_person.set_possessive_title("Mrs."+the_person.last_name)
         the_person.char "I am [the_person.title], [emily.title]'s mother. I'm happy to finally have a chance to introduce myself."
@@ -1462,6 +1479,7 @@ label student_mom_intro(the_person):
         call person_introduction(the_person, girl_introduction = False) from _call_person_introduction_4
         the_person.char "[emily.title] is very happy with your work so far, and I'm glad to see her marks improving."
         the_person.char "You're welcome to come in and wait for [emily.title] to get back."
+        $ mc.location.show_background()
         "She steps to the side, letting you move into the front room of the luxurious house."
 
     $ clear_scene()

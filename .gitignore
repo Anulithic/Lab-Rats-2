@@ -13,3 +13,4 @@
 !/game/sex_positions/*
 *.rpyc
 !*.rpy
+!*.xml

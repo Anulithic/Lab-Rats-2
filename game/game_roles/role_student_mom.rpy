@@ -20,9 +20,10 @@ label study_check_up(the_student, the_mom):
     # If her marks have improved enough, and if you haven't been already, Christina invites you to stay for dinner.
 
     $ clear_scene()
+    "[the_student.title] opens the door to her room and leads you downstairs. [the_mom.title] is waiting at the front door."
+    $ her_hallway.show_background()
     $ the_group = GroupDisplayManager([the_student, the_mom], primary_speaker = the_mom)
     $ the_group.draw_group()
-    "[the_student.title] opens the door to her room and leads you downstairs. [the_mom.title] is waiting at the front door."
     the_mom.char "All done for tonight? Tell me [the_mom.mc_title], how is my daughter doing?"
     $ current_marks = the_student.event_triggers_dict.get("current_marks",0)
     if current_marks < 20:
@@ -110,11 +111,14 @@ label study_check_up(the_student, the_mom):
         the_mom.char "Thank you for your hard work [the_mom.mc_title]. I hope we see you again soon."
 
     $ the_group = None
+    $ mc.change_location(bedroom)
+    $ mc.location.show_background()
     return
 
 label student_dinner(the_student, the_mom, first_time):
     #TODO Have a unique dining room background
     $ clear_scene()
+    $ renpy.show(name = "living room", what = house_background, layer = "master")
     $ the_group = GroupDisplayManager([the_student], primary_speaker = the_student)
     $ the_group.draw_group()
 
@@ -254,6 +258,8 @@ label student_dinner(the_student, the_mom, first_time):
     the_mom.char "It's been wonderful having you over [the_mom.mc_title], but I'm sure you're looking forward to getting home."
     mc.name "The dinner was fantastic. I'm lucky to have such a generous, beautiful host."
     "[the_mom.title] seems to blush, although it might just be wine taking effect."
+
+    $ her_hallway.show_background()
     $ the_group.draw_group()
     "[the_mom.title] and [the_student.title] walk you to the door to say goodbye."
     the_student.char "Bye [the_student.mc_title], I hope you'll be by again soon!"
@@ -334,6 +340,7 @@ label student_mom_appologise_label(the_person): #TODO Provide a way to not activ
     the_person.char "[the_person.mc_title], it's nice to see you."
     "She avoids making eye contact with you, looking off to the side."
     the_person.char "Could I speak with you for a moment, privately?"
+    $ renpy.show(name = "living room", what = house_background, layer = "master")
     "You nod and follow her to the sitting room."
     the_person.char "I wanted to appologise for my moment of indiscretion."
     the_person.char "I was angry, and lonely, and drunk, and I lost control. I'm sorry."
@@ -357,9 +364,12 @@ label student_mom_appologise_label(the_person): #TODO Provide a way to not activ
     mc.name "It's natural for you to need some sort of physical contact. Isn't that what you want?"
     "She stutters out a few half answers."
     the_person.char "I don't... I mean, it would be nice, but I can't... I..."
+    $ the_person.draw_person(position = "kissing", special_modifier = "kissing")
     "You kiss her, and after a moment of hesitation she kisses you back."
+    $ the_person.draw_person(position = "kissing")
     "When you break the kiss she looks deep into your eyes."
     the_person.char "Wow..."
+    $ the_person.draw_person()
     mc.name "I'm going to be here to tutor your daughter. I could also give you the physical contact you need."
     the_person.char "You mean, cheat on my..."
     "You nod. She sighs and closes her eyes, thinking it over. Your hand wanders down her back until you are cradling her ass."

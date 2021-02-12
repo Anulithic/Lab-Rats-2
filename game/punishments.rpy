@@ -352,8 +352,8 @@ label punishment_spank(the_person, the_infraction):
                 else:
                     "You grab the hem of [the_person.title]'s [top_clothing.display_name] and pull it up around her waist."
 
-                $ the_person.draw_animated_removal(top_clothing, half_off_instead = True)
-                if not the_person.wearing_panties():
+                $ the_person.draw_animated_removal(top_clothing, position = "standing_doggy", half_off_instead = True)
+                if not the_person.outfit.wearing_panties():
                     mc.name "No panties today, I see."
 
                 $ the_person.update_outfit_taboos()
@@ -362,6 +362,7 @@ label punishment_spank(the_person, the_infraction):
                 pass
 
     call spank_description(the_person, the_infraction) from _call_spank_description
+    $ the_person.review_outfit()
     $ clear_scene()
     return
 
@@ -397,7 +398,7 @@ label spank_description(the_person, the_infraction):
             "You keep smacking her butt, putting more force behind your blow each time."
             if not_cushioned: #Ass gets red, she gets sore.
                 "Her exposed ass jiggles with each hit, and quickly starts to turn red."
-                the_person.char "Ah... Am I almost done [the_person.title]?"
+                the_person "Ah... Am I almost done [the_person.mc_title]?"
 
                 if the_person.get_opinion_score("being submissive") > 0: #She likes it and is getting turned on.
                     "You spank her again, and she moans."
@@ -460,9 +461,9 @@ label punishment_underwear_only(the_person, the_infraction):
     mc.name "You've let me down [the_person.title], and more importantly you've let down the entire company."
     mc.name "Strip down to your underwear."
     if the_person.should_wear_uniform():
-        mc.name "You don't deserve to wear your uniform, so for the rest of today you won't."
+        mc.name "You don't deserve to wear your uniform, so for the rest of the week you won't."
     else:
-        mc.name "You can consider that your official uniform for the day."
+        mc.name "You can consider that your official uniform for the rest of the week."
 
     if not (the_person.outfit.wearing_bra() and the_person.outfit.wearing_panties()): # Whoops, not wearing underwear today! Tough luck.
         the_person.char "I... I can't do that [the_person.mc_title]."
@@ -553,11 +554,12 @@ label punishment_underwear_only(the_person, the_infraction):
         $ slut_change += the_person.get_opinion_score("not wearing anything")
     $ the_person.change_slut_temp(slut_change)
 
-    mc.name "I expect you to stay in your new uniform for the rest of the day. Any deviation from it and there will be further punishments."
+    mc.name "I expect you to stay in your new uniform for the rest of the week. Any deviation from it and there will be further punishments."
     mc.name "Understood?"
     the_person.char "Yes, [the_person.mc_title]."
     mc.name "Good. We're done here."
     $ the_person.event_triggers_dict["forced_uniform"] = the_person.outfit.get_copy()
+    $ the_person.set_uniform(the_person.event_triggers_dict["forced_uniform"], wear_now = True)
     $ clear_scene()
     return
 
@@ -622,7 +624,7 @@ label punishment_pay_cut(the_person, the_infraction): #There is a similar option
             maj_amount = the_person.salary
 
     menu:
-        "Minor cut (-$[minor_amount]/day)":
+        "Minor cut\n{color=#00ff00}{size=18}Profit: $[minor_amount] / day{/size}{/color}":
             mc.name "I'm going to be generous. Your pay will only be cut by $[minor_amount] per day."
             $ the_person.change_salary(-minor_amount)
             $ the_person.change_happiness(-2)
@@ -631,7 +633,7 @@ label punishment_pay_cut(the_person, the_infraction): #There is a similar option
             "[the_person.possessive_title] seems upset by the news, but she nods her understanding."
             mc.name "Good. Now get back to work."
 
-        "Moderate cut (-$[mod_amount]/day)":
+        "Moderate cut\n{color=#00ff00}{size=18}Profit: $[mod_amount] / day{/size}{/color}":
             mc.name "You will see a $[mod_amount] reduction in your daily pay, effective immediately."
             $ the_person.change_salary(-mod_amount)
             $ the_person.change_happiness(-5)
@@ -647,7 +649,7 @@ label punishment_pay_cut(the_person, the_infraction): #There is a similar option
             mc.name "Good, now get back to work before I have to write you up again."
 
 
-        "Major cut (-$[maj_amount]/day)":
+        "Major cut\n{color=#00ff00}{size=18}Profit: $[maj_amount] / day{/size}{/color}":
             mc.name "There will be a $[maj_amount] cut to your daily pay, effective immediately."
             $ the_person.change_salary(-maj_amount)
             $ the_person.change_happiness(-10)
@@ -692,12 +694,13 @@ label punishment_strip_and_spank(the_person, the_infraction):
 
     $ the_person.draw_person(position = "standing_doggy")
     call spank_description(the_person, the_infraction) from _call_spank_description_1
+    $ the_person.review_outfit()
     $ clear_scene()
     return
 
 label punishment_office_nudity(the_person, the_infraction):
     mc.name "I have decided on a suitable punishment for your violation of company rules."
-    mc.name "You're going to spend the rest of the day working while nude."
+    mc.name "You're going to spend the rest of the week working while nude."
     if not (the_person.outfit.tits_available() and the_person.outfit.vagina_available() and the_person.outfit.tits_visible() and the_person.outfit.vagina_available()): #Something to strip
         mc.name "Let's start by having you strip down."
         call strip_naked_command_helper(the_person, the_infraction) from _call_strip_naked_command_helper_1
@@ -709,12 +712,13 @@ label punishment_office_nudity(the_person, the_infraction):
             mc.name "Hands down, there's no point hiding anything from me now."
             "She frowns, but follows your instructions. She lowers her hands to her sides, letting you get a good view of her body."
 
-        mc.name "Good. Now I want you to consider this your uniform for the rest of the day."
+        mc.name "Good. Now I want you to consider this your uniform for the rest of the week."
 
     else:
-        mc.name "You're already un-dressed for the occasion, consider this your uniform for the rest of the day."
+        mc.name "You're already un-dressed for the occasion, consider this your uniform for the rest of the week."
 
     $ the_person.event_triggers_dict["forced_uniform"] = the_person.outfit.get_copy()
+    $ the_person.set_uniform(the_person.event_triggers_dict["forced_uniform"], wear_now = True)
     $ slut_change = 0
     if the_person.outfit.tits_visible():
         $ slut_change += the_person.get_opinion_score("showing her tits")
@@ -739,10 +743,9 @@ label strip_naked_command_helper(the_person, the_infraction): #Helper function f
         "She sighs and nods."
         the_person.char "Yes [the_person.mc_title]."
 
-        $ feet_ordered = the_person.outfit.get_feet_ordered()
-        if feet_ordered:
-            $ top_feet = feet_ordered[-1]
-            the_person.char "Can I keep my [top_feet.display_name] on?"
+        $ the_item = the_person.outfit.get_feet_top_layer()
+        if the_item:
+            the_person.char "Can I keep my [the_item.display_name] on?"
             menu:
                 "Strip it all off":
                     mc.name "Take it all off, I don't want you to be wearing anything."
@@ -750,13 +753,13 @@ label strip_naked_command_helper(the_person, the_infraction): #Helper function f
 
                 "Leave them on":
                     mc.name "Fine, you can leave them on."
+        $ del the_item
 
     else: # No big deal, she just gets right to it
         "She nods and starts to strip immediately."
-        $ feet_ordered = the_person.outfit.get_feet_ordered()
-        if feet_ordered:
-            $ top_feet = feet_ordered[-1]
-            the_person.char "Would you like me to take off my [top_feet.display_name] too?"
+        $ the_item = the_person.outfit.get_feet_top_layer()
+        if the_item:
+            the_person.char "Would you like me to take off my [the_item.display_name] too?"
             menu:
                 "Strip it all off":
                     mc.name "Take it all off, I want you naked."
@@ -764,9 +767,7 @@ label strip_naked_command_helper(the_person, the_infraction): #Helper function f
 
                 "Leave them on":
                     mc.name "Fine, you can leave them on."
-
-    $ feet_ordered = None
-    $ top_feet = None
+        $ del the_item
 
     return remove_shoes
 
@@ -802,7 +803,7 @@ init -1 python:
 
     def add_humiliating_work_action(person):
         person.add_role(employee_humiliating_work_role)
-        clear_action = Action("Clear employee busywork", employee_humiliating_work_role, "employee_humiliating_work_remove_requirement", args = person, requirement_args = [person, day + 7])
+        clear_action = Action("Clear employee humiliating work", employee_humiliating_work_remove_requirement, "employee_humiliating_work_remove_label", args = person, requirement_args = [person, day + 7])
         mc.business.mandatory_crises_list.append(clear_action)
         return
 
@@ -884,11 +885,11 @@ label punishment_orgasm_denial(the_person, the_infraction):
     $ the_person.break_taboo("touching_body")
     $ the_person.add_situational_obedience("punishment", 20, "I'm being punished, I don't have any right to refuse.")
     call fuck_person(the_person, private = False, start_position = standing_grope, start_object = mc.location.objects_with_trait("Stand")[0], skip_intro = True, affair_ask_after = False) from _call_fuck_person_92
-    $ report = _return
+    $ the_report = _return
     $ the_person.clear_situational_obedience("punishment")
 
-    if report.get("girl orgasms", 0) == 0: #Successfully didn't let her orgasm.
-        if report.get("end arousal", 0) >= 95 : # Got her very close
+    if the_report.get("girl orgasms", 0) == 0: #Successfully didn't let her orgasm.
+        if the_report.get("end arousal", 0) >= 95 : # Got her very close
             the_person.char "No [the_person.mc_title], you can't... You can't leave me like this!"
             "She moans desperately."
             if the_person.wants_creampie():
@@ -901,12 +902,13 @@ label punishment_orgasm_denial(the_person, the_infraction):
                         the_person.char "Please, I... I want you to fuck me! Fuck me and cum inside me, I want it!"
                         the_person.char "Put that cock in me before I go crazy!"
                         call fuck_person(the_person, private = False, affair_ask_after = False) from _call_fuck_person_93
-                        $ report = _return
-                        if report.get("girl orgasms", 0) > 0:
+                        $ the_report = _return
+                        if the_report.get("girl orgasms", 0) > 0:
                             mc.name "I hope that satisfied you."
                             the_person.char "It was everything I needed it to be. Ah..."
                             $ the_person.change_slut_temp(2)
                             $ the_person.change_obedience(1)
+                            $ the_person.draw_person()
                             mc.name "Good, now get back to work."
                             the_person.char "Yes [the_person.mc_title], right away."
                         else:
@@ -917,6 +919,7 @@ label punishment_orgasm_denial(the_person, the_infraction):
                             mc.name "Do you understand?"
                             $ the_person.change_happiness(-5)
                             $ the_person.change_obedience(4)
+                            $ the_person.draw_person()
                             the_person.char "I understand [the_person.mc_title]..."
                             mc.name "Good, now get back to work."
 
@@ -927,6 +930,7 @@ label punishment_orgasm_denial(the_person, the_infraction):
                         the_person.char "I... Oh fuck, fine. I understand."
                         $ the_person.change_happiness(-5)
                         $ the_person.change_obedience(4)
+                        $ the_person.draw_person()
                         mc.name "Good, now get back to work."
                         the_person.char "Yes [the_person.mc_title]."
 
@@ -938,23 +942,25 @@ label punishment_orgasm_denial(the_person, the_infraction):
                 the_person.char "Yes [the_person.mc_title]."
 
 
-        elif report.get("end arousal", 0) >= 80: # Reasonably high
+        elif the_report.get("end arousal", 0) >= 80: # Reasonably high
             the_person.char "God, I was getting close... Fuck."
             "She groans unhappily."
             mc.name "Good, that's the point. If I catch you trying to pleasure yourself, or having someone else do it for you, there will be further punishments."
             the_person.char "I understand... God this is going to be hard!"
             $ the_person.change_happiness(-5)
             $ the_person.change_obedience(3)
+            $ the_person.draw_person()
             mc.name "Get back to work, It'll take your mind off of it."
             the_person.char "Yes [the_person.mc_title]."
 
 
-        elif report.get("end arousal", 0) >= 50: # At least you tried
+        elif the_report.get("end arousal", 0) >= 50: # At least you tried
             the_person.char "Ah... Ah..."
             mc.name "If I catch you trying to pleasure yourself, or having someone else do it for you, there will be further punishments."
             the_person.char "Right, I understand [the_person.mc_title]."
             $ the_person.change_happiness(-5)
             $ the_person.change_obedience(2)
+            $ the_person.draw_person()
             mc.name "Good, now get back to work."
             the_person.char "Yes [the_person.mc_title]."
 
@@ -963,6 +969,7 @@ label punishment_orgasm_denial(the_person, the_infraction):
             mc.name "We are, and if I catch you trying to pleasure yourself, or having someone else do it for you, there will be further punishments."
             the_person.char "I understand, but I think I'll be able to manage."
             $ the_person.change_obedience(1)
+            $ the_person.draw_person()
             mc.name "Get back to work, you've wasted enough time already."
             the_person.char "Yes [the_person.mc_title]."
 
@@ -972,6 +979,7 @@ label punishment_orgasm_denial(the_person, the_infraction):
         the_person.char "Do you want to punish me some more?"
         $ the_person.change_slut_temp(3)
         $ the_person.change_obedience(-3)
+        $ the_person.draw_person()
         "You sigh and give up."
         mc.name "Get back to work, or I'll come up with something more unpleasant."
         the_person.char "Yes [the_person.mc_title]."
@@ -997,13 +1005,13 @@ label punishment_forced_punishment_outfit(the_person, the_infraction):
     else:
         the_person.char "What is it going to be, [the_person.mc_title]?"
 
-    mc.name "I've put together a special outfit for you. It will be your outfit for the rest of the day."
+    mc.name "I've put together a special outfit for you. It will be your outfit for the rest of the week."
     call outfit_master_manager() from _call_outfit_master_manager_9
     $ the_outfit = _return
     if the_outfit is None:
         "You consider what to dress [the_person.possessive_title] for a moment, then shrug."
         mc.name "On second thought, I think wearing nothing at all suits a disobedient slut like you."
-        mc.name "Consider this your uniform for the rest of the day. Do you understand?"
+        mc.name "Consider this your uniform for the rest of the week. Do you understand?"
         $ the_person.set_uniform(the_person.outfit, wear_now = True)
 
     else:
@@ -1061,6 +1069,16 @@ init -1 python:
         mc.business.mandatory_crises_list.append(clear_action)
         return
 
+    def employee_unpaid_intern_remove_requirement(person, trigger_day):
+        if day >= trigger_day:
+            return True
+        return False
+
+    def add_unpaid_intern_clear_punishment_action(person):
+        clear_action = Action("Clear employee freeuse", employee_freeuse_remove_requirement, "employee_unpaid_remove_label", args = person, requirement_args = [person, day + 7])
+        mc.business.mandatory_crises_list.append(clear_action)
+        return
+
     punishment_unpaid_intern_action = Action("Unpaid Internship", punishment_unpaid_intern_requirement, "punishment_unpaid_intern")
     punishment_orgasm_denial_action = Action("Freeuse Office Slut", punishment_freeuse_slut_requirement, "punishment_office_freeuse_slut")
 
@@ -1071,7 +1089,7 @@ init -1 python:
 label punishment_unpaid_intern(the_person, the_infraction):
     mc.name "Because of your actions, I have no choice but to slash your salary."
     the_person.char "Slash how badly?"
-    mc.name "Completely. Right down to zero. From now on you will be working as an unpaid intern."
+    mc.name "Completely. Right down to zero. The next week you will be working as an unpaid intern."
     $ the_person.draw_person(emotion = "sad")
     if the_person.obedience < 150:
         $ the_person.change_happiness(-20)
@@ -1101,7 +1119,12 @@ label punishment_unpaid_intern(the_person, the_infraction):
 
     "You leave [the_person.title] to consider her new position in the company."
     $ the_person.change_salary(-the_person.salary) #You get nothing! Good day sir!
+    $ add_unpaid_intern_clear_punishment_action(the_person)
     $ clear_scene()
+    return
+
+label employee_unpaid_remove_label(the_person):
+    $ the_person.change_salary(the_person.calculate_base_salary() * .9)
     return
 
 label punishment_office_freeuse_slut(the_person, the_infraction):
