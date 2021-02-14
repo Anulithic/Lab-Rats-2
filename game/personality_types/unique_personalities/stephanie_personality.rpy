@@ -43,7 +43,7 @@ label stephanie_greetings(the_person):
                 the_person "Hey [the_person.mc_title], are you here for business or pleasure?"
                 "[the_person.title] smiles playfully."
             else:
-                "Hey [the_person.mc_title], what's up?"
+                the_person "Hey [the_person.mc_title], what's up?"
     return
 
 label stephanie_cum_face(the_person):

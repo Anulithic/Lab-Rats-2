@@ -1079,7 +1079,7 @@ label mom_work_promotion_two_report(the_person): #TODO: Hook this up as an on_ro
         $ the_person.draw_person()
         "You hug her back. When she steps away she's still smiling ear to ear."
 
-        $ add_mom_work_secretary_replacement_action(person)
+        $ add_mom_work_secretary_replacement_action(the_person)
 
     else: #No promotion
         $ the_person.change_happiness(-20, add_to_log = False)
@@ -2280,7 +2280,7 @@ label mom_promotion_boss_phase_one(the_secretary):
     $ clear_scene()
     "She motions to a wing of seats in an alcove to your side. You walk over and sit down across from a young woman."
 
-    $ the_wife = create_random_person(last_name = mom_boss_last_name, age = 42)
+    $ the_wife = create_random_person(last_name = mom.event_triggers_dict.get("mom_boss_last_name", "Games"), age = 42)
     $ the_wife.generate_home()
     $ the_wife.home.add_person(the_wife)
 

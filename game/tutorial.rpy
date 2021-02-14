@@ -29,7 +29,7 @@ label research_tutorial_intro():
     stephanie "Right now I think we'll struggle to get a single property to express itself properly in our serums, but with some experience we can combined a bunch."
     mc.name "Right, I think I understand."
     "[stephanie.title] pulls out a notebook and flips it open, handing it over to you."
-    the_person "These are my first ideas, you should pick something for me to work on right now. If you change your mind you can always come back here and pick a new topic."
+    stephanie "These are my first ideas, you should pick something for me to work on right now. If you change your mind you can always come back here and pick a new topic."
     $ clear_scene()
     call research_select_action_description from _call_research_select_action_description
     $ stephanie.draw_person(emotion = "happy")

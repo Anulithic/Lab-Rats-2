@@ -443,7 +443,7 @@ label nora_special_research(the_person):
         "She hands you her research on the matter, unlocking a new serum trait for you to research."
         $ list_of_traits.append(nora_reward_high_slut_trait)
 
-    elif the_subject.int >= 7 and the_subjectisma >= 7 and the_subject.focus >= 7 and nora_reward_genius_trait not in list_of_traits:
+    elif the_subject.int >= 7 and the_subject.charisma >= 7 and the_subject.focus >= 7 and nora_reward_genius_trait not in list_of_traits:
         the_person "This was certainly an interesting case, and I have a development for you."
         the_person "Your subject was extremely competent, scoring near perfectly across the board on all intellectual tests."
         the_person "Replicating the capabilities of this amazing mind may be impossible with modern science, but it may be possible to approximate it for short periods of time."

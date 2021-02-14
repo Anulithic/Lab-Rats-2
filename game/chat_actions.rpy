@@ -1034,21 +1034,10 @@ label command_person(the_person):
 
     if "action_mod_list" in globals():
         call screen enhanced_main_choice_display(build_menu_items([build_command_person_actions_menu(the_person)]))
-    $ bc_demand_action = Action("Talk about birth control.", requirement = demand_bc_requirement, effect = "bc_demand_label", args = the_person, requirement_args = the_person,
-        menu_tooltip = "Discuss "+the_person.title+"'s use of birth control.", priority = -5)
-
-    #TODO: Add more commands
-    #TODO: Add a way to add role specific commands.
-
-    $ player_choice = call_formated_action_choice([change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, bc_demand_action, "Return"])
-    #call screen main_choice_display([["Command her to...", change_titles_action, wardrobe_change_action, serum_demand_action, strip_demand_action, touch_demand_action, "Return"]])
-    #$ player_choice = _return
-    if player_choice == "Return":
-        pass
     else:
         call screen main_choice_display([build_command_person_actions_menu(the_person)])
 
-    if _return != "Return":
+    if isinstance(_return, Action):
         $ _return.call_action()
     return
 
