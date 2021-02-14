@@ -108,7 +108,27 @@ init -5 python:
             prepared_animation_arguments[layer_name] = {} #Stores the arguments based on dict.
             animation_draw_requested[layer_name] = []
 
+
+
     config.interact_callbacks.append(take_animation_screenshot)
+
+    def text_message_history_callback(history_entry): #Manages taking the history entry and slotting it into the appropriate list
+        if hasattr(store,"mc"): #Make sure the main character has been instantiated
+            if mc.having_text_conversation: #This is set to a Person when talking via text, to allow us to log the interaction correctly.
+                if history_entry != "": #Record the entry, we'll figure out in the history display section if it's messages from us or a Person.
+                    mc.phone.add_message(mc.having_text_conversation, history_entry)
+                else:
+                    pass #Nothing to do. We don't record narration.
+
+    def text_message_say_callback(who, *args, **kwargs): #Manually sets the style of anything sent as part of a text conversation
+        if hasattr(store,"mc"):
+            if mc.having_text_conversation:
+                kwargs["what_color"] = "#19e9f7" #We need to define these explicitly so they are not overridden by the characters defaults.
+                kwargs["what_font"] = "Autobusbold-1ynL.ttf"
+        return args, kwargs
+
+    config.history_callbacks.append(text_message_history_callback) #Ensures conversations had via text are recorded properly
+    config.say_arguments_callback = text_message_say_callback #Recolours and re-fonts say statements made while having a text conversation
 
     config.predict_screen_statements = True
     config.predict_statements = 50
@@ -952,7 +972,7 @@ init -5 python:
                 return True
             return False
 
-        def get_uniform_wardrobe(self,title): #Takes a division (a room) and returns the correct uniform for that division, if one exists. If it is None, returns false. TODO: get this working.
+        def get_uniform_wardrobe(self,title): #Takes a title and returns the correct uniform for that division, if one exists. If it is None, returns false. TODO: get this working.
             if title == "Marketing":
                 return self.m_uniform.merge_wardrobes(self.all_uniform)
             elif title == "Researcher":
@@ -965,6 +985,9 @@ init -5 python:
                 return self.h_uniform.merge_wardrobes(self.all_uniform)
             else:
                 return None
+
+        def get_uniform_wardrobe_for_person(self, the_person):
+            return self.get_uniform_wardrobe(self.get_employee_title(the_person))
 
         def get_uniform_limits(self): #Returns three values: the max sluttiness of a full outfit, max sluttiness of an underwear set, and if only overwear sets are allowed or notself.
             slut_limit = 0
@@ -1922,6 +1945,9 @@ init -5 python:
 
             self.known_home_locations = MappedList(Room, all_locations_in_the_game) #When the MC learns a character's home location the room reference should be added here. They can then get to it from the map.
 
+            self.having_text_conversation = None #Set to a Person when dialogue should be taking place on the phone. Logs dialogue (but not narration) as appropriate.
+            self.phone = Text_Message_Manager()
+
             self.listener_system = Listener_Management_System() #A listener manager to let us enroll to events and update goals when they are triggered.
 
             #How many free points does the main character have to spend on their skills/abilities
@@ -2268,7 +2294,8 @@ init -5 python:
                 what_font = font, #The font to be used for the character.
                 who_font = font,
                 color = name_color, #The colour of the character's NAME section
-                what_color = dialogue_color) #The colour of the character's dialogue.
+                what_color = dialogue_color, #The colour of the character's dialogue.
+                what_style = "general_dialogue_style") #Used to describe everything that isn't character specific.
 
             if title: #Format the given titles, if any, so they appear correctly the first time you meet at person.
                 self.set_title(title) #The way the girl is referred to by the MC. For example: "Mrs. Whatever", "Lily", or "Mom". Will reset "???" if appropriate
@@ -2452,6 +2479,11 @@ init -5 python:
             return self._identifier
 
         @property
+        def location(self): # Check what location a person is in e.g the_person.location == downtown. Use to trigger events?
+            location = next((x for x in list_of_places if self in x.people), None)
+            return (location if location else self.home) # fallback location for person is home
+
+        @property
         def expression_images(self):
             global emotion_images_dict
             return emotion_images_dict[self.skin][self.face_style]
@@ -2489,7 +2521,7 @@ init -5 python:
                 return any(x for x in self.on_room_enter_event_list + self.on_talk_event_list if x.effect == the_event)
             return False
 
-        def generate_daughter(self): #Generates a random person who shares a number of similarities to the mother
+        def generate_daughter(self, force_live_at_home = False): #Generates a random person who shares a number of similarities to the mother
             age = renpy.random.randint(18, self.age-16)
 
             if renpy.random.randint(0,100) < 60:
@@ -2526,10 +2558,10 @@ init -5 python:
             else:
                 height = None
 
-            if renpy.random.randint(0,100) < 85 - age: #It is less likely she lives at home the older she is.
-                start_home  = self.home
+            if renpy.random.randint(0,100) < 85 - age or force_live_at_home: #It is less likely she lives at home the older she is.
+                start_home = self.home
             else:
-                start_home  = None
+                start_home = None
 
 
             the_daughter = create_random_person(last_name = self.last_name, age = age, body_type = body_type, face_style = face_style, tits = tits, height = height,
@@ -2672,13 +2704,13 @@ init -5 python:
 
 
             if day%7 == 0: #If the new day is Monday
-                self.change_happiness(self.get_opinion_score("Mondays"), add_to_log = False)
+                self.change_happiness(self.get_opinion_score("Mondays")*10, add_to_log = False)
 
             elif day%7 == 4: #If the new day is Friday
-                self.change_happiness(self.get_opinion_score("Fridays"), add_to_log = False)
+                self.change_happiness(self.get_opinion_score("Fridays")*10, add_to_log = False)
 
             elif day%7 == 5 or day%7 == 6: #If the new day is a weekend day
-                self.change_happiness(self.get_opinion_score("the weekend"), add_to_log = False)
+                self.change_happiness(self.get_opinion_score("the weekend")*10, add_to_log = False)
 
             for a_role in self.special_role:
                 a_role.run_day(self)
@@ -3156,7 +3188,7 @@ init -5 python:
             if uniform is not None:
                 self.planned_uniform = uniform.get_copy()
                 if wear_now:
-                    self.apply_outfit(uniform)
+                    self.wear_uniform()
 
         def apply_outfit(self, the_outfit = None, ignore_base = False, update_taboo = False): #Hand over an outfit, we'll take a copy and apply it to the person, along with their base accessories unless told otherwise.
             if the_outfit is None:
@@ -3470,15 +3502,20 @@ init -5 python:
 
                 mc.log_event(log_string, "float_text_grey")
 
-        def review_outfit(self, dialogue = True):
-            if self.should_wear_uniform():
-                self.wear_uniform()#Reset uniform
-                # self.call_uniform_review() #TODO: actually impliment this call, but only when her outfit significantly differs from the real uniform.
-
-            elif self.judge_outfit(self.outfit) > self.effective_sluttiness():
-                self.apply_outfit(self.planned_outfit)
+        def review_outfit(self, dialogue = True, draw_person = True):
+            if self.should_wear_uniform() and not self.is_wearing_uniform():
+                self.apply_outfit()#Reset uniform
                 if dialogue:
                     self.call_dialogue("clothing_review")
+                if draw_person():
+                    self.draw_person()
+
+            elif not self.judge_outfit(self.outfit):
+                self.apply_outfit()
+                if dialogue:
+                    self.call_dialogue("clothing_review")
+                if draw_person():
+                    self.draw_person()
 
         def judge_outfit(self,outfit, temp_sluttiness_boost = 0, use_taboos = True, as_underwear = False, as_overwear = False): #Judge an outfit and determine if it's too slutty or not. Can be used to judge other people's outfits to determine if she thinks they look like a slut.
             # temp_sluttiness can be used in situations (mainly crises) where an outfit is allowed to be temporarily more slutty than a girl is comfortable wearing all the time.
@@ -3523,6 +3560,62 @@ init -5 python:
                 return False
             else:
                 return True
+
+        def is_wearing_uniform(self): # Returns True if the clothing the girl is wearing contains all of the uniform clothing items. #TODO: may want to support more flexibility for over/underwear sets that had optional bits chosen by the girl.
+            #May want to make this a Business side check. Make "is_valid_uniform" check like this against all uniforms available for the character. Would provide the flexiblity I mentioned above.
+            if self.planned_uniform is None:
+                return False #If no uniform is set you aren't wearing one at all.
+
+            uniform_wardrobe = mc.business.get_uniform_wardrobe_for_person(self)
+            matching_full = False
+            full_set = False #Boolean used to track if we have at least one full set we _could_ have been wearing
+
+            matching_overwear = False
+            overwear_set = False #Tracks if we had at least one overwear we _could_ have been wearing
+
+            matching_underwear = False
+            underwear_set = False #Tracks if we had an underwear set we could have been wearing
+
+            for potential_uniform in uniform_wardrobe.get_valid_outfit_list(): #Check if we match any of the full uniforms
+                full_set = True
+                if not matching_full:
+                    matching_full = True #Assume they match, then find a counter example. When we do, break and try the next one.
+                    for cloth in potential_uniform.generate_clothing_list():
+                        if not self.outfit.has_clothing(cloth):
+                            matching_full = False
+                            break
+
+            for potential_uniform in uniform_wardrobe.get_valid_overwear_sets_list(): #Check if we match the overwear and underwear sets.
+                overwear_set = True
+                if not matching_overwear:
+                    matching_overwear = True
+                    for cloth in potential_uniform.generate_clothing_list():
+                        if not self.outfit.has_clothing(cloth):
+                            matching_overwear = False
+                            break
+
+            for potential_uniform in uniform_wardrobe.get_valid_underwear_sets_list():
+                underwear_set = True
+                if not matching_underwear:
+                    matching_underwear = True
+                    for cloth in potential_uniform.generate_clothing_list():
+                        if not self.outfit.has_clothing(cloth):
+                            matching_underwear = False
+                            break
+
+            if matching_full:
+                return True
+
+            elif matching_overwear and matching_underwear:
+                return True
+
+            elif matching_overwear or matching_underwear: #Sometimes this is okay
+                if matching_overwear and not underwear_set:
+                    return True
+                elif matching_underwear and not overwear_set:
+                    return True
+
+            return False
 
         def should_wear_uniform(self):
             if not mc.business.is_open_for_business():  # quick exit
@@ -4706,6 +4799,59 @@ init -5 python:
             if the_relationship is None: #Only sets a relationship for these people if one does not exist, so as to not override friendships or familial relationships
                 self.update_relationship(person_a, person_b, get_random_from_weighted_list([[self.relationship_scale[1], 20], [self.relationship_scale[2], 60], [self.relationship_scale[3], 20]]))
 
+
+    # Aaaand immediately after creating this class I've decided it's not wanted. All I expect it to do for now is to act as a per-character message log.
+    class Text_Message_Manager(): #Manages text conversations you've had with other girls
+        def __init__(self): #TODO: Add support for manufacturing a message history.
+            self.message_history = {} # A dict that stores entries of Person:[HistoryEntry,HistoryEntry...] representing your recorded conversation with this girl.
+            #TODO: Then figure out how we are gong to store pictures, videos, allow custom avatar pics, ect. We could either store them as .pngs, or store all the required parameters (including outfit).
+
+        def register_number(self, person): #Now just used to keep track of who's number we know
+            if not self.has_number(person):
+                self.message_history[person.identifier] = []
+
+        def add_message(self, person, history_entry):
+            self.register_number(person)
+            self.message_history[person.identifier].append(history_entry)
+
+        def get_person_list(self):
+            return [x for x in all_people_in_the_game() if x.identifier in self.message_history]
+
+        def has_number(self, person):
+            if person.identifier in self.message_history:
+                return True
+            else:
+                return False
+
+    #     def add_new_message(self, person, the_action):
+    #         if person not in self.pending_messages:
+    #             self.register_number(person)
+    #
+    #         self.pending_messages[person].append(the_action)
+    #
+    #     def has_new_message(self, person):
+    #         return len(self.pending_messages[person]) > 0
+    #
+    #     def get_next_new_message(self, person):
+    #         return self.pending_messages[person].pop(0) #NOTE: Assumes there is an event to get. Otherwise throws an error.
+    #
+    #     def call_new_message(self, person):
+    #         the_message = self.get_next_new_message(person)
+    #         the_message.call_action(person)
+
+
+    #     def get_person_list(self):
+    #         # Returns a tuple of (Person, Bool) for each person you know of.
+    #         return_list = []
+    #         for a_person in self.pending_messages:
+    #             if self.has_new_message(a_person):
+    #                 return_list.append((a_person, True))
+    #             else:
+    #                 return_list.append((a_person, False))
+    #         return return_list
+
+
+
     class Room(renpy.store.object): #Contains people and objects.
         def __init__(self,name,formalName,connections,background_image,objects,people,actions,public,map_pos,
             tutorial_label = None, visible = True, hide_in_known_house_map = True, lighting_conditions = None):
@@ -4808,18 +4954,12 @@ init -5 python:
             return None
 
         def valid_actions(self):
-            count = 0
-            for act in self.actions:
-                if act.is_action_enabled() or act.is_disabled_slug_shown(): #We should also check if a non-action disabled slug would be available so that the player can check what the requirement would be.
-                    count += 1
-            return count
+            return __builtin__.len(get_valid_actions())
 
         def get_valid_actions(self):
-            return_list = []
-            for act in self.actions:
-                if act.is_action_enabled() or act.is_disabled_slug_shown():
-                    return_list.append(act)
-            return return_list
+            actions = [x for x in self.actions if x.is_action_enabled() or x.is_disabled_slug_shown()]
+            actions.sort(key = lambda x: x.priority if x.is_action_enabled() else -1000, reverse = True)
+            return actions
 
         def get_lighting_conditions(self):
             return self.lighting_conditions[time_of_day]
@@ -5419,8 +5559,21 @@ init -5 python:
                 self.constrain_regions = [constrain_regions]
 
         def __cmp__(self,other):
-            if type(self) is type(other):
-                if self.name == other.name and self.hide_below == other.hide_below and self.layer == other.layer and self.is_extension == other.is_extension:
+            if isinstance(other, Facial_Accessory):
+                if (self.name == other.name
+                    and self.hide_below == other.hide_below
+                    and self.layer == other.layer
+                    and self.is_extension == other.is_extension
+                    and self.colour == other.colour):
+                    return 0
+            elif isinstance(other, Clothing):
+                if (self.name == other.name
+                    and self.hide_below == other.hide_below
+                    and self.layer == other.layer
+                    and self.is_extension == other.is_extension
+                    and self.colour == other.colour
+                    and self.pattern == other.pattern
+                    and self.colour_pattern == other.colour_pattern):
                     return 0
 
             if other is None:
@@ -5875,21 +6028,16 @@ init -5 python:
             currently_constrained_regions = []
             ordered_displayables = []
             for item in reversed(all_items): #To properly constrain items we need to figure out how they look from the outside in, even though we eventually draw from the inside out
-                if type(item) is Facial_Accessory:
+                if isinstance(item, Facial_Accessory):
                     if item.layer not in hide_layers:
                         ordered_displayables.append(item.generate_item_displayable(position, face_style, emotion, special_modifiers, lighting = lighting))
-                else:
-                    if not item.is_extension:
-                        if item.layer not in hide_layers:
-                            ordered_displayables.append(item.generate_item_displayable(body_type, tit_size, position, lighting = lighting, regions_constrained = currently_constrained_regions, nipple_wetness = nipple_wetness))
-                        for region in item.constrain_regions:
-                            if item.half_off and region in item.half_off_regions:
-                                pass # If an item is half off the regions that are hidden while half off are also not constrained by the clothing.
-                            elif item.has_extension and item.has_extension.half_off and region in item.has_extension.half_off_regions:
-                                pass # If the extension for an item (a dress bottom, for example) is half off and hiding something that section is not contrained.
-                            else:
-                                currently_constrained_regions.append(region)
-            return ordered_displayables[::-1] #We iterated over all_items backwards, so our return list needs to be inverted
+                elif not item.is_extension:
+                    if item.layer not in hide_layers:
+                        ordered_displayables.append(item.generate_item_displayable(body_type, tit_size, position, lighting = lighting, regions_constrained = currently_constrained_regions, nipple_wetness = nipple_wetness))
+                        for region in [x for x in item.constrain_regions if not (x.half_off and x in item.half_off_regions) or not (x.has_extension and x.has_extension.half_off and x in item.has_extension.half_off_regions)]:
+                            currently_constrained_regions.append(region)
+
+            return reversed(ordered_displayables) #We iterated over all_items backwards, so our return list needs to be inverted
 
         def generate_split_draw_list(self, split_on_clothing, the_person, position, emotion = "default", special_modifiers = None, lighting = None): #Mirrors generate draw list but returns only the clothing above and below the given item as two lists with the item in between (in a tuple)
             if the_person is None:
@@ -5943,10 +6091,9 @@ init -5 python:
             return forced_special_modifier
 
         def generate_clothing_list(self, body_type = None, tit_size = None, position = None): #Returns a properly ordered list of clothing. If used to draw them they would be displayed correctly.
-            # I don't believe position is needed for anything here.
+            # I don't believe position is needed for anything here. Actually body_type and tit_size aren't either any more. We'll clean that up at some point.
             items_to_draw = self.accessories + self.feet + self.lower_body + self.upper_body #Throw all of our items in a list.
-            items_to_draw.sort(key= lambda clothing: clothing.tucked, reverse = True)
-            items_to_draw.sort(key= lambda clothing: clothing.layer) #First, sort by clothing layer.
+            items_to_draw.sort(key= lambda x: x.layer + (0 if x.tucked else 0.5)) #First, sort by clothing layer.
              #Next, modify things that are tucked into eachother.
             return items_to_draw
 
@@ -6058,15 +6205,10 @@ init -5 python:
             if self.can_add_accessory(new_clothing):
                 self.accessories.append(new_clothing)
 
-        def has_clothing(self, the_clothing): #Returns True if this outfit includes the given clothing item, false otherwise. Checks only for exact match (ie. down to exact colour, opacity, etc.)
-            if the_clothing in self.upper_body:
-                return True
-            elif the_clothing in self.lower_body:
-                return True
-            elif the_clothing in self.feet:
-                return True
-            elif the_clothing in self.accessories:
-                return True
+        def has_clothing(self, the_clothing): #Returns True if this outfit includes the given clothing item, false otherwise. Checks for exact parameter match (colour, name, ect), but not reference match.
+            for cloth in self.upper_body + self.lower_body + self.feet + self.accessories:
+                if cloth == the_clothing:
+                    return True
             return False
 
         def remove_clothing(self, old_clothing):
@@ -6715,21 +6857,21 @@ init -5 python:
 
         def add_outfit(self, the_outfit):
             the_outfit.restore_all_clothing() #Ensure none of the outfits have half-off clothing.
-            found = find_in_list(lambda x: x.name == the_outfit.name, self.outfits)
+            found = next((x for x in self.outfits if x.name == the_outfit.name), None)
             if found:   # if we already have an outfit with that name, replace it (outfit name must be unique)
                 self.outfits.remove(found)
             self.outfits.append(the_outfit)
 
         def add_underwear_set(self, the_outfit):
             the_outfit.restore_all_clothing()
-            found = find_in_list(lambda x: x.name == the_outfit.name, self.underwear_sets)
+            found = next((x for x in self.underwear_sets if x.name == the_outfit.name), None)
             if found:   # if we already have an outfit with that name, replace it (outfit name must be unique)
                 self.underwear_sets.remove(found)
             self.underwear_sets.append(the_outfit)
 
         def add_overwear_set(self, the_outfit):
             the_outfit.restore_all_clothing()
-            found = find_in_list(lambda x: x.name == the_outfit.name, self.overwear_sets)
+            found = next((x for x in self.overwear_sets if x.name == the_outfit.name), None)
             if found:   # if we already have an outfit with that name, replace it (outfit name must be unique)
                 self.overwear_sets.remove(found)
             self.overwear_sets.append(the_outfit)
@@ -6838,25 +6980,12 @@ init -5 python:
                 return self.build_appropriate_outfit(sluttiness_limit, sluttiness_min)
 
         def decide_on_uniform(self, the_person): # Creates a uniform out of the clothing items from this wardrobe. Unlike a picked outfit sluttiness has no factor here. A girls personal underwear sets will be used for constructed uniforms.
-            valid_full_outfits = [] #We begin by building lists of all the uniform pieces that might be valid given our current uniform rules. This allows for the rules to update without requring any changes to the uniform wardrobe directly.
-            valid_underwear_sets = []
-            valid_overwear_sets = []
-
             slut_limit, underwear_limit, limited_to_top = mc.business.get_uniform_limits()
 
-            if not limited_to_top:
-                for full_outfit in self.outfits:
-                    if full_outfit.slut_requirement <= slut_limit:
-                        valid_full_outfits.append(full_outfit)
-
-            if not limited_to_top:
-                for an_underwear_set in self.underwear_sets:
-                    if an_underwear_set.get_underwear_slut_score() <= underwear_limit:
-                        valid_underwear_sets.append(an_underwear_set)
-
-            for an_overwear_set in self.overwear_sets:
-                if an_overwear_set.get_overwear_slut_score() <= slut_limit:
-                    valid_overwear_sets.append(an_overwear_set)
+            # Get a list of all the pieces of clothing that are valid for us to build our uniform from.
+            valid_full_outfits = self.get_valid_outfit_list()
+            valid_underwear_sets = self.get_valid_underwear_sets_list()
+            valid_overwear_sets = self.get_valid_overwear_sets_list()
 
 
             if len(valid_full_outfits) > 0:
@@ -6939,11 +7068,40 @@ init -5 python:
         def get_outfit_list(self):
             return self.outfits
 
+        def get_valid_outfit_list(self):
+            return_list = []
+            slut_limit, underwear_limit, limited_to_top = mc.business.get_uniform_limits()
+            if limited_to_top:
+                return return_list
+            for full_set in self.get_outfit_list():
+                if full_set.slut_requirement <= slut_limit:
+                    return_list.append(full_set)
+            return return_list
+
         def get_underwear_sets_list(self):
             return self.underwear_sets
 
+        def get_valid_underwear_sets_list(self): #List of underwear items that may possibly be valid
+            return_list = []
+            slut_limit, underwear_limit, limited_to_top = mc.business.get_uniform_limits()
+            if limited_to_top:
+                return return_list #If we're limited to just tops there are _no_ valid underwear sets, by definition
+            for underwear_set in self.get_underwear_sets_list():
+                if underwear_set.get_underwear_slut_score() <= underwear_limit:
+                    return_list.append(underwear_set)
+            return return_list
+
+
         def get_overwear_sets_list(self):
             return self.overwear_sets
+
+        def get_valid_overwear_sets_list(self): #List of overwear items that may possibly be valid.
+            return_list = []
+            slut_limit, underwear_limit, limited_to_top = mc.business.get_uniform_limits()
+            for overwear_set in self.get_overwear_sets_list():
+                if overwear_set.get_overwear_slut_score() <= slut_limit:
+                    return_list.append(overwear_set)
+            return return_list
 
         def has_outfit_with_name(self, the_name):
             return any(x for x in self.outfits + self.underwear_sets + self.overwear_sets if x.name == the_name)
@@ -7362,7 +7520,38 @@ init -5 python:
 
     def review_designs_action_requirement():
         return True
+
     ##Creator Defined Displayables, used in custom menues throughout the game##
+
+    class VrenZipImage(renpy.display.im.ImageBase): #TODO: Move this to a more obvious file. Probably something to do along with a bunch of other refactoring.
+        def __init__(self, position, filename, mtime=0, **properties):
+            super(VrenZipImage, self).__init__(position, filename, mtime, **properties)
+            self.position = position
+            self.filename = filename
+
+        def load(self):
+            tries = 0
+            max_tries = 5
+            while tries < max_tries:
+                global mobile_zip_dict
+                try:
+                    data = mobile_zip_dict[self.position].read(self.filename)
+                    sio = io.BytesIO(data)
+                    the_image = renpy.display.pgrender.load_image(sio, self.filename)
+                    return the_image
+
+                except (zipfile.BadZipfile, RuntimeError): #Not my fault! See: https://github.com/pfnet/pfio/issues/104
+                    e = sys.exc_info()[1]
+                    log_message("ERR " + str(tries) + ": "  + str(e))
+                    tries += 1
+                    if tries >= max_tries:
+                        renpy.notify("Unsuccessful Recovery: " + self.position + ", Item: " + self.filename)
+                        return renpy.display.pgrender.surface((2, 2), True)
+
+                    else:
+                        file_name = mobile_zip_dict[self.position].filename
+                        mobile_zip_dict[self.position].close()
+                        mobile_zip_dict[self.position] = zipfile.ZipFile(file_name, "a") #May have to convert to a renpy_file first, but I dthink Zipfile will have alreayd done that
 
     class Vren_Line(renpy.Displayable): # Caused large amounts of lag when used! No longer in use.
         def __init__(self, start, end, thickness, color, **kwargs):
@@ -10801,7 +10990,14 @@ init -2 python:
     def greyout_transform(d):
         return AlphaBlend(Solid("#fff"), d, Solid("#000"), True)
 
+init -2 style text_message_style is say_dialogue:
+    font "Autobusbold-1ynL.ttf"
+    color "#19e9f7"
+    outlines [(2,"#222222",0,0)]
+    #TODO: MIght need to decide on Size too
 
+init -2 style general_dialogue_style is say_dialogue:
+    outlines [(2,"#222222",0,0)]
 
 
 transform float_up:
@@ -10911,27 +11107,27 @@ label tutorial_start:
     "Today you have an interview with a small pharmaceutical company. You've gotten up early and dressed in your finest suit."
     $ hall.show_background()
     "You head for the front door, eager to get to your interview early."
-    mom.char "[mom.mc_title], are you leaving already?"
+    mom "[mom.mc_title], are you leaving already?"
     "[mom.possessive_title]'s voice comes from the kitchen, along with the smell of breakfast."
     mc.name "Yeah, I want to make sure I make it on time."
-    mom.char "You haven't had any breakfast yet. You should eat, I'll drive you if you're running late."
+    mom "You haven't had any breakfast yet. You should eat, I'll drive you if you're running late."
     "The smell of cooked toast and frying eggs wins you over and you head to the kitchen."
     $ kitchen.show_background()
     $ mom.draw_person(emotion = "happy", position = "back_peek")
     "[mom.possessive_title] is at the stove and looks back at you when you come into the room."
-    mom.char "The food's almost ready. Just take a seat and I'll make you a plate."
+    mom "The food's almost ready. Just take a seat and I'll make you a plate."
     mc.name "Thanks Mom, I didn't realize how hungry I was. Nerves, I guess."
-    mom.char "Don't worry, I'm sure they'll love you."
+    mom "Don't worry, I'm sure they'll love you."
     "She turns back and focuses her attention on her cooking. A few minutes later she presents you with a plate."
     $ mom.draw_person(emotion = "happy")
-    mom.char "Here you go sweetheart. You look very sharp in your suit, by the way. My little boy is all grown up."
+    mom "Here you go sweetheart. You look very sharp in your suit, by the way. My little boy is all grown up."
     "You eat quickly, keeping a sharp eye on the time. When you're done you stand up and move to the front door again."
     mc.name "Okay, I've got to go if I'm going to catch my bus. I'll talk to you later and let you know how it goes."
-    mom.char "Wait."
+    mom "Wait."
     "Mom follows you to the front door. She straightens your tie and brushes some lint off of your shoulder."
-    mom.char "Oh, I should have ironed this for you."
+    mom "Oh, I should have ironed this for you."
     mc.name "It's fine, Mom. Really."
-    mom.char "I know, I know, I'll stop fussing. Good luck sweety."
+    mom "I know, I know, I'll stop fussing. Good luck sweety."
     "She wraps her arms around you and gives you a tight hug. You hug her back then hurry out the door."
     $ clear_scene()
     $ downtown.show_background()
@@ -10975,24 +11171,24 @@ label tutorial_start:
     "Three days later..."
     $ mom.draw_person(position = "sitting")
     "Mom looks over the paperwork you've laid out. Property cost, equipment value, and potential earnings are all listed."
-    mom.char "And you've checked all the numbers?"
+    mom "And you've checked all the numbers?"
     mc.name "Three times."
-    mom.char "It's just... this is a lot of money [mom.mc_title]. I would need to take a second mortgage out on the house."
+    mom "It's just... this is a lot of money [mom.mc_title]. I would need to take a second mortgage out on the house."
     mc.name "And I'll be able to pay for that. This is the chance of a life time Mom."
-    mom.char "What was it you said you were going to make again?"
+    mom "What was it you said you were going to make again?"
     mc.name "When I was working at the lab last summer we developed some prototype chemical carriers. I think they have huge commercial potential."
     mc.name "And there's no regulation around them yet, because they're so new. I can start production and be selling them tomorrow."
     "[mom.possessive_title] leans back in her chair and pinches the brow of her nose."
-    mom.char "Okay, you've convinced me. I'll get in touch with the bank and put a loan on the house."
+    mom "Okay, you've convinced me. I'll get in touch with the bank and put a loan on the house."
     "You jump up and throw your arms around [mom.possessive_title]. She laughs and hugs you back."
 
-    lily.char "What's going on?"
+    lily "What's going on?"
     $ lily.draw_person()
     "[lily.possessive_title] steps into the doorway and looks at you both."
     $ mom.draw_person(position = "sitting")
-    mom.char "Your brother is starting a business. I'm his first investor."
+    mom "Your brother is starting a business. I'm his first investor."
     $ lily.draw_person(emotion = "happy")
-    lily.char "Is that what you've been excited about the last couple days? What're you actually making?"
+    lily "Is that what you've been excited about the last couple days? What're you actually making?"
     mc.name "I'll have to tell you more about it later Lily, I've got some calls to make. Thanks Mom, you're the best!"
     $ clear_scene()
     "You leave [mom.possessive_title] and sister in the kitchen to talk and retreat to your room for some privacy."
@@ -11000,42 +11196,42 @@ label tutorial_start:
     $ bedroom.show_background()
     "You can manage the machinery of the lab, but you're going to need help refining the serum design from last year."
     "You pick up your phone and call [stephanie.title]."
-    stephanie.char "Hello?"
+    stephanie "Hello?"
     mc.name "Stephanie, this is [mc.name]."
-    stephanie.char "[stephanie.mc_title]! Good to hear from you, what's up?"
+    stephanie "[stephanie.mc_title]! Good to hear from you, what's up?"
     mc.name "I'd like to talk to you about a business offer. Any chance we could meet somewhere?"
-    stephanie.char "Ooh, a business offer. How mysterious. I'm almost done here at the lab, if you buy me a drink you've got a deal."
+    stephanie "Ooh, a business offer. How mysterious. I'm almost done here at the lab, if you buy me a drink you've got a deal."
     mc.name "Done. Where's convenient for you?"
     "Stephanie sends you the address of a bar close to the university."
     scene
-    $ bedroom.show_background()
+    $ bar_location.show_background()
     "It takes you an hour to get your pitch prepared and to get over to the bar."
     "When you arrive [stephanie.title] is sitting at the bar with a drink already. She smiles and raises her glass."
     $ stephanie.draw_person(position = "sitting", emotion = "happy")
-    stephanie.char "Hey [stephanie.mc_title], it's great to see you!"
+    stephanie "Hey [stephanie.mc_title], it's great to see you!"
     "She stands and gives you a hug."
-    stephanie.char "That was a crazy summer we had together. It seems like such a blur now, but I had a lot of fun."
+    stephanie "That was a crazy summer we had together. It seems like such a blur now, but I had a lot of fun."
     mc.name "Me too, that's actually part of what I want to talk to you about."
     "You order a drink for yourself and sit down."
     "You lay out your idea to [stephanie.title]: the commercial production and distribution of the experimental serum."
-    stephanie.char "Well that's... Fuck, it's bold, I'll say that. And you need me to handle the R&D side of the business."
+    stephanie "Well that's... Fuck, it's bold, I'll say that. And you need me to handle the R&D side of the business."
     mc.name "Right. Production processes are my bread and butter, but I need your help to figure out what we're actually making."
     "Stephanie finishes off her drink and flags down the bartender for another."
-    stephanie.char "I would need to quit my job at the lab, and there's no guarantee that this even goes anywhere."
+    stephanie "I would need to quit my job at the lab, and there's no guarantee that this even goes anywhere."
     mc.name "Correct."
-    stephanie.char "Do have any clients?"
+    stephanie "Do have any clients?"
     mc.name "Not yet. It's hard to have clients without a product."
     "Stephanie gets her drink and sips it thoughtfully."
     mc.name "The pay won't be great either, but I can promise..."
-    stephanie.char "I'm in."
+    stephanie "I'm in."
     mc.name "I... what?"
-    stephanie.char "I'm in. The old lab just doesn't feel the same since you left. I've been looking for something new in my life, something to shake things up."
-    stephanie.char "I think this is it."
+    stephanie "I'm in. The old lab just doesn't feel the same since you left. I've been looking for something new in my life, something to shake things up."
+    stephanie "I think this is it."
     "She raises her drink and smiles a huge smile."
-    stephanie.char "A toast: To us, and stupid risks!"
+    stephanie "A toast: To us, and stupid risks!"
     mc.name "To us!"
     "You clink glasses together and drink."
-    stephanie.char "Ah... Okay, so I've got some thoughts already..."
+    stephanie "Ah... Okay, so I've got some thoughts already..."
     "Stephanie grabs a napkin and starts doodling on it. You spend the rest of the night with her, drinking and talking until you have to say goodbye."
     $ clear_scene()
     "A week later [mom.possessive_title] has a new mortgage on the house and purchases the lab in your name."
@@ -11348,8 +11544,8 @@ init -2 python:
         else:
             actions_list.append(["Wait here {image=gui/heart/Time_Advance.png}\n{color=#FFFF00}10% Extra{/color} {image=gui/extra_images/energy_token.png} (tooltip)Kill some time and wait around. Recovers more energy than working.", "Wait"])
         actions_list.append(["Go somewhere else", "Travel"])
+        actions_list.append(["Check your phone", "Phone"])
         actions_list.extend(mc.location.get_valid_actions())
-        actions_list.sort(key = sort_display_list, reverse = True)
         actions_list.insert(0, "Do Something")
         return actions_list
 
@@ -11484,6 +11680,9 @@ label game_loop: ##THIS IS THE IMPORTANT SECTION WHERE YOU DECIDE WHAT ACTIONS Y
                     $ clear_scene()
                     $ del the_greeter
 
+    elif picked_option == "Phone":
+        call browse_internet() from _call_browse_internet
+
     elif picked_option == "Wait":
         if time_of_day == 4:
             $ mc.change_location(bedroom)
@@ -11558,6 +11757,7 @@ init -2 python:
         return special_role_actions
 
 label talk_person(the_person):
+    $ mc.having_text_conversation = None #Just in case some event hasn't properly reset this.
     if the_person.title is None:
         $ the_person.draw_person()
         call person_introduction(the_person) from _call_person_introduction #If their title is none we assume it is because we have never met them before. We have a special introduction scene for new people.
@@ -12279,16 +12479,18 @@ init -1 python:
         menu_tooltip = "Pick one your employees to be your company model. You can run ad campaigns with your model, increasing the value of every dose of serum sold.")
 
     sleep_action = Action("Sleep for the night {image=gui/heart/Time_Advance.png}{image=gui/heart/Time_Advance.png}",sleep_action_requirement,"sleep_action_description",
-        menu_tooltip = "Go to sleep and advance time to the next day. Night time counts as three time chunks when calculating serum durations.")
+        menu_tooltip = "Go to sleep and advance time to the next day. Night time counts as three time chunks when calculating serum durations.", priority = 20)
     faq_action = Action("Check the FAQ",faq_action_requirement,"faq_action_description",
         menu_tooltip = "Answers to frequently asked questions about Lab Rats 2.")
 
     downtown_search_action = Action("Wander the streets {image=gui/heart/Time_Advance.png}", downtown_search_requirement, "downtown_search_label",
         menu_tooltip = "Spend time exploring the city and seeing what interesting locations it has to offer.")
 
-
     strip_club_show_action = Action("Watch a show", stripclub_show_requirement, "stripclub_dance",
         menu_tooltip = "Take a seat and wait for the next girl to come out on stage.")
+
+    mom_office_person_request_action = Action("Approach the receptionist", mom_office_person_request_requirement, "mom_office_person_request",
+        menu_tooltip = "The receptionist might be able to help you, if you're looking for someone.")
 
     import_wardrobe_action = Action("Import a wardrobe file", faq_action_requirement, "wardrobe_import",
         menu_tooltip = "Select and import a wardrobe file, adding all outfits to your current wardrobe.")
@@ -12349,9 +12551,19 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         strip_club_owner = get_random_male_name()
         strip_club = Room(strip_club_owner + "'s Gentlemen's Club", strip_club_owner + "'s Gentlemen's Club", [], stripclub_background, [], [], [strip_club_show_action], False, [6,5], None, False, lighting_conditions = standard_club_lighting)
 
+        mom_office_name = get_random_male_name() + " and " + get_random_male_name() + " Ltd."
+
+        mom_office_lobby = Room(mom_office_name + " Lobby", mom_office_name + " Lobby", [], standard_office_backgrounds[:], [], [], [mom_office_person_request_action], False, [6,3], lighting_conditions = standard_indoor_lighting)
+        mom_offices = Room(mom_office_name + " Offices", mom_office_name + " Offices", [], standard_office_backgrounds[:], [], [], [], False, [5,5], visible = False, lighting_conditions = standard_indoor_lighting)
+
+
+        bar_location = Room("Bar", "Bar", [], standard_bar_backgrounds[:], [], [], [], False, [10,10], visible = False, lighting_conditions = standard_indoor_lighting)
 
         ##PC starts in his bedroom##
         mc = MainCharacter(bedroom,character_name,last_name, Business(business_name, m_division, p_division, rd_division, office, office),stat_array,skill_array,_sex_array)
+
+
+
         town_relationships = RelationshipArray() #Singleton class used to track relationships. Remvoes need for recursive character references (which messes with Ren'py's saving methods)
         mc.generate_goals()
 
@@ -12384,6 +12596,9 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         list_of_places.append(cousin_bedroom)
         list_of_places.append(university)
         list_of_places.append(strip_club)
+
+        list_of_places.append(mom_office_lobby)
+        list_of_places.append(mom_offices)
 
         for room in [bedroom, lily_bedroom, mom_bedroom, aunt_bedroom, cousin_bedroom]:
             room.add_object(make_wall())
@@ -12420,6 +12635,18 @@ label create_test_variables(character_name,business_name,last_name,stat_array,sk
         office.add_object(make_chair())
         office.add_object(make_desk())
         office.add_object(make_window())
+
+        mom_office_lobby.add_object(make_wall())
+        mom_office_lobby.add_object(make_floor())
+        mom_office_lobby.add_object(make_chair())
+        mom_office_lobby.add_object(make_desk())
+        mom_office_lobby.add_object(make_window())
+
+        mom_offices.add_object(make_wall())
+        mom_offices.add_object(make_floor())
+        mom_offices.add_object(make_chair())
+        mom_offices.add_object(make_desk())
+        mom_offices.add_object(make_window())
 
         rd_division.add_object(make_wall())
         rd_division.add_object(make_floor())

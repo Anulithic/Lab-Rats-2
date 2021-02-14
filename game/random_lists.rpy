@@ -143,6 +143,7 @@ init -2:
         list_of_names.append("Kayla")
         list_of_names.append("Tia")
         list_of_names.append("Mimi")
+        list_of_names.append("Evelyn")
 
         def get_random_name():
             return get_random_from_list(list_of_names)
@@ -254,6 +255,7 @@ init -2:
         list_of_last_names.append("Derry")
         list_of_last_names.append("Ling")
         list_of_last_names.append("Bjornson")
+        list_of_last_names.append("Lin")
 
         def get_random_last_name():
             return get_random_from_list(list_of_last_names)
@@ -450,6 +452,7 @@ init -2:
             for a_tit_tuple in list_of_tits:
                 if the_tits == a_tit_tuple[0]:
                     return list_of_tits.index(a_tit_tuple) #Ranges from 0 (AA) to 9 (FF).
+            return 0
 
 
         list_of_clothing_colours = []
@@ -591,6 +594,7 @@ init -2:
         font_list.append("Crimson-Bold.ttf")
         font_list.append("HKVenetian-Regular.otf")
         font_list.append("HKVenetian-Italic.otf")
+        font_list.append("AAntiCorona-L3Ax3.ttf")
 
 
 
@@ -980,6 +984,7 @@ init 1 python:
         lily.set_schedule(lily.home, times = [3])
         lily.set_schedule(university, days = [0, 1, 2, 3, 4, 5], times = [1,2])
         lily.home.add_person(lily)
+        mc.phone.register_number(lily)
 
         ### MOM ###
         global mom
@@ -995,8 +1000,10 @@ init 1 python:
 
         mom.add_role(mother_role)
         mom.set_schedule(kitchen, times = [3])
+        mom.set_work(mom_offices, work_times = [1,2])
 
         mom.home.add_person(mom)
+        mc.phone.register_number(mom)
 
         ### AUNT ###
         global aunt

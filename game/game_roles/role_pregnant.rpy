@@ -228,7 +228,7 @@ label pregnant_announce(the_person):
                 $ the_person.change_happiness(10)
                 the_person "I'm sorry, I guess the hormones are already getting to me. I'd like that."
                 $ the_person.add_role(girlfriend_role)
-                "You hug [the_person.possessive_title], and she hugs you back."
+                "You hug [the_person.possessive_title!l], and she hugs you back."
                 the_person "That's all for now, I'll keep you informed as things progress."
 
             "Thanks for telling me":
@@ -256,25 +256,25 @@ label pregnant_tits_announce(start_day, the_person):
         return #If it's been a week she doesn't comment on it.
 
     if the_person.effective_sluttiness() + (the_person.get_opinion_score("showing her tits")*10) > 50: #She's happy to show off her new tits
-        the_person.char "Hey [the_person.mc_title]. I was looking in the mirror this morning and I noticed something."
+        the_person "Hey [the_person.mc_title]. I was looking in the mirror this morning and I noticed something."
         "She cups her tits and jiggles them."
         if the_person.get_opinion_score("creampies") > 0 and the_person.get_opinion_score("being submissive") > 0:
-            the_person.char "My tits are starting to swell. It feels like my body is transforming into a sluttier version of me."
-            the_person.char "Soon everyone is going to know that I was a desperate cumslut who got bred. Ah..."
+            the_person "My tits are starting to swell. It feels like my body is transforming into a sluttier version of me."
+            the_person "Soon everyone is going to know that I was a desperate cumslut who got bred. Ah..."
             "She closes her eyes and sighs happily, clearly lost in her own little fantasy."
 
         else:
-            the_person.char "My tits are starting to swell up. I wonder how long it's going to be until people figure out I'm pregnant."
+            the_person "My tits are starting to swell up. I wonder how long it's going to be until people figure out I'm pregnant."
             mc.name "I think you've got a little longer before it's obvious. For now you can just let all the other girls be jealous of your big tits."
             "She smiles and lets her tits drop out of her hands. They bounce a few times before coming to a stop."
 
     else: #She's a little embarrassed about it
-        the_person.char "Hey [the_person.mc_title], I have a question."
+        the_person "Hey [the_person.mc_title], I have a question."
         mc.name "Okay, what is it?"
-        the_person.char "Can you tell that my boobs are bigger? They're starting to swell up and I'm nervous people are going to figure out I'm pregnant."
+        the_person "Can you tell that my boobs are bigger? They're starting to swell up and I'm nervous people are going to figure out I'm pregnant."
         "She moves her arms and gives you a clear look at her chest. Her tits do look bigger than they were before."
         mc.name "They're definitely larger, but I don't think you need to worry about it. I'm sure all the other girls will be jealous of your great rack."
-        the_person.char "That's good to hear. Thanks [the_person.mc_title]."
+        the_person "That's good to hear. Thanks [the_person.mc_title]."
 
     call talk_person(the_person) from _call_talk_person_11
     return
@@ -312,21 +312,21 @@ label pregnant_transform_announce(start_day, the_person):
 
     if day - the_person.event_triggers_dict.get("preg_start_date", day)  <= 30:
         # Unusually short pregnancy.
-        the_person.char "Hey [the_person.mc_title]. I know this might be a little surprising, but obviously things..."
+        the_person "Hey [the_person.mc_title]. I know this might be a little surprising, but obviously things..."
         "She runs her hand over her belly, accentuating the new and prominent curves that have formed."
-        the_person.char "... are moving pretty fast. My doctor tells me everything is fine, I'm just ahead of the curve."
+        the_person "... are moving pretty fast. My doctor tells me everything is fine, I'm just ahead of the curve."
 
     else:
         # Normal length pregnancy
-        the_person.char "Hey [the_person.mc_title]. So, I'm past the point of just having a little baby bump..."
+        the_person "Hey [the_person.mc_title]. So, I'm past the point of just having a little baby bump..."
         "She turns and runs a hand over her belly, accentuating the new and prominent curves that have formed there."
 
-    the_person.char "My boobs are starting to swell with milk too. It's a little embarrassing but..."
-    the_person.char "Now when I get aroused they leak just a little bit."
+    the_person "My boobs are starting to swell with milk too. It's a little embarrassing but..."
+    the_person "Now when I get aroused they leak just a little bit."
     mc.name "You look fantastic. You really are glowing."
     $ the_person.change_happiness(10)
     "[the_person.possessive_title] smiles and holds your hand for a moment."
-    the_person.char "Well don't let me distract you any more, I'm sure you were doing something important."
+    the_person "Well don't let me distract you any more, I'm sure you were doing something important."
     return
 
 init 2 python:
@@ -345,23 +345,23 @@ init 2 python:
 
 label pregnant_finish_announce(the_person): #TODO: have more variants for girlfriend_role, affair_role, etc.
     # The girl tells you she'll need a few days to have the kid and recover, and she'll be back in a few days.
-    "You get a call from [the_person.possessive_title]. You answer it."
+    "You get a call from [the_person.possessive_title!l]. You answer it."
     mc.name "Hey [the_person.title], what's up?"
 
     if employee_role in the_person.special_role:
-        the_person.char "Hi [the_person.mc_title]. I wanted to let you to know that I won't be at work for a few days."
+        the_person "Hi [the_person.mc_title]. I wanted to let you to know that I won't be at work for a few days."
     else:
-        the_person.char "Hi [the_person.mc_title], I have some exciting news."
+        the_person "Hi [the_person.mc_title], I have some exciting news."
 
-    the_person.char "I saw my doctor yesterday and he tells me I'm going to pop any day now."
+    the_person "I saw my doctor yesterday and he tells me I'm going to pop any day now."
 
     if day - the_person.event_triggers_dict.get("preg_start_date", day) <= 90: #It's unusually short
-        the_person.char "It's earlier than I expected, but he tells me everything looks like it's perfectly normal."
+        the_person "It's earlier than I expected, but he tells me everything looks like it's perfectly normal."
 
     mc.name "That's amazing news. Do you need me to do anything?"
-    the_person.char "No, I know you're very busy. You just focus on work and I'll focus on this. I know you'll be there for me in spirit."
+    the_person "No, I know you're very busy. You just focus on work and I'll focus on this. I know you'll be there for me in spirit."
     mc.name "Okay, I'll talk to you soon then."
-    the_person.char "I'll let you know as soon as things are finished. Bye!"
+    the_person "I'll let you know as soon as things are finished. Bye!"
 
     $ pregnant_finish_announce_person(the_person)
     return
@@ -404,42 +404,42 @@ label pregnant_finish(the_person):
     if not done:
         return
 
-    "You get a call from [the_person.possessive_title] early in the morning. You answer it."
+    "You get a call from [the_person.possessive_title!l] early in the morning. You answer it."
     if the_person in [aunt, mom]:
-        the_person.char "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl!"
+        the_person "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl!"
         mc.name "That's amazing, where is she now?"
-        the_person.char "I'll be leaving her with my mother, your grand-mother for now, so we can continue seeing each other."
-        the_person.char "I just wanted to let you know. I'll talk to you soon."
+        the_person "I'll be leaving her with my mother, your grand-mother for now, so we can continue seeing each other."
+        the_person "I just wanted to let you know. I'll talk to you soon."
         "You say goodbye and [the_person.title] hangs up."
         return
 
     elif the_person in [lily, cousin]:
-        the_person.char "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl!"
+        the_person "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl!"
         mc.name "That's amazing, where is she now?"
-        the_person.char "I'll be leaving her with our grandma for now, so we can continue seeing each other."
-        the_person.char "I just wanted to let you know. I'll talk to you soon."
+        the_person "I'll be leaving her with our grandma for now, so we can continue seeing each other."
+        the_person "I just wanted to let you know. I'll talk to you soon."
         "You say goodbye and [the_person.title] hangs up."
         return
 
     if employee_role in the_person.special_role:
         if day%7 == 5 or day%7 == 6:    # event triggers at start of day (so on sat or sun, next workday is monday)
-            the_person.char "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl! I'll be coming back to work monday." #Obviously they're all girls for extra fun in 18 years.
+            the_person "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl! I'll be coming back to work monday." #Obviously they're all girls for extra fun in 18 years.
         else:
-            the_person.char "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl! I'll be coming back to work today." #Obviously they're all girls for extra fun in 18 years.
+            the_person "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl! I'll be coming back to work today." #Obviously they're all girls for extra fun in 18 years.
         #TODO: Let you pick a name (or at low obedience she's already picked one)
         mc.name "That's amazing, but are you sure you don't need more rest?"
     else:
-        the_person.char "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl!"
+        the_person "Hey [the_person.mc_title], good news! Two days ago I had a beautiful, healthy baby girl!"
         mc.name "That's amazing, how are you doing?"
 
 
     if affair_role in the_person.special_role:
         $ so_title = SO_relationship_to_title(the_person.relationship)
-        the_person.char "I'll be fine, I'll be leaving our girl with her \"father\" so I can come back and see you again."
+        the_person "I'll be fine, I'll be leaving our girl with her \"father\" so I can come back and see you again."
     else:
-        the_person.char "I'll be fine. I'm leaving her with my mother for a little while so I can get back to a normal life."
+        the_person "I'll be fine. I'm leaving her with my mother for a little while so I can get back to a normal life."
 
-    the_person.char "I just wanted to let you know. I'll talk to you soon."
+    the_person "I just wanted to let you know. I'll talk to you soon."
     "You say goodbye and [the_person.title] hangs up."
     return
 
@@ -453,30 +453,30 @@ label tits_shrink(the_person, reduce_lactation, announcement_function):
     return
 
 label tits_shrink_announcement_one(the_person):
-    the_person.char "Hey [the_person.mc_title]."
+    the_person "Hey [the_person.mc_title]."
     "[the_person.possessive_title] sighs and looks down at her chest. She cups a boob and rubs it gently."
-    the_person.char "It looks like my milk is starting to dry up. I'm going to miss having my tits that big..."
+    the_person "It looks like my milk is starting to dry up. I'm going to miss having my tits that big..."
     if the_person.get_opinion_score("creampies") > 0 or the_person.get_opinion_score("bareback sex") > 0:
-        the_person.char "If you really wanted to keep them around you could always get me pregnant again."
+        the_person "If you really wanted to keep them around you could always get me pregnant again."
         "She bites her lip and eyes your crotch, obviously fantasizing."
         mc.name "What a good little slut, being so eager to get bred again just so I can have some bigger tits to play with."
         $ the_person.change_arousal(10)
         "She nods and sighs happily."
     else:
-        the_person.char "I won't miss milk soaking through all my clothing. That was a huge pain."
+        the_person "I won't miss milk soaking through all my clothing. That was a huge pain."
     call talk_person(the_person) from _call_talk_person_12
     return
 
 label tits_shrink_announcement_two(the_person):
-    the_person.char "Hey [the_person.mc_title]."
+    the_person "Hey [the_person.mc_title]."
     "[the_person.possessive_title] sighs and looks down down at her chest. She cups one of her boobs and rubs it gently."
-    the_person.char "My chest is back to it's old size. I had gotten so use to them when I was pregnant that these feel tiny now."
+    the_person "My chest is back to it's old size. I had gotten so use to them when I was pregnant that these feel tiny now."
     mc.name "That's a pretty easy problem to solve. I'll just have to get you pregnant again."
     if the_person.get_opinion_score("creampies") > 0 or the_person.get_opinion_score("bareback sex") > 0:
         $ the_person.change_arousal(10)
         "[the_person.title] moans and nods happily."
-        the_person.char "Yes please, I want that so badly... Whenever you want to do it."
+        the_person "Yes please, I want that so badly... Whenever you want to do it."
     else:
-        the_person.char "That was a lot of work to go through just for some bigger tits. Maybe I'll get a boobjob though..."
+        the_person "That was a lot of work to go through just for some bigger tits. Maybe I'll get a boobjob though..."
     call talk_person(the_person) from _call_talk_person_13
     return

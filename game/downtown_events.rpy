@@ -110,10 +110,10 @@ label lady_of_the_night_label():
     $ the_person.set_mc_title("Sir")
     $ the_person.add_role(prostitute_role)
     "You're lost in thought when a female voice calls out to you."
-    the_person.char "Excuse me, [the_person.mc_title]."
+    the_person "Excuse me, [the_person.mc_title]."
     $ the_person.draw_person()
     mc.name "Yes?"
-    the_person.char "You're looking a little lonely all by yourself. Are you looking for a friend to keep you warm?"
+    the_person "You're looking a little lonely all by yourself. Are you looking for a friend to keep you warm?"
     "Her tone suggests that her \"friendship\" won't come free."
     menu:
         "Pay her\n{color=#ff0000}{size=18}Costs: $200{/size}{/color}":
@@ -122,7 +122,7 @@ label lady_of_the_night_label():
             mc.name "That sounds nice. It's nice to meet you..."
             $ the_person.set_title(get_random_title(the_person))
             $ the_person.set_possessive_title(get_random_possessive_title(the_person))
-            the_person.char "You can call me [the_person.title]. For two hundred dollars I'll be your best friend for the next hour."
+            the_person "You can call me [the_person.title]. For two hundred dollars I'll be your best friend for the next hour."
             $ mc.business.funds += -200
             $ the_person.change_obedience(1)
             "The streets are quiet this time of night. You pull your wallet out and hand over the cash."
@@ -134,17 +134,17 @@ label lady_of_the_night_label():
 
             if the_report.get("girl orgasms", 0) > 0 and the_report.get("guy orgasms", 0) > 0:
                 "It takes [the_person.title] a few moments to catch her breath."
-                the_person.char "Maybe I should be paying you... Whew!"
+                the_person "Maybe I should be paying you... Whew!"
             elif the_report.get("girl orgasms", 0) > 0:
                 "It takes [the_person.title] a few moments to catch her breath."
-                the_person.char "Am I not hot enough for you, darling?"
+                the_person "Am I not hot enough for you, darling?"
             else:
-                the_person.char "Not bad darling, I hope you had a good time."
+                the_person "Not bad darling, I hope you had a good time."
 
             $ the_person.review_outfit()
             $ the_person.draw_person()
 
-            the_person.char "It's been fun, if you ever see me around maybe we can do this again."
+            the_person "It's been fun, if you ever see me around maybe we can do this again."
             $ the_person.draw_person(position = "walking_away")
             "She gives you a peck on the cheek, then turns and struts off into the night."
             $ clear_scene()
@@ -152,7 +152,7 @@ label lady_of_the_night_label():
         "Say no":
             mc.name "Thanks for the offer, but no thanks."
             "She shrugs."
-            the_person.char "Suit yourself."
+            the_person "Suit yourself."
 
     return
 
@@ -174,24 +174,24 @@ label meet_person_label():
             mc.name "Excuse me! You dropped your wallet!"
             $ the_person.draw_person()
             "She pauses and turns around."
-            the_person.char "What? Oh! Oh my god!"
+            the_person "What? Oh! Oh my god!"
             "You hold out her wallet for her and she takes it back."
-            the_person.char "Thank you so much, I really need to..."
+            the_person "Thank you so much, I really need to..."
             "She glances over her shoulder, and the two of you watch as her bus pulls away. She sighs."
-            the_person.char "Well never mind, I guess I have some time. Thank you."
+            the_person "Well never mind, I guess I have some time. Thank you."
             mc.name "No problem, I'd do it for anyone."
 
             "She holds out her hand to shake yours."
             $ title_choice = get_random_title(the_person)
             $ the_person.set_title(title_choice)
             $ the_person.set_possessive_title(get_random_possessive_title(the_person))
-            the_person.char "Thank you so much. I'm [the_person.title]."
+            the_person "Thank you so much. I'm [the_person.title]."
             call person_introduction(the_person, girl_introduction = False) from _call_person_introduction_1
             "You shake her hand. You and [the_person.title] chat while she waits for the next bus to come by."
             $ the_person.change_happiness(10)
             $ the_person.change_love(8)
             "When it does she gives you a quick hug."
-            the_person.char "Thank you again, you've saved my whole day. Maybe we'll see each other again."
+            the_person "Thank you again, you've saved my whole day. Maybe we'll see each other again."
             mc.name "I'd like that."
             "She smiles and steps onto the bus, waving briefly from one of the windows."
 

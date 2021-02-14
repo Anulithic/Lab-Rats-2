@@ -41,15 +41,15 @@ label employee_busywork_report_label(the_person):
         return
     $ the_person.draw_person()
     "[the_person.title] catches your attention while you are working."
-    the_person.char "Do you have a moment [the_person.mc_title]?"
+    the_person "Do you have a moment [the_person.mc_title]?"
     mc.name "Sure, what do you need?"
-    the_person.char "I wanted to let you know that I've finished my week of punishment."
+    the_person "I wanted to let you know that I've finished my week of punishment."
     menu:
         "Tell me about it":
             mc.name "Good. Tell me about it."
-            the_person.char "I've been doing coffee runs for the office every day, which people seemed to appreciate."
-            the_person.char "Someone told a client I was the office secretary and gave them my phone number. I've been answering calls all week, every hour of the day."
-            the_person.char "The hardest part was getting my normal work done. I tried to stay on top of it, but it's been piling up."
+            the_person "I've been doing coffee runs for the office every day, which people seemed to appreciate."
+            the_person "Someone told a client I was the office secretary and gave them my phone number. I've been answering calls all week, every hour of the day."
+            the_person "The hardest part was getting my normal work done. I tried to stay on top of it, but it's been piling up."
             menu:
                 "Punish her for unfinished work":
                     mc.name "I've noticed that you have been leaving unfinished work."
