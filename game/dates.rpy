@@ -25,6 +25,25 @@ init 2 python:
         return formatted_opinion_list
 
 
+label date_conversion(the_person):
+    $ conversation_choice = renpy.display_menu(lunch_date_create_topics_menu(the_person),True,"Choice")
+    $ the_person.discover_opinion(conversation_choice)
+    $ score = the_person.get_opinion_score(conversation_choice)
+    $ kiss_after = False
+    if score > 0:
+        "You steer the conversation towards [conversation_choice] and [the_person.title] seems more interested and engaged."
+        $ kiss_after = True
+        $ the_person.change_love(10, max_modified_to = 50)
+        $ the_person.change_happiness(5)
+    elif score == 0:
+        "You steer the conversation towards [conversation_choice]. [the_person.title] chats pleasantly with you, but she doesn't seem terribly interested in the topic."
+        $ the_person.change_love(5, max_modified_to = 50)
+    else: #Negative score
+        "You steer the conversation towards [conversation_choice]. It becomes quickly apparent that [the_person.title] is not interested in talking about that at all."
+        $ the_person.change_love(1, max_modified_to = 35)
+    $ del conversation_choice
+    return kiss_after
+
 label lunch_date_label(the_person): #Could technically be included in the planning phase, but broken out to fit the structure of the other events.
     the_person "So, where do you want to go?"
     $ the_type = get_random_from_list(["chinese food","thai food","italian food","sushi","korean barbecue","pizza","sandwiches"])
@@ -66,22 +85,8 @@ label lunch_date_label(the_person): #Could technically be included in the planni
         the_person "Mmm, it looks delicious. Or maybe I'm just really hungry. Either way, let's eat!"
     "You dig into your food, chatting between bites about this and that. What do you talk about?"
 
-    $ conversation_choice = renpy.display_menu(lunch_date_create_topics_menu(the_person),True,"Choice")
-    $ the_person.discover_opinion(conversation_choice)
-    $ score = the_person.get_opinion_score(conversation_choice)
-    $ kiss_after = False
-    if score > 0:
-        "You steer the conversation towards [conversation_choice] and [the_person.title] seems more interested and engaged."
-        $ kiss_after = True
-        $ the_person.change_love(10, max_modified_to = 50)
-        $ the_person.change_happiness(5)
-    elif score == 0:
-        "You steer the conversation towards [conversation_choice]. [the_person.title] chats pleasantly with you, but she doesn't seem terribly interested in the topic."
-        $ the_person.change_love(5, max_modified_to = 50)
-    else: #Negative score
-        "You steer the conversation towards [conversation_choice]. It becomes quickly apparent that [the_person.title] is not interested in talking about that at all."
-        $ the_person.change_love(1, max_modified_to = 35)
-    $ del conversation_choice
+    call date_conversation(the_person) from _call_date_conversation_1
+    $ kiss_after = _return
 
     "Before you know it you've both finished your lunch and it's time to leave. You walk [the_person.title] outside and get ready to say goodbye."
     the_person "This was fun [the_person.mc_title], we should do it again."

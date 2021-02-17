@@ -35,7 +35,7 @@ init -1 python:
         return
 
     def add_so_morning_breakup_crisis(the_person):
-        morning_so_breakup_crisis = Action("Morning SO breakup", so_morning_breakup_requirement, "so_morning_breakup_label", args = the_person, requirement_args = the_person)
+        morning_so_breakup_crisis = Action("Morning SO breakup", so_morning_breakup_requirement, "so_morning_breakup", args = the_person, requirement_args = the_person)
         mc.business.mandatory_morning_crises_list.append(morning_so_breakup_crisis)
         return
 
