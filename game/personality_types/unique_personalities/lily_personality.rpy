@@ -177,7 +177,7 @@ label lily_sex_review(the_person, the_report):
 
     # Gave creampie while she is not on birth control (extra dialog when she could get pregnant)
     if the_report.get("creampies", 0) > 0 and not the_person.on_birth_control and not the_person.event_triggers_dict.get("preg_knows", False):
-        the_person "Well [the_person.mc_title], how are going to tell mom when I got pregnant?"
+        the_person "Well [the_person.mc_title], you have to tell mom when I get pregnant?"
     return
 
 label lily_greetings(the_person):
@@ -830,7 +830,7 @@ label lily_sex_watch(the_person, the_sex_person, the_position):
         $ the_person.draw_person()
         the_person "Oh my god, you two are just... Wow..."
         $ change_report = the_person.change_slut_temp(1)
-        "[possessive_title] averts her gaze, but she keeps stealing glances while you and [the_sex_person.name] [the_position.verb]."
+        "[title] averts her gaze, but she keeps stealing glances while you and [the_sex_person.name] [the_position.verb]."
 
     elif the_person.sluttiness >= the_position.slut_requirement and the_person.sluttiness < the_position.slut_cap:
         $ the_person.draw_person()

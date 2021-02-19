@@ -2081,7 +2081,7 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                             "Let it go":
                                 pass
 
-                    $ reset_arousal()
+                    $ the_person.reset_arousal()
                     $ the_person.change_slut_temp(3)
                     $ the_person.change_obedience(-2)
                     the_person "Now, what did you need to talk about?"

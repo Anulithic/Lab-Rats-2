@@ -2011,7 +2011,7 @@ init -1 python:
         if test_outfit.tits_visible() and not person.outfit.tits_visible():
             if person.has_taboo("bare_tits"):
                 renpy.say("", person.title + " glances around the table nervously.")
-                renpy.say(person, "Maybe we should call it here?")
+                renpy.say(person.char, "Maybe we should call it here?")
                 renpy.say(mc.name, "Relax " + person.title + ", it's just a game! Come on, get those tits out for us.")
                 renpy.say("", person.possessive_title + " hesitates, and the other girls start to cheer her on.")
                 renpy.say(person, "Okay, okay...")
@@ -2029,7 +2029,7 @@ init -1 python:
         elif test_outfit.vagina_visible() and not person.outfit.vagina_visible():
             if person.has_taboo("bare_pussy"):
                 renpy.say("", person.title + " starts to move her " + the_item.display_name + ", but hesitates.")
-                renpy.say(person, "Maybe we've taken this far enough...")
+                renpy.say(person.char, "Maybe we've taken this far enough...")
                 renpy.say(mc.name, "Come on " + person.title + ", you can't quit now. We're all family here, nobody cares.")
                 renpy.say("", "The rest of the table cheers her on. She takes a deep breath and gathers up her courage.")
             the_group.draw_animated_removal(person, make_primary = False, the_clothing = the_item)
@@ -2041,12 +2041,12 @@ init -1 python:
 
         elif person.has_taboo("underwear_nudity") and test_outfit.underwear_visible() and not person.outfit.underwear_visible():
             renpy.say("", person.title + " glances nervously around the table.")
-            renpy.say(person, "You don't really want me to take off my " + the_item.display_name + ", do you? I'll just have my underwear on...")
+            renpy.say(person.char, "You don't really want me to take off my " + the_item.display_name + ", do you? I'll just have my underwear on...")
             renpy.say(mc.name, "Come on " + person.title + ", that's the whole point of the game! Nobody cares about you just wearing your underwear.")
             renpy.say("","She bites her lip as she considers it, then takes a deep breath.")
             the_group.draw_animated_removal(person, make_primary = False, the_clothing = the_item)
             renpy.say("", person.title + " pulls off her " + the_item.display_name + " and drops it beside her chair.")
-            renpy.say(person, "There, I did it.")
+            renpy.say(person.char, "There, I did it.")
             person.break_taboo("underwear_nudity")
 
         else: #She's just stripping, and it's not really important

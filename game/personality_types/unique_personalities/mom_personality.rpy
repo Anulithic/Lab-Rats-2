@@ -660,7 +660,7 @@ label mom_sex_watch(the_person, the_sex_person, the_position):
         $ the_person.draw_person()
         the_person "[the_person.mc_title], I'm... You really shouldn't be doing this here..."
         $ change_report = the_person.change_slut_temp(1)
-        "[possessive_title] averts her gaze, but she keeps stealing glances while you and [the_sex_person.name] [the_position.verb]."
+        "[title] averts her gaze, but she keeps stealing glances while you and [the_sex_person.name] [the_position.verb]."
 
     elif the_person.sluttiness >= the_position.slut_requirement and the_person.sluttiness < the_position.slut_cap:
         $ the_person.draw_person()

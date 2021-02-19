@@ -25,7 +25,7 @@ init 2 python:
         return formatted_opinion_list
 
 
-label date_conversion(the_person):
+label date_conversation(the_person):
     $ conversation_choice = renpy.display_menu(lunch_date_create_topics_menu(the_person),True,"Choice")
     $ the_person.discover_opinion(conversation_choice)
     $ score = the_person.get_opinion_score(conversation_choice)

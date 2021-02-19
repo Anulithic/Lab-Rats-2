@@ -1,6 +1,6 @@
 ﻿init:
     python:
-        blowjob = Position(name = "Blowjob", slut_requirement = 40, slut_cap = 60, requires_hard = True, requires_large_tits = False,
+        blowjob = Position(name = "Blowjob", slut_requirement = 40, slut_cap = 60, requires_hard = False, requires_large_tits = False,
             position_tag = "blowjob", requires_location = "Kneel", requires_clothing = "None", skill_tag = "Oral",
             girl_arousal = 3, girl_energy = 13,
             guy_arousal = 16, guy_energy = 5,
