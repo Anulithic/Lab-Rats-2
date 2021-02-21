@@ -463,8 +463,8 @@ init -1:
             constrain_regions = [torso_region, stomach_region, skirt_region])
         # dress_list.append(towel) #Not a standard dress item, so not on the list.
 
-        apron_bottom = Clothing("Apron", 3, False, False, "Apron_Bot", False, False, 0, is_extension = True,
-            can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region], half_off_gives_access = True, half_off_reveals = True, display_name = "arpon bottom")
+        apron_bottom = Clothing("Apron", 3, False, False, "Apron_Bot", False, False, 0, is_extension = True, display_name = "apron bottom",
+            can_be_half_off = True, half_off_regions = [pelvis_region, upper_leg_region], half_off_gives_access = True, half_off_reveals = True)
         apron = Clothing("Apron", 3, False, True, "Apron", True, False, 0, has_extension = apron_bottom, supported_patterns = {"Plaid":"Pattern_1"}, whiteness_adjustment = -0.1, display_name = "apron",
             can_be_half_off = True, half_off_regions = [breast_region], half_off_gives_access = True, half_off_reveals = True,
             constrain_regions = [stomach_region])

@@ -1327,7 +1327,7 @@ label sex_report_helper(the_person, the_report): #TODO: We use this in enough pl
         "You stuff your cock back in your pants and leave [the_person.possessive_title!l]'s bedroom."
     elif the_report.get("girl orgasms", 0) > 0:
         the_person "Wow, I guess I needed that even more than you did."
-        $ the_person.change_obedience(-(2 + the_person.get_opinion_score("being in control")))
+        $ the_person.change_obedience(-(2 + the_person.get_opinion_score("taking control")))
         the_person "Sorry [the_person.mc_title], I'll make sure to finish you off next time, okay?"
         mc.name "Next time, huh? I can get behind that."
     else:

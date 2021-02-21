@@ -2704,13 +2704,13 @@ init -5 python:
 
 
             if day%7 == 0: #If the new day is Monday
-                self.change_happiness(self.get_opinion_score("Mondays")*10, add_to_log = False)
+                self.change_happiness(self.get_opinion_score("Mondays")*5, add_to_log = False)
 
             elif day%7 == 4: #If the new day is Friday
-                self.change_happiness(self.get_opinion_score("Fridays")*10, add_to_log = False)
+                self.change_happiness(self.get_opinion_score("Fridays")*5, add_to_log = False)
 
             elif day%7 == 5 or day%7 == 6: #If the new day is a weekend day
-                self.change_happiness(self.get_opinion_score("the weekend")*10, add_to_log = False)
+                self.change_happiness(self.get_opinion_score("the weekend")*5, add_to_log = False)
 
             for a_role in self.special_role:
                 a_role.run_day(self)
