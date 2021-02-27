@@ -267,7 +267,7 @@ label bimbo_strip_obedience_accept(the_person, the_clothing, strip_type = "Full"
 
 label bimbo_grope_body_reject(the_person):
     if the_person.effective_sluttiness("touching_body") < 5: #Fail point for touching shoulder
-        the_person "Oh my god [the_person.title], you can't touch me like this."
+        the_person "Oh my god [the_person.mc_title], you can't touch me like this."
         "She takes a step back and giggles."
         the_person "I'm flattered, but I don't think it's okay..."
         "You pull your hand back and laugh along with her, diffusing the tension."

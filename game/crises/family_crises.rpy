@@ -1071,6 +1071,7 @@ label lily_new_underwear_crisis_label():
             "[the_person.possessive_title] walks over to you and gives you a hug."
             the_person "Okay, it's getting cold. I'm going to go put some clothes on!"
             $ clear_scene()
+            $ the_person.apply_outfit() # make her change back to her normal outfit (for morning crisis events)
             "[the_person.title] slips out into the hall, leaving you alone in your room."
 
 

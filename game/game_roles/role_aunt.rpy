@@ -2014,7 +2014,7 @@ init -1 python:
                 renpy.say(person.char, "Maybe we should call it here?")
                 renpy.say(mc.name, "Relax " + person.title + ", it's just a game! Come on, get those tits out for us.")
                 renpy.say("", person.possessive_title + " hesitates, and the other girls start to cheer her on.")
-                renpy.say(person, "Okay, okay...")
+                renpy.say(person.char, "Okay, okay...")
 
             the_group.draw_animated_removal(person, make_primary = False, the_clothing = the_item)
             if person.has_large_tits(): #Bazongas

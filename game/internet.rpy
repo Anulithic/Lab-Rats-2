@@ -68,7 +68,7 @@ label browse_internet(is_phone = True): #TODO: Maybe make this a generic functio
                 if the_person.love < 0:
                     the_person "Why would I tell you that?"
 
-                if mc.location.has_person(the_person): #She's in the same location as you.
+                elif mc.location.has_person(the_person): #She's in the same location as you.
                     $ mc.having_text_conversation = None
                     $ the_person.draw_person()
                     "[the_person.possessive_title] glances at her phone when it buzzes. She looks up at you and shakes her head."

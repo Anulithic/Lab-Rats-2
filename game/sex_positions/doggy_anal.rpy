@@ -35,7 +35,7 @@ label intro_doggy_anal(the_girl, the_location, the_object):
             the_girl "Okay, but take it slowly. I need some time to adjust..."
     else: #She's inexperienced and doesn't quite know what to do.
         if the_girl.effective_sluttiness() > 100:
-            the_girl "Oh fuck, I want you inside me but I need you to slowly."
+            the_girl "Oh fuck, I want you inside me but I need you to go slowly."
         else:
             "[the_girl.possessive_title] looks worried for a moment."
             the_girl "I'll let you try, but I don't know if you'll be able to fit. I haven't done this much..."

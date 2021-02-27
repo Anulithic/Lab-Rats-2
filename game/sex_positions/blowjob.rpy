@@ -61,7 +61,7 @@ label scene_blowjob_1(the_girl, the_location, the_object):
     $ blowjob.current_modifier = "blowjob"
     $ blowjob.redraw_scene(the_girl)
     if the_girl.sex_skills["Oral"] < 2: #Inexperienced.
-        "You rest your hand on [the_girl.title]'s head as she bobs her head back and forth. She struggles to take your very deep, and focuses on licking and sucking your tip instead."
+        "You rest your hand on [the_girl.title]'s head as she bobs her head back and forth. She struggles to take you very deep, and focuses on licking and sucking your tip instead."
         menu:
             "Encourage her to go deeper":
                 mc.name "Come on, you'll never get better if you don't try and take it deeper."
