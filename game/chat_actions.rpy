@@ -454,7 +454,7 @@ label small_talk_person(the_person, apply_energy_cost = True): #Tier 0. Useful f
             $ opinion_string = opinion_score_to_string(opinion_state[0])
 
             "The two of you chat pleasantly for half an hour."
-            the_person "So [the_person.mc_title], I'm curious what you think about about [opinion_learned]. Do you have any opinions on it?"
+            the_person "So [the_person.mc_title], I'm curious what you think about [opinion_learned]. Do you have any opinions on it?"
             $ love_gain = 4
             $ prediction = 0
             menu:

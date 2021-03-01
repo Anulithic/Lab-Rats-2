@@ -276,7 +276,7 @@ init 1 python: #TODO: Prevent you from getting the game goal type twice in a row
         the_goal.arg_dict["required"] += __builtin__.int(the_difficulty/3)
         return
 
-    def chain_orgasm_count_function(the_goal, **kwarg):
+    def chain_orgasm_count_function(the_goal, the_person, **kwargs):
         if the_goal.arg_dict["day"] == day and the_goal.arg_dict["time"] == time_of_day and the_goal.arg_dict.get("last person") == the_person:
             the_goal.arg_dict["count"] += 1
 

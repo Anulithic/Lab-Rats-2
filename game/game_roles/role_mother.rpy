@@ -191,7 +191,8 @@ label mom_weekly_pay_label(the_person):
     "You're just getting out of bed when [the_person.possessive_title!l] calls from downstairs."
     the_person "[the_person.mc_title], could we talk for a moment?"
     mc.name "Sure, down in a second."
-    $ kitchen.show_background()
+    $ mc.change_location(kitchen)
+    $ mc.location.show_background()
     $ the_person.draw_person(position = "sitting")
     "[the_person.title] is sitting at the kitchen table, a collection of bills laid out in front of her."
 
@@ -1544,9 +1545,6 @@ label mom_work_secretary_replacement_report(the_person):
     return
 
 label mom_weekly_pay_lily_question(the_person):
-    $ mc.change_location(bedroom)
-    $ mc.location.show_background()
-
     if the_person.event_triggers_dict.get("mom_instathot_questioned", False):
         the_person "Before we talk about that, do can I ask you a question?"
         mc.name "Sure, what do you want to know?"
@@ -1796,7 +1794,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                 mc.name "I need to get going."
                 if the_mom.love > 80:
                     "You hurry to the door, but [the_mom.possessive_title] grabs your arm."
-                    the_mom "Wait! How about about just a quickie? You can tell her you're running late."
+                    the_mom "Wait! How about just a quickie? You can tell her you're running late."
                     the_mom "I want to take all of your cum, so she doesn't get any. Can you give me that, at least?"
                     menu:
                         "Fuck [the_mom.title] before your date":
