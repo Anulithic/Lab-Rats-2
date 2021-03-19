@@ -637,7 +637,7 @@ label study_normally(the_person, public = True):
 
                             $ the_person.change_slut_temp(2)
                             if the_person.outfit.tits_available():
-                                "You enjoy the feeling of her bare breasts as you play with them. When her nipples harden you give them, a light pinch."
+                                "You enjoy the feeling of her bare breasts as you play with them. When her nipples harden, you give them a light pinch."
                             else:
                                 "You enjoy the feeling of her breasts underneath her clothing. You can feel her nipples harden underneath the fabric."
 
