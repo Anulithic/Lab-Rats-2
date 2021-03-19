@@ -1290,7 +1290,7 @@ label relaxed_sex_review(the_person, the_report):
 
     # Gave creampie while she is not on birth control (extra dialog when she could get pregnant)
     if the_report.get("creampies", 0) > 0 and not the_person.on_birth_control and not the_person.event_triggers_dict.get("preg_knows", False):
-        the_person "Oh my...you know that you can get me pregnant, right?"
+        the_person "Oh my...you know that you could get me pregnant, right?"
     return
 
 ## Role Specific Section ##
