@@ -115,7 +115,7 @@ label ask_be_girlfriend_label(the_person):
     #Hide this event at low love, show it when it at it's lowest love possibility and let it fail out for specific reasons (thus informing the player WHY it failed out).
 
     mc.name "[the_person.title], can I talk to you about something important?"
-    the_person "Of course. What's on your mind."
+    the_person "Of course. What's on your mind?"
     mc.name "I've been thinking about this for a while. I really like you and I hope you feel the same way about me."
     mc.name "I'd like to make our relationship official. What do you say?"
 
