@@ -397,8 +397,8 @@ label advanced_serum_stage_3_label(the_person):
     the_person "Hmm? What is it about?"
     $ old_researcher = mc.business.event_triggers_dict["research_bimbo"] #Get the old researcher so we can call her name.
     if mc.business.get_employee_workstation(old_researcher):
-        mc.name "I'm sure you've seen [old_researcher.name] around the office? She use to be my head of research and insisted she try a prototype serum she had located."
-        the_person "She use to lead the R&D team?"
+        mc.name "I'm sure you've seen [old_researcher.name] around the office? She used to be my head of research and insisted she try a prototype serum she had located."
+        the_person "She used to lead the R&D team?"
         mc.name "Just look at this, it will all make sense."
     else:
         mc.name "A previous head of research insisted she try a prototype serum she had located. These were the test results."
