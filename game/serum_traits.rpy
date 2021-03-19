@@ -928,7 +928,7 @@ init -1:
             research_needed = 1000000)
 
         nora_sluttiness_boost = SerumTrait(name = "Nora's Research Trait",
-            desc = "The manufacturing details for a serum trait developed by Nora. Causes a sudden spike in the recipients sluttiness, as well as generating a side effect and negatively effecting value.",
+            desc = "The manufacturing details for a serum trait developed by Nora. Causes a sudden spike in the recipient's sluttiness, as well as generating a side effect and negatively effecting value.",
             positive_slug = "+20 Sluttiness",
             negative_slug = "+75 Serum Research, -$150 Value",
             value_added = -150,
@@ -992,7 +992,7 @@ init -1:
             research_needed = 750)
 
         nora_reward_nora_trait = SerumTrait(name = "Meritocratic Attraction",
-            desc = "A special serum trait developed by Nora after studying herself. Increases the recipients Obedience and Sluttiness for the duration by 5 for every point of Intelligence you have.",
+            desc = "A special serum trait developed by Nora after studying herself. Increases the recipient's Obedience and Sluttiness for the duration by 5 for every point of Intelligence you have.",
             positive_slug = "+5 Obedience and Sluttiness per Intelligence, +$35 Value",
             negative_slug = "+300 Serum Research",
             value_added = 35,
@@ -1054,7 +1054,7 @@ init -1:
             research_needed = 750)
 
         nora_reward_genius_trait = SerumTrait(name = "Natural Talent",
-            desc = "A special serum trait developed by Nora after studying someone who was a genius. Instantly and permanently sets the recipients Intelligence, Charisma, and Focus to 7.",
+            desc = "A special serum trait developed by Nora after studying someone who was a genius. Instantly and permanently sets the recipient's Intelligence, Charisma, and Focus to 7.",
             positive_slug = "Sets Charisma, Intelligence, Focus to 7, +$50 Value",
             negative_slug = "+1000 Serum Research",
             value_added = 50,
