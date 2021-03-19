@@ -1336,7 +1336,7 @@ label family_games_night_drinks(the_mom, the_aunt): #Breakout function for the d
     if mc.business.event_triggers_dict.get("family_games_cards",0) == 0:
         the_mom "Would you two like to play something while we drink? I have a pack of cards in the kitchen."
         $ the_group.redraw_person(the_aunt)
-        the_aunt "Oh my god, we use to play cards every night after school. Do you play cards often [the_aunt.mc_title]?"
+        the_aunt "Oh my god, we used to play cards every night after school. Do you play cards often [the_aunt.mc_title]?"
         mc.name "Not very often."
         the_aunt "Well I'm sure you'll catch on quickly. Do you want to try?"
 
@@ -1447,7 +1447,7 @@ label family_games_night_cards(the_mom, the_aunt, the_sister): #Breakout functio
         $ the_group.redraw_person(the_mom)
         the_mom "It's just suppose to be a friendly game. We don't need to play for anything."
         $ the_group.redraw_person(the_aunt)
-        the_aunt "Come on, we use to play for cash all the time. Let's make it interesting."
+        the_aunt "Come on, we used to play for cash all the time. Let's make it interesting."
         $ the_group.redraw_person(the_mom)
         the_mom "[the_mom.mc_title], [the_sister.title], what do you want to do?"
     else:
