@@ -729,7 +729,7 @@ label mom_work_promotion_outfit_create(the_person):
             the_person "Ooh, this is nice [the_person.mc_title]."
             $ the_person.draw_person(position = "back_peek")
             the_person "Does it look good from the back?"
-            mc.name "It looks great [the_person.possessive_title]."
+            mc.name "It looks great, [the_person.title]."
             $ the_person.draw_person()
             the_person "Do you think it's going far enough though? I mean, if the point is to catch some attention."
             the_person "It's nice, it just feels a little... boring? Do you think this is what I should wear?"
