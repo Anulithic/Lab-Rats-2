@@ -77,7 +77,7 @@ label reserved_sex_responses_foreplay(the_person):
         if the_person.sluttiness > 50:
             the_person "Oh gods above taht feels amazing!"
         else:
-            the_person "Oh lord... I could get use to you touching me like this!"
+            the_person "Oh lord... I could get used to you touching me like this!"
     else:
         if the_person.sluttiness > 50:
             if the_person.relationship == "Single":
@@ -222,7 +222,7 @@ label reserved_clothing_accept(the_person):
     if the_person.obedience > 130:
         the_person "You're too kind [the_person.mc_title]. I'll add it to my wardrobe right away."
     else:
-        the_person "For me? Oh, I'm not use to getting gifts like this..."
+        the_person "For me? Oh, I'm not used to getting gifts like this..."
     return
 
 label reserved_clothing_reject(the_person):
@@ -296,7 +296,7 @@ label reserved_sex_obedience_accept(the_person):
         if the_person.obedience > 130:
             the_person "Okay [the_person.mc_title], if that's what you want. I'll do what I can to serve you."
         else:
-            the_person "If it were anyone other than you I'd say no [the_person.mc_title]. Don't get too use to this, okay?"
+            the_person "If it were anyone other than you I'd say no [the_person.mc_title]. Don't get too used to this, okay?"
     return
 
 label reserved_sex_gentle_reject(the_person):
@@ -419,7 +419,7 @@ label reserved_flirt_response_low(the_person):
                 # Her pussy is on display.
                 the_person "It's not much of an outfit at all though."
                 the_person "I understand it's the company uniform, but it would be nice to have a little more coverage."
-                mc.name "It will take some getting use to, but I think it would be a shame to cover up your wonderful figure."
+                mc.name "It will take some getting used to, but I think it would be a shame to cover up your wonderful figure."
                 "[the_person.possessive_title] doesn't seem so sure, but she smiles and nods anyways."
 
             elif the_person.outfit.tits_visible():
@@ -430,13 +430,13 @@ label reserved_flirt_response_low(the_person):
                 else:
                     the_person "Thank you, but I do hope you'll consider a uniform with a proper top in the future."
                     the_person "It still doesn't feel natural having my... breasts so visible."
-                mc.name "I understand it's a little uncomfortable, but I'm sure you'll get use to it."
+                mc.name "I understand it's a little uncomfortable, but I'm sure you'll get used to it."
                 the_person "Yes, given enough time I'm sure I will."
 
             elif the_person.outfit.underwear_visible():
                 # Her underwear is visible.
                 the_person "Thank you. I always feel a touch self-conscious when I put it on. I wish it kept me a little more covered."
-                mc.name "I know it can take some getting use to, but you look fantastic in it. You're a perfect fit for it."
+                mc.name "I know it can take some getting used to, but you look fantastic in it. You're a perfect fit for it."
                 "[the_person.possessive_title] doesn't seem so sure, but she smiles and nods anyways."
 
             else:
@@ -1238,7 +1238,7 @@ label reserved_sex_review(the_person, the_report):
             the_person "Finished? That's good, I think I need to sit down. My head is still spinning."
             the_person "I didn't think I was going to... climax like that. I wasn't prepared."
             mc.name "Hopefully you will be next time."
-            the_person "Maybe. I don't think I could ever get use to that."
+            the_person "Maybe. I don't think I could ever get used to that."
 
     elif the_report.get("guy orgasms", 0) > 0: #Only you came
         if the_person.effective_sluttiness() > comment_position.slut_cap: #She's sluttier than the position
@@ -1388,7 +1388,7 @@ label reserved_sucking_cock_taboo_break(the_person):
         mc.name "Because deep down, you want to. You can be honest with me, aren't you a little bit curious what it's going to be like?"
         "She looks away, but you both know the answer."
         mc.name "Just get on your knees, put it in your mouth, and if you don't like how it feels you can stop."
-        the_person "What are you doing to me [the_person.mc_title]? I use to think I was better than this..."
+        the_person "What are you doing to me [the_person.mc_title]? I used to think I was better than this..."
     return
 
 label reserved_licking_pussy_taboo_break(the_person):
@@ -1453,7 +1453,7 @@ label reserved_anal_sex_taboo_break(the_person):
             the_person "I'm not sure about this [the_person.mc_title]... I'm not even sure if you can fit inside me there!"
             mc.name "I can stretch you out, don't worry about that."
             the_person "Oh lord, what happened to me..."
-            the_person "I use to think I was a respectable lady, now I'm about to get fucked in the ass..."
+            the_person "I used to think I was a respectable lady, now I'm about to get fucked in the ass..."
         mc.name "Relax, you'll be fine and this isn't the end of the world. Who knows, you might even enjoy yourself."
         the_person "I doubt it. Come on then, there's no point stalling any longer."
     return
