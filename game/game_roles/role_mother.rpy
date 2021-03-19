@@ -1789,7 +1789,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                     $ the_mom.draw_person()
                     the_mom "Anything for my special man."
                 else:
-                    the_mom "I'm sorry [the_mom.mc_title], I just don't have the energy I use to have..."
+                    the_mom "I'm sorry [the_mom.mc_title], I just don't have the energy I used to have..."
                     mc.name "It's okay [the_mom.title], maybe later we can finish this up."
                     $ the_mom.draw_person()
                     $ the_mom.change_happiness(-5)
@@ -1826,7 +1826,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                                 mc.name "Of course [the_mom.title]."
                                 $ the_mom.change_happiness(5)
                             else:
-                                the_mom "I'm sorry [the_mom.mc_title], I just don't have the energy I use to have..."
+                                the_mom "I'm sorry [the_mom.mc_title], I just don't have the energy I used to have..."
                                 mc.name "It's okay [the_mom.title], maybe later we can finish this up."
                                 the_mom "Maybe you do need this other girl... You should find someone who can take care of you properly."
                                 $ the_mom.change_happiness(-5)
@@ -2009,7 +2009,7 @@ label mom_date_intercept(the_mom, the_date): #TODO: Add some relationship awaren
                     $ the_mom.change_happiness(10)
                     the_mom "Anything for my special man."
                 else:
-                    the_mom "I'm sorry [the_mom.mc_title], I just don't have the energy I use to have..."
+                    the_mom "I'm sorry [the_mom.mc_title], I just don't have the energy I used to have..."
                     mc.name "It's okay [the_mom.title], maybe later we can finish this up."
                     $ the_mom.change_happiness(-5)
                     the_mom "I'll do my best. For my special man I'll try anything at all."
