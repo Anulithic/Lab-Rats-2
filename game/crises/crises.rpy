@@ -305,7 +305,7 @@ label broken_AC_crisis_label():
                     "[the_person.possessive_title] finishes stripping and looks back at you."
                     if (the_person.outfit.wearing_panties() and not the_person.outfit.panties_covered()) or (the_person.outfit.wearing_bra() and not the_person.outfit.bra_covered()):
                         if the_person.has_taboo("underwear_nudity"):
-                            "She seems nervous at first, but quickly gets use to being in her underwear in front of you."
+                            "She seems nervous at first, but quickly gets used to being in her underwear in front of you."
                             $ the_person.break_taboo("underwear_nudity")
                 the_person "Ahh, that's a lot better."
             else:
@@ -381,7 +381,7 @@ label broken_AC_crisis_label():
                             "[girl_choice.possessive_title] finishes stripping and looks at [the_person.title]."
                             if (girl_choice.outfit.wearing_panties() and not girl_choice.outfit.panties_covered()) or (girl_choice.outfit.wearing_bra() and not girl_choice.outfit.bra_covered()):
                                 if girl_choice.has_taboo("underwear_nudity"):
-                                    "She seems nervous at first, but quickly gets use to being in her underwear in front of you."
+                                    "She seems nervous at first, but quickly gets used to being in her underwear in front of you."
                                     $ girl_choice.break_taboo("underwear_nudity")
 
                         girl_choice "Ahh, that's a lot better."
@@ -2254,7 +2254,7 @@ label cat_fight_crisis_label():
                         loser "You'll pay for that, slut!"
                     elif ran_num == 2:
                         "[winner.title] and [loser.title] collide, screaming profanities at each other."
-                        "You aren't sure exactly what happens, but when they separate [winner.title] is holding a piece of fabric that use to be [loser.title]'s [the_clothing.name]."
+                        "You aren't sure exactly what happens, but when they separate [winner.title] is holding a piece of fabric that used to be [loser.title]'s [the_clothing.name]."
                         $ the_group.draw_animated_removal(loser, the_clothing = the_clothing, emotion = "angry")
                         loser "Is that all you've got?"
                     else: #ran_num == 3
