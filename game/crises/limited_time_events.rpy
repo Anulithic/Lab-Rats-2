@@ -2027,7 +2027,7 @@ label work_walk_in_label(the_person): #Walk into the room and find someone mastu
                         pass
                     the_person "Do you like... watching me, [the_person.mc_title]?"
                     the_person "Is watching me finger myself making your dick hard? Thinking about is making me so wet!"
-                    "She moans again, arching her back and lifting her hips away from her office chair. There's a large wet spot left where she use to be sitting."
+                    "She moans again, arching her back and lifting her hips away from her office chair. There's a large wet spot left where she used to be sitting."
                     $ the_person.draw_person(position = "sitting", emotion = "orgasm")
                     the_person "Fuck... Watch me cum [the_person.mc_title]! I'm cumming!"
                     "[the_person.title]'s whole body quivers, her hips thrusting out with each pulse of her climax."
