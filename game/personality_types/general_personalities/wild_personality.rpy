@@ -147,7 +147,7 @@ label wild_sex_responses_vaginal(the_person):
 label wild_sex_responses_anal(the_person):
     if the_person.arousal < 25:
         if the_person.sluttiness > 50:
-            the_person "Oh fuck, I'm never get use to being stretched out like this."
+            the_person "Oh fuck, I'm never get used to being stretched out like this."
         else:
             the_person "Oh... Oh fuck my ass!"
 
@@ -416,13 +416,13 @@ label wild_flirt_response_low(the_person):
                 the_person "I'm sure you like it; I'm practically naked!"
                 mc.name "Well, you know that it's..."
                 the_person "I know, I know. It's company policy. I'm not complaining, exactly. It's kind of fun."
-                mc.name "Give it some time and you'll get use to it."
+                mc.name "Give it some time and you'll get used to it."
                 "She smiles and nods."
                 the_person "I'm sure I will."
 
             elif the_person.outfit.tits_visible():
                 # Her tits are out
-                the_person "Thanks! I'm still getting use to being so... exposed in this uniform. At least I don't have to wear a bra!"
+                the_person "Thanks! I'm still getting used to being so... exposed in this uniform. At least I don't have to wear a bra!"
                 mc.name "You look incredible and you're comfortable. I call that a success."
                 "She laughs and shrugs."
                 the_person "Sure, I guess you could call it that."
@@ -1376,7 +1376,7 @@ label wild_licking_pussy_taboo_break(the_person):
         if the_person.has_taboo("sucking_cock"):
             the_person "Really? I haven't even sucked your cock yet and you're ready to go down on me?"
             "She bites her lip and smiles."
-            the_person "I could get use to this! Get to it!"
+            the_person "I could get used to this! Get to it!"
 
         else:
             the_person "It's about time you offered to repay the favour! Most guys think they're the only one who should get some head."
