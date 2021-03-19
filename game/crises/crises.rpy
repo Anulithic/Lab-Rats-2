@@ -2636,7 +2636,7 @@ label daughter_work_crisis_label():
         $ promised_sex = True
 
     else:
-        "[the_person.title] hands over a printed out resume waits nervously for you to look it over."
+        "[the_person.title] hands over a printed out resume and waits nervously for you to look it over."
 
     menu:
         "Look at the resume for [the_person.name]'s daughter":
