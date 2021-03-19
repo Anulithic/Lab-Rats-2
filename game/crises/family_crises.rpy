@@ -415,7 +415,7 @@ label mom_selfie_label():
     "While you're going about your day you get a text from your mother."
     if lowest_stat >= 100:
         #Both love and sluttiness are very high, she sends you super slutty selfies and says she can't wait till you come home, fuck her, and make her your woman.
-        $ ran_num = renpy.random.randint(0,2) #Used to determine which varient we use to avoid spamming the player with the exact same texts.
+        $ ran_num = renpy.random.randint(0,2) #Used to determine which variant we use to avoid spamming the player with the exact same texts.
         if ran_num == 0:
             if mc.business.is_weekend():
                 $ the_person.apply_outfit(lingerie_wardrobe.pick_random_outfit(), update_taboo = True)
@@ -448,7 +448,7 @@ label mom_selfie_label():
 
     elif lowest_stat >= 80:
         #Both are high. Sends you slutty selfies and talks about how she wants to fuck you. Sends them from work, etc.
-        $ ran_num = renpy.random.randint(0,1) #Used to determine which varient we use to avoid spamming the player with the exact same texts.
+        $ ran_num = renpy.random.randint(0,1) #Used to determine which variant we use to avoid spamming the player with the exact same texts.
         if ran_num == 0:
             if mc.business.is_weekend():
                 the_person "I'm here at home and wishing it was you could help me take these pictures..."
@@ -476,7 +476,7 @@ label mom_selfie_label():
 
     elif lowest_stat >= 60:
         #Sends you nudes and talks about how she'll help you blow off steam later.
-        $ ran_num = renpy.random.randint(0,3) #Used to determine which varient we use to avoid spamming the player with the exact same texts.
+        $ ran_num = renpy.random.randint(0,3) #Used to determine which variant we use to avoid spamming the player with the exact same texts.
         if ran_num == 0:
             if mc.business.is_weekend():
                 the_person "I was just about to get in the shower and I thought you might like a peek. Love you [the_person.mc_title]!"
@@ -540,7 +540,7 @@ label mom_selfie_label():
 
     elif lowest_stat >= 40:
         #Sends you teasing pictures (ie. no shirt or something) and talks about how much she loves you.
-        $ ran_num = renpy.random.randint(0,2) #Used to determine which varient we use to avoid spamming the player with the exact same texts.
+        $ ran_num = renpy.random.randint(0,2) #Used to determine which variant we use to avoid spamming the player with the exact same texts.
         if ran_num == 0:
             the_person "You're such a hard worker [the_person.mc_title]. Here's a little gift from the woman who loves you most in the world!"
             $ the_person.outfit.remove_random_upper(top_layer_first = True)
@@ -592,7 +592,7 @@ label mom_selfie_label():
 
     elif lowest_stat >= 20:
         #Sends you normal texts but talks about wanting to get away to talk to you instead
-        $ ran_num = renpy.random.randint(0,4) #Used to determine which varient we use to avoid spamming the player with the exact same texts.
+        $ ran_num = renpy.random.randint(0,4) #Used to determine which variant we use to avoid spamming the player with the exact same texts.
         if ran_num == 0:
             the_person "I hope I'm not interrupting, I just wanted to say hi and check in. I'm stuck here at work but wish I could spend more time with you."
             the_person "Have a great day, see you later tonight. Love, Mom."
@@ -626,7 +626,7 @@ label mom_selfie_label():
 
     else:
         #Sends you normal motherly texts.
-        $ ran_num = renpy.random.randint(0,2) #Used to determine which varient we use to avoid spamming the player with the exact same texts.
+        $ ran_num = renpy.random.randint(0,2) #Used to determine which variant we use to avoid spamming the player with the exact same texts.
         if ran_num == 0:
             the_person "I hope I'm not interrupting your busy day [the_person.mc_title]. I just wanted to let you know that I'm proud of you and you're doing great work."
             the_person "Keep it up! Dinner will be at the normal time."
@@ -1316,7 +1316,7 @@ label family_morning_breakfast_label():
                     "[the_sister.title] looks at the two of you like you're crazy then sighs dramatically."
                     the_sister "Fine, but this is really weird, okay?"
                     $ the_mom.draw_person(position = "sitting")
-                    "[the_mom.possessive_title] dishes out three portions and sits down at the table with you. [the_sister.title] eventaully gets use to her mothers outfit and joins in on your conversation."
+                    "[the_mom.possessive_title] dishes out three portions and sits down at the table with you. [the_sister.title] eventually gets used to her mothers outfit and joins in on your conversation."
                     $ the_sister.change_slut_temp(5)
                     $ the_mom.change_happiness(10)
 
@@ -1349,7 +1349,7 @@ label family_morning_breakfast_label():
             $ the_sister.change_slut_temp(5)
             $ the_mom.change_happiness(10)
             $ the_mom.draw_person(position = "sitting")
-            "[the_mom.possessive_title] gives everyone a plate and sits down. [the_sister.title] eventually gets use to her mothers outfit and joins in on your conversation."
+            "[the_mom.possessive_title] gives everyone a plate and sits down. [the_sister.title] eventually gets used to her mothers outfit and joins in on your conversation."
             "When you're done you help Mom put the dirty dishes away and get on with your day."
 
 
