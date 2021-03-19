@@ -945,7 +945,7 @@ label lily_kissing_taboo_break(the_person):
     the_person "Hey... What are you doing?"
     mc.name "I'm going to kiss you [the_person.title]."
     the_person "Ew. You're my brother, that's weird."
-    mc.name "Why? We use to kiss when we were kids."
+    mc.name "Why? We used to kiss when we were kids."
     the_person "Oh my god, I forgot about that. That was different, we were young and just practicing."
     mc.name "Let's practice some more. I'm sure we can both get better at it if we try."
     the_person "You're serious? I... I don't know [the_person.mc_title], what if [mom.title] finds out?"
@@ -1294,7 +1294,7 @@ label lily_creampie_taboo_break(the_person):
         elif the_person.on_birth_control:
             the_person "It does feel really good..."
             mc.name "It feels good for me too. Don't worry [the_person.title], there's nothing to worry about."
-            the_person "Yeah, you're right. It's just such a new feeling, I needed a second to get use to it."
+            the_person "Yeah, you're right. It's just such a new feeling, I needed a second to get used to it."
         else:
             the_person "It does feel really good, but I'm not on my birth control. What if I, you know..."
             mc.name "Get pregnant?"
