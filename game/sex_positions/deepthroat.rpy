@@ -478,7 +478,7 @@ label transition_deepthroat_skull_fuck(the_girl, the_location, the_object):
 
 label transition_default_deepthroat(the_girl, the_location, the_object):
     "[the_girl.title] gets ready in front of you, on her knees with her mouth open. You place a hand on the back of her head and pull her towards you, sliding your cock down her throat."
-    "After giving her a second to get use to your size you start to guide her back and forth, keeping yourself buried nice and deep in her mouth."
+    "After giving her a second to get used to your size you start to guide her back and forth, keeping yourself buried nice and deep in her mouth."
     return
 
 label strip_deepthroat(the_girl, the_clothing, the_location, the_object):
