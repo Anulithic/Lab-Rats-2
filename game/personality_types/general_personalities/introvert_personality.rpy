@@ -415,7 +415,7 @@ label introvert_flirt_response_low(the_person):
             elif the_person.outfit.tits_visible():
                 # Her tits are out
                 "[the_person.possessive_title] blushes and tries to hide her breasts."
-                the_person "Thanks. I don't know if I'll ever get use to having my... boobs out."
+                the_person "Thanks. I don't know if I'll ever get used to having my... boobs out."
                 if the_person.has_large_tits():
                     the_person "I'm normally so worried about keeping them hidden, I don't like the attention."
                 mc.name "I know it's a little unusual, but you look great."
@@ -448,7 +448,7 @@ label introvert_flirt_response_mid(the_person):
         if the_person.judge_outfit(the_person.outfit):
             the_person "Oh... Thanks."
             "[the_person.possessive_title] blushes and looks away."
-            the_person "Sorry. I'm just not use to someone paying this much attention to me."
+            the_person "Sorry. I'm just not used to someone paying this much attention to me."
             mc.name "It's alright, you just need to be more confident. Come on, give me a spin"
             "She hesitates for a moment, then smiles meekly and nods."
             $ the_person.draw_person(position = "back_peek")
@@ -464,14 +464,14 @@ label introvert_flirt_response_mid(the_person):
                 the_person "Sorry! I know these are our uniforms, but I feel so exposed with my boobs out!"
             else:
                 the_person "Sorry! I know these are our uniforms, but I feel so exposed!"
-            mc.name "It's okay, it's a perfect chance for you to work on your confidence. Give it time and you'll get use to it."
+            mc.name "It's okay, it's a perfect chance for you to work on your confidence. Give it time and you'll get used to it."
             "She seems unconvinced, but nods anyways."
 
     else:
         if the_person.effective_sluttiness() < 20:
             the_person "Oh... Thanks."
             "[the_person.possessive_title] blushes and looks away."
-            the_person "Sorry. I'm just not use to someone paying this much attention to me."
+            the_person "Sorry. I'm just not used to someone paying this much attention to me."
             mc.name "It's alright, you just need to be more confident."
             the_person "Maybe you're right..."
             mc.name "Let's try right now. Give me a spin and show off a little."
@@ -1475,7 +1475,7 @@ label introvert_bare_tits_taboo_break(the_person, the_clothing):
         mc.name "And what's wrong with that?"
         the_person "I don't normally do anything like this. I'm not the kind of girl to pull her... breasts out for someone."
         if the_person.has_large_tits():
-            the_person "Plus they're always attracting attention, so I've gotten so use to covering them up."
+            the_person "Plus they're always attracting attention, so I've gotten so used to covering them up."
 
         mc.name "You aren't really worried about that though, are you? Come on, I want to see your tits."
         "She takes a deep breath, then nods."
