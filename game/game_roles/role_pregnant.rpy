@@ -470,7 +470,7 @@ label tits_shrink_announcement_one(the_person):
 label tits_shrink_announcement_two(the_person):
     the_person "Hey [the_person.mc_title]."
     "[the_person.possessive_title] sighs and looks down down at her chest. She cups one of her boobs and rubs it gently."
-    the_person "My chest is back to it's old size. I had gotten so use to them when I was pregnant that these feel tiny now."
+    the_person "My chest is back to its old size. I had gotten so used to them when I was pregnant that these feel tiny now."
     mc.name "That's a pretty easy problem to solve. I'll just have to get you pregnant again."
     if the_person.get_opinion_score("creampies") > 0 or the_person.get_opinion_score("bareback sex") > 0:
         $ the_person.change_arousal(10)
