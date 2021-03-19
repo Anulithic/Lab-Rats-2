@@ -1138,7 +1138,7 @@ label water_spill_crisis_label():
                         next_piece = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True)
                         while (next_piece and the_person.judge_outfit(the_person.outfit, the_person.obedience-100+10)):
                             the_person.draw_animated_removal(next_piece)
-                            renpy.say(None,the_person.title + " takes off her " + next_piece.name + " and leave it on the ground.")
+                            renpy.say(None,the_person.title + " takes off her " + next_piece.name + " and drops it on the floor.")
                             next_piece = the_person.outfit.remove_random_any(top_layer_first = True, exclude_feet = True, do_not_remove = True)
 
                     the_person "There, I hope that's good enough."
