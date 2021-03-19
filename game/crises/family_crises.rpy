@@ -891,7 +891,7 @@ label mom_morning_surprise_label():
                 $ the_report = _return
                 if the_report.get("girl orgasms", 0) > 0:
                     $ the_person.change_love(5)
-                    the_person "That was amazing [the_person.mc_title], you know how to make me feel like women again!"
+                    the_person "That was amazing [the_person.mc_title], you know how to make me feel like a woman again!"
                     $ the_person.draw_person(position = "missionary")
                     "She rolls over and kisses you, then rests her head on your chest."
                     "After a minute she sighs and starts to get up."
