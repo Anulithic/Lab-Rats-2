@@ -529,7 +529,7 @@ label punishment_underwear_only(the_person, the_infraction):
         if the_person.effective_sluttiness("underwear_nudity") < 40:
             # Obedient but very shy about it
             "She blushes and looks away."
-            the_person "Are you sure [the_person.mc_title]? I'm not use to... being undressed in front of people."
+            the_person "Are you sure [the_person.mc_title]? I'm not used to... being undressed in front of people."
             mc.name "Of course I'm sure. Now strip."
             "She nods meekly."
             the_person "Okay, if you say I have to..."
