@@ -1,4 +1,4 @@
-### Takes the old events that use to be Alexia specific and breaks them out into it's own role.
+### Takes the old events that used to be Alexia specific and breaks them out into its own role.
 init -2 python:
 
     def model_photography_list_requirement(the_person):
