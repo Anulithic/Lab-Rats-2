@@ -57,7 +57,6 @@ label study_check_up(the_student, the_mom):
         $ the_group.draw_person(the_student)
         $ the_student.change_obedience(1)
         $ the_student.change_love(1)
-        the_student "Thanks Mom, It was really [the_student.title], he's a very engaging teacher."
         the_student "Thanks Mom, It was really [the_student.mc_title], he's a very engaging teacher."
 
 
@@ -173,7 +172,7 @@ label student_dinner(the_student, the_mom, first_time):
         "After a few moments of teasing she draws her leg back and slips her foot back in her shoe."
 
 
-    the_mom "Now, how about I get desert ready. [the_student.title], please clean the table. Leave my wine, I'll have the rest with desert."
+    the_mom "Now, how about I get dessert ready. [the_student.title], please clean the table. Leave my wine, I'll have the rest with dessert."
     $ the_group.draw_person(the_student, position = "sitting")
     the_student "Okay Mom."
     $ the_group.draw_group(position = "walking_away")
@@ -242,10 +241,10 @@ label student_dinner(the_student, the_mom, first_time):
                 "She runs her hand along the bulge of your crotch, stroking you slowly through the fabric."
                 the_student "He's been such a strong, firm presence in my life since I met him. I'm really learning a lot."
                 $ the_student.change_slut_temp(1)
-                "You and [the_student.possessive_title] fondle each other while you eat desert, doing your best to keep [the_mom.title] from noticing everything."
+                "You and [the_student.possessive_title] fondle each other while you eat dessert, doing your best to keep [the_mom.title] from noticing everything."
 
             else:
-                "You fondle [the_student.possessive_title] as you eat your desert, doing your best to keep [the_mom.title] from noticing."
+                "You fondle [the_student.possessive_title] as you eat your dessert, doing your best to keep [the_mom.title] from noticing."
 
 
 
@@ -255,7 +254,7 @@ label student_dinner(the_student, the_mom, first_time):
             $ the_group.draw_person(the_mom, position = "sitting")
             the_mom "[the_student.title], could you clean things up for us?"
 
-    "[the_student.possessive_title] collects up the dishes again when you finished desert and carries them to the kitchen."
+    "[the_student.possessive_title] collects up the dishes again when you finished dessert and carries them to the kitchen."
     the_mom "It's been wonderful having you over [the_mom.mc_title], but I'm sure you're looking forward to getting home."
     mc.name "The dinner was fantastic. I'm lucky to have such a generous, beautiful host."
     "[the_mom.title] seems to blush, although it might just be wine taking effect."
@@ -349,7 +348,7 @@ label student_mom_appologise_label(the_person): #TODO Provide a way to not activ
     "She nods meekly."
     mc.name "You don't need to be sorry, I liked it. It sounds like you really needed it, too."
     the_person "I don't know what you mean..."
-    mc.name "It's pretty obviously. When's the last time your husband was home on time?"
+    mc.name "It's pretty obvious. When's the last time your husband was home on time?"
     the_person "It's been a few weeks..."
     mc.name "When was the last time you had sex together?"
     if the_person.effective_sluttiness() < 35:
