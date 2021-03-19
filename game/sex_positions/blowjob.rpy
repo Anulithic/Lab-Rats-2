@@ -71,7 +71,7 @@ label scene_blowjob_1(the_girl, the_location, the_object):
                 if the_girl.get_opinion_score("giving blowjobs") < 0:
                     $ the_girl.discover_opinion("giving blowjobs")
                     the_girl "Ugh... I hate that feeling."
-                    mc.name "Give it time, you'll get use to it."
+                    mc.name "Give it time, you'll get used to it."
                 else:
                     the_girl "Ah... Ah..."
                     mc.name "Better. Now keep it up."
