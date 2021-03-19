@@ -218,7 +218,7 @@ label mom_strip_reject(the_person, the_clothing, strip_type = "Full"):
     elif the_person.obedience < 70:
         the_person "Not yet [the_person.mc_title]. You just need to relax and let mommy take care of you."
     else:
-        the_person "Don't touch that [the_person.mc_title]. I'm your mother, you shouldn't be trying to take off my [the_clothing.display_name]"
+        the_person "Don't touch that [the_person.mc_title]. I'm your mother, you shouldn't be trying to take off my [the_clothing.display_name]."
     return
 
 label mom_strip_obedience_accept(the_person, the_clothing, strip_type = "Full"):
