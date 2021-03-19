@@ -63,7 +63,7 @@ label scene_piledriver_1(the_girl, the_location, the_object):
         the_girl "Ah! Oh fuck me, I think I need you to slow down..."
         menu:
             "Go slowly":
-                "You pause and give [the_girl.possessive_title] a chance to get use to having your cock buried inside of her cunt."
+                "You pause and give [the_girl.possessive_title] a chance to get used to having your cock buried inside of her cunt."
                 "She takes a few deep breaths, then nods to you."
                 the_girl "Okay, I think I'm ready. Take it slow though."
                 if the_girl.arousal > 50:
