@@ -1590,7 +1590,7 @@ label mom_weekly_pay_lily_question(the_person):
         "Tell her about InstaPic":
             mc.name "Well, I think she's picked up a part time job."
             the_person "Oh, why haven't I heard about this?"
-            mc.name "It's not exactly a traditional job. She's been putting picture up on InstaPic."
+            mc.name "It's not exactly a traditional job. She's been putting pictures up on InstaPic."
             the_person "InstaPic? Isn't that an internet thing? I don't understand."
             mc.name "[lily.title] puts up pictures showing off clothing, and InstaPic pays her for the ad traffic she generates."
             the_person "So it's like modeling, but she can do it from home?"
@@ -1603,6 +1603,7 @@ label mom_weekly_pay_lily_question(the_person):
             the_person "Aww, you're too sweet."
             $ lily.event_triggers_dict["sister_instathot_mom_knows"] = True
             $ add_sister_instapic_discover_crisis()
+    the_person "Now then, was there anything you wanted me to do this week?"
     return
 
 label mom_stress_relief_offer(the_person): #TODO: Write and hook this up.
