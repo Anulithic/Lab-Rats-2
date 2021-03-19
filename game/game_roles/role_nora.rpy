@@ -408,7 +408,7 @@ label nora_special_research(the_person):
         else:
             the_person "I have an interesting development and possible path forward."
         the_person "My testing has revealed a number of major differences between the test subject's hormonal balance and what is expected."
-        the_person "I believe this is the bodies natural response to her noticeably intense desire for sexual satisfaction."
+        the_person "I believe this is the body's natural response to her noticeably intense desire for sexual satisfaction."
         the_person "If most women have a biological clock ticking, this one has a church bell."
         the_person "It may be possible to induce and amplify this hormonal response in others pre-impregnation."
         the_person "I would expect the results to be increased fertility, breast swelling, and very likely immediate lactation."
