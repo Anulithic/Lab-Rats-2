@@ -109,7 +109,7 @@ label outro_cowgirl(the_girl, the_location, the_object):
     if the_girl.wants_creampie() or mc.condom:
         #She drops down on you as you cum.
         the_girl "Yes! Ah!"
-        "[the_girl.title] drops herself down, grinding her hips against yours and pushing cock as deep into her as possible."
+        "[the_girl.title] drops herself down, grinding her hips against yours and pushing your cock as deep into her as possible."
         "Her breath catches in her throat when you pulse out your hot load of cum deep inside of her."
         #the_girl "Oh my god... Give it all to me [the_girl.mc_title]... Fill me up..."
         if mc.condom:
