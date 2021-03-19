@@ -7249,13 +7249,13 @@ init -5 python:
         return the_stage
 
     def make_front_door():
-        return Object("Front Door", ["Lean"], sluttiness_modifier = 10, obedience_modifier = 5)
+        return Object("front door", ["Lean"], sluttiness_modifier = 10, obedience_modifier = 5)
 
     def make_hall_carpet():
-        return Object("Hall Carpet", ["Kneel", "Lay"], sluttiness_modifier = 5, obedience_modifier = 10)
+        return Object("hall carpet", ["Kneel", "Lay"], sluttiness_modifier = 5, obedience_modifier = 10)
 
     def make_stairs():
-        return Object("Stairs", ["Sit", "Low"], sluttiness_modifier = 5, obedience_modifier = 10)
+        return Object("stairs", ["Sit", "Low"], sluttiness_modifier = 5, obedience_modifier = 10)
 
     class Position():
         def __init__(self,name,slut_requirement,slut_cap,requires_hard, requires_large_tits,
