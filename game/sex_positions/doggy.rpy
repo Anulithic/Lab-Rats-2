@@ -183,11 +183,11 @@ label scene_doggy_2(the_girl, the_location, the_object):
                 "You keep up the pace as long as you can, but eventually you need to slow down. You settle back into a rhythm you can sustain."
 
     else:
-        #Inexperienced. She needs time to get use to it.
+        #Inexperienced. She needs time to get used to it.
         the_girl "Ah... go easy on me [the_girl.mc_title], I'm still figuring out how to do this..."
         menu:
             "Fondle her tits":
-                "You ease yourself deep inside of [the_girl.title] and give her a chance to get use to your size."
+                "You ease yourself deep inside of [the_girl.title] and give her a chance to get used to your size."
                 the_girl "Oh god..."
                 if the_girl.has_large_tits() :
                     if the_girl.outfit.tits_available():
@@ -307,9 +307,9 @@ label transition_doggy_doggy_anal(the_girl, the_location, the_object):
 
             else:
                 the_girl "Oh fuck! FUCK!"
-                "She yells out in surprise and pain. You bottom out and hold still, giving her a second to get use to your size."
+                "She yells out in surprise and pain. You bottom out and hold still, giving her a second to get used to your size."
                 the_girl "Fuck... I hate that part..."
-                mc.name "It's just like ripping off a bandage. You'll get use to it."
+                mc.name "It's just like ripping off a bandage. You'll get used to it."
                 "You wait a moment, then start to move again. Using her pussy juices as lube you've soon got a good rhythm going."
 
         "Take it slow":
