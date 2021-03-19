@@ -12152,7 +12152,7 @@ label research_select_action_description:
         $mc.business.set_serum_research(_return)
         "You change your research to [_return.name]."
     else:
-        "You decide to leave your labs current research topic as it is."
+        "You decide to leave your lab's current research topic as it is."
     return
 
 label production_select_action_description: #TODO: Change this to allow you to select which line of serum you are changing!
