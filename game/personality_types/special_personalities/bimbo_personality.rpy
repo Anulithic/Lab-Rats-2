@@ -1058,7 +1058,7 @@ label bimbo_date_seduction(the_person):
         if the_person.love > 40:
             the_person "[the_person.mc_title], I don't know how you do it but I swear you've been driving me, like, totally crazy all night."
             "[the_person.title] runs her hand along your arm and giggles."
-            the_person "I want you to come back to my place so I can have you all to my self."
+            the_person "I want you to come back to my place so I can have you all to myself."
         else:
             the_person "Oh my god [the_person.mc_title], tonight has been so much fun. Do you want to, like, come back home with me and drink some more?"
     return
