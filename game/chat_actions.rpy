@@ -680,12 +680,12 @@ label movie_date_plan_label(the_person):
         if is_tuesday:
             the_person "How about tonight? I think tickets are half price."
         else:
-            the_person "How about Tuesday night? I tickets are half price."
+            the_person "How about Tuesday night? I think tickets are half price."
 
     elif mother_role in the_person.special_role:
         mc.name "Hey [the_person.title], would you like to come to the movies with me? I want to spend some more time together, mother and son."
         the_person "Aww, you're precious [the_person.mc_title]. I would love to go to the movies with you."
-        the_person "Remember how me and you use to watch movies together every weekend? I felt like our relationship was so close because of that."
+        the_person "Remember how you and I used to watch movies together every weekend? I felt like our relationship was so close because of that."
         "She seems distracted by the memory for a moment, then snaps back to the conversation."
         if is_tuesday:
             the_person "Would you be free tonight?"
