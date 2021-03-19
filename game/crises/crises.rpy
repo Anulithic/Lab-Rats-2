@@ -2296,7 +2296,7 @@ label cat_fight_crisis_label():
                     loser "Hey!"
                     $ the_group.draw_person(winner, emotion = "happy")
                     winner "You're not going anywhere, not yet!"
-                    "[winner.title] reaches a hand down between [loser.title]'s legs, running her finger over her coworkers pussy."
+                    "[winner.title] reaches a hand down between [loser.title]'s legs, running her finger over her coworker's pussy."
                     $ loser.change_arousal(5)
                     $ the_group.draw_person(winner, make_primary = False, emotion = "happy", the_animation = tit_bob, animation_effect_strength = 0.2)
                     $ the_group.draw_person(loser, position = "against_wall", the_animation = tit_bob, animation_effect_strength = 0.2) #TODO: Experiment with different settings here
