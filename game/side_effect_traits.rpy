@@ -48,7 +48,7 @@ init -1 python:
         the_person.change_energy(-10)
 
     depressant_side_effect = SerumTrait(name = "Depressant",
-        desc = "An unintended interaction produces a sudden and noticeable drop in the recipients mood without any corresponding improvement when the serum expires.",
+        desc = "An unintended interaction produces a sudden and noticeable drop in the recipient's mood without any corresponding improvement when the serum expires.",
         positive_slug = "None",
         negative_slug = "-20 Happiness When Applied, -$5 Value",
         value_added = -5,
@@ -85,7 +85,7 @@ init -1 python:
         is_side_effect = True)
 
     libido_suppressant = SerumTrait(name = "Libido Suppressant",
-        desc = "An unintended interaction results in a major decrease in the recipients sex drive for the duration of this serum.",
+        desc = "An unintended interaction results in a major decrease in the recipient's sex drive for the duration of this serum.",
         positive_slug = "None",
         negative_slug = "-20 Sluttiness, -$5 Value",
         value_added = -5,
@@ -102,7 +102,7 @@ init -1 python:
         is_side_effect = True)
 
     performance_inhibitor = SerumTrait(name = "Performance Inhibitor",
-        desc = "For reasons not understood by your R&D team this serum causes a general decrease in the recipients to do work for the duration of the serum.",
+        desc = "For reasons not understood by your R&D team this serum causes a general decrease in the recipient's to do work for the duration of the serum.",
         positive_slug = "None",
         negative_slug = "-1 Intelligence, Focus, and Charisma, -$5 Value",
         value_added = -5,
