@@ -1522,7 +1522,7 @@ label invest_rep_visit_label(rep_name):
             "You send [helper.title] a text to meet you. You and [rep_name] grab chairs and wait in the lobby until she arrives."
             $ helper.draw_person()
             if helper.outfit.slut_requirement > 60:
-                "[rep_name]'s goes slack-jawed when he sees [helper.title] wearing not much at all."
+                "[rep_name] goes slack-jawed when he sees [helper.title] wearing not much at all."
             elif helper.outfit.slut_requirement > 20:
                 "Your idle conversation with [rep_name] trails off when [helper.title] comes into the room. You see his eyes run up and down her before he regains his composure."
             else:
