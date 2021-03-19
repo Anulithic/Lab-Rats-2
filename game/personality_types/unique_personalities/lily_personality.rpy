@@ -283,7 +283,7 @@ label lily_sex_responses_vaginal(the_person):
 
     elif the_person.arousal < 75:
         if the_person.sluttiness > 50:
-            "Mmm, give it to me [the_person.mc_title]! Stretch out my teen pussy so it will only fit your big, hot cock!"
+            the_person "Mmm, give it to me [the_person.mc_title]! Stretch out my teen pussy so it will only fit your big, hot cock!"
 
         else:
             "[the_person.possessive_title] moans enthusiastically."
